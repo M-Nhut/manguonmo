@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo Đề Kiểm Tra Chống Gian Lận - {{ classroom.name }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+  <a href="{{ url_for('main.classroom_detail', class_id=classroom.id) }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">
+    ← Quay lại Lớp: {{ classroom.name }}
+  </a>
+</div>
+
+<div style="max-width: 680px; margin: 0 auto 40px;">
+  <div class="clay-card animate-spring-pop">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="clay-logo-icon animate-float" style="margin: 0 auto 12px; width: 56px; height: 56px; font-size: 1.8rem; background: linear-gradient(135deg, #F43F5E, #BE123C);">
+        🛡️
+      </div>
+      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">Tạo Đề Kiểm Tra Chống Gian Lận</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">Cấu hình thời gian và các tầng bảo vệ giám sát học sinh</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('main.create_exam', class_id=classroom.id) }}">
+      <div class="clay-input-group">
+        <label class="clay-label">Tiêu đề đề kiểm tra</label>
+        <input type="text" name="title" class="clay-input" placeholder="Ví dụ: Kiểm tra 15 phút: Chủ đề F - Kiến thức cơ bản HTML/CSS" required>
+      </div>
+
+      <div class="clay-input-group">
+        <label class="clay-label">Mô tả / Hướng dẫn làm bài</label>
+        <textarea name="description" class="clay-textarea" rows="3" placeholder="Ví dụ: Đề thi gồm 10 câu trắc nghiệm. Học sinh không được rời màn hình làm bài."></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="clay-input-group">
+          <label class="clay-label">Thời gian làm bài (Phút)</label>
+          <input type="number" name="duration_minutes" class="clay-input" value="15" min="1" max="180" required>
+        </div>
+
+        <div class="clay-input-group">
+          <label class="clay-label">Số lần vi phạm tối đa</label>
+          <input type="number" name="max_violations" class="clay-input" value="3" min="1" max="10" required>
+          <small style="color: var(--text-muted); font-size: 0.8rem;">(Vượt quá sẽ tự động nộp bài ngay lập tức)</small>
+        </div>
+      </div>
+
+      <!-- Anti-cheating options -->
+      <div style="background: var(--bg-clay); padding: 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-clay-input); margin-bottom: 24px;">
+        <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--text-main);">🛡️ Cấu hình cơ chế chống gian lận:</h4>
+        
+        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer;">
+          <input type="checkbox" name="enable_fullscreen" value="1" checked style="accent-color: var(--primary-clay); width: 18px; height: 18px;">
+          <span><strong>Toàn màn hình bắt buộc (Enforced Fullscreen):</strong> Cảnh báo khi học sinh thoát toàn màn hình</span>
+        </label>
+
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="checkbox" name="enable_tab_lock" value="1" checked style="accent-color: var(--primary-clay); width: 18px; height: 18px;">
+          <span><strong>Khóa Tab & Focus:</strong> Phát hiện khi mở tab mới, chuyển ứng dụng khác hoặc bấm phím tắt</span>
+        </label>
+      </div>
+
+      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+        Tiếp Tục: Thêm Câu Hỏi Trắc Nghiệm →
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

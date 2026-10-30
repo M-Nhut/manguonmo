@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Tin học 11 - Học tập trực tuyến{% endblock %}</title>
+  <!-- Claymorphism & Motion Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/claymorphism.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/motion.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Ambient Blobs for Claymorphism Depth -->
+  <div class="clay-ambient-blob blob-1 animate-float"></div>
+  <div class="clay-ambient-blob blob-2 animate-float-reverse"></div>
+  <div class="clay-ambient-blob blob-3 animate-float"></div>
+
+  <div class="container">
+    <!-- Clay Navigation Bar -->
+    <header class="clay-nav">
+      <a href="{{ url_for('main.index') }}" class="clay-logo">
+        <div class="clay-logo-icon">💻</div>
+        <span>Tin Học 11 <small style="font-size: 0.65em; color: var(--primary-clay); font-weight: 700;">(Ứng Dụng)</small></span>
+      </a>
+
+      <nav>
+        <ul class="clay-nav-links">
+          {% if current_user.is_authenticated %}
+            {% if current_user.is_admin %}
+              <li><a href="{{ url_for('main.admin_dashboard') }}" class="clay-nav-link">Quản Trị</a></li>
+            {% elif current_user.is_teacher %}
+              <li><a href="{{ url_for('main.teacher_dashboard') }}" class="clay-nav-link">Bàn Làm Việc</a></li>
+            {% else %}
+              <li><a href="{{ url_for('main.student_dashboard') }}" class="clay-nav-link">Góc Học Tập</a></li>
+            {% endif %}
+            
+            <li>
+              <span class="clay-badge {% if current_user.is_admin %}badge-admin{% elif current_user.is_teacher %}badge-teacher{% else %}badge-student{% endif %}">
+                👤 {{ current_user.full_name }} ({{ current_user.role | upper }})
+              </span>
+            </li>
+            <li><a href="{{ url_for('auth.logout') }}" class="clay-btn clay-btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;">Đăng xuất</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px;">Đăng nhập</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px;">Đăng ký</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Flash Alerts -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages animate-spring-pop">
+          {% for category, message in messages %}
+            <div class="clay-alert alert-{{ category }}">
+              <span>{{ message }}</span>
+              <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">×</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Main Page Content -->
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer style="text-align: center; margin: 60px 0 30px; color: var(--text-muted); font-size: 0.9rem;">
+      <p style="font-weight: 600;">Dự án Phát triển phần mềm mã nguồn mở (PTPM.MNM) • Bộ môn Tin học 11 Ứng dụng</p>
+      <p style="font-size: 0.8rem; margin-top: 4px;">Giao diện Motion-Driven & Claymorphism • Bảo vệ thi cử chống gian lận đa tầng</p>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

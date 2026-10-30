@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Phòng thi: {{ exam.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Disable text selection inside exam room */
+  .exam-security-zone {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  /* Sticky Proctoring Bar */
+  .proctoring-hud {
+    position: sticky;
+    top: 20px;
+    z-index: 100;
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-clay-card);
+    padding: 16px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="exam-security-zone">
+
+  <!-- Floating Proctoring HUD Bar -->
+  <div class="proctoring-hud animate-spring-pop">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="width: 14px; height: 14px; border-radius: 50%; background: var(--danger-clay);" class="animate-radar"></div>
+      <div>
+        <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">
+          🛡️ HỆ THỐNG GIÁM SÁT CHỐNG GIAN LẬN ĐANG BẬT
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          Toàn màn hình • Chặn chuyển tab • Chặn phím tắt & chuột phải
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer & Violations -->
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <!-- Violation counter -->
+      <div style="text-align: center;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); display: block;">VI PHẠM</span>
+        <span id="violation-counter" class="clay-badge badge-pdf" style="font-size: 1rem; padding: 4px 12px;">
+          {{ submission.violations_count }}/{{ exam.max_violations }}
+        </span>
+      </div>
+
+      <!-- Live Countdown Timer -->
+      <div style="text-align: center;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); display: block;">THỜI GIAN CÒN LẠI</span>
+        <div id="exam-timer" style="font-family: monospace; font-size: 1.5rem; font-weight: 800; color: var(--primary-clay-dark);">
+          {{ exam.duration_minutes }}:00
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exam Form -->
+  <form id="exam-form" method="POST" action="{{ url_for('main.submit_exam', submission_id=submission.id) }}">
+    <div style="display: flex; flex-direction: column; gap: 24px; margin-bottom: 40px;">
+      {% for q in questions %}
+        <div class="clay-card animate-spring-pop" style="animation-delay: {{ loop.index * 0.05 }}s;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); line-height: 1.5;">
+              Câu {{ loop.index }}: {{ q.content }}
+            </h3>
+            <span class="clay-badge badge-teacher">{{ q.points }} điểm</span>
+          </div>
+
+          <!-- Options -->
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <label style="display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: var(--radius-md); background: var(--bg-clay); cursor: pointer; box-shadow: var(--shadow-clay-input); transition: all 0.2s ease;">
+              <input type="radio" name="question_{{ q.id }}" value="A" style="accent-color: var(--primary-clay); width: 20px; height: 20px;" required>
+              <span style="font-weight: 600;">A.</span> {{ q.option_a }}
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: var(--radius-md); background: var(--bg-clay); cursor: pointer; box-shadow: var(--shadow-clay-input); transition: all 0.2s ease;">
+              <input type="radio" name="question_{{ q.id }}" value="B" style="accent-color: var(--primary-clay); width: 20px; height: 20px;">
+              <span style="font-weight: 600;">B.</span> {{ q.option_b }}
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: var(--radius-md); background: var(--bg-clay); cursor: pointer; box-shadow: var(--shadow-clay-input); transition: all 0.2s ease;">
+              <input type="radio" name="question_{{ q.id }}" value="C" style="accent-color: var(--primary-clay); width: 20px; height: 20px;">
+              <span style="font-weight: 600;">C.</span> {{ q.option_c }}
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: var(--radius-md); background: var(--bg-clay); cursor: pointer; box-shadow: var(--shadow-clay-input); transition: all 0.2s ease;">
+              <input type="radio" name="question_{{ q.id }}" value="D" style="accent-color: var(--primary-clay); width: 20px; height: 20px;">
+              <span style="font-weight: 600;">D.</span> {{ q.option_d }}
+            </label>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Final Submit Bar -->
+    <div class="clay-card" style="text-align: center; padding: 30px; margin-bottom: 50px;">
+      <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;">Bạn đã hoàn thành tất cả các câu hỏi?</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Sau khi bấm nộp bài, bạn không thể thay đổi đáp án đã chọn.</p>
+      <button type="submit" class="clay-btn clay-btn-success" style="padding: 16px 40px; font-size: 1.15rem;">
+        ✓ Hoàn Thành & Nộp Bài Thi
+      </button>
+    </div>
+  </form>
+
+</div>
+
+<!-- Cheating Warning Modal -->
+<div id="cheating-modal" class="clay-modal-backdrop">
+  <div class="clay-modal" style="border-top: 8px solid var(--danger-clay);">
+    <div style="font-size: 3rem; margin-bottom: 12px;" class="animate-radar">⚠️</div>
+    <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--danger-clay); margin-bottom: 12px;">CẢNH BÁO VI PHẠM QUY CHẾ!</h2>
+    <p id="cheating-warning-text" style="color: var(--text-main); font-weight: 600; line-height: 1.6; margin-bottom: 24px; white-space: pre-line;">
+      Hành vi chuyển tab hoặc rời màn hình đã bị ghi nhận vào nhật ký kiểm tra!
+    </p>
+    <button id="close-warning-btn" type="button" class="clay-btn clay-btn-danger" style="width: 100%; padding: 14px; font-size: 1rem;">
+      Tôi Đã Hiểu & Quay Lại Làm Bài Ngay
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/anti-cheating.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const proctor = new AntiCheatingEngine({
+      submissionId: {{ submission.id }},
+      maxViolations: {{ exam.max_violations }},
+      enableFullscreen: {{ 'true' if exam.enable_fullscreen else 'false' }},
+      enableTabLock: {{ 'true' if exam.enable_tab_lock else 'false' }},
+      durationMinutes: {{ exam.duration_minutes }},
+      initialViolations: {{ submission.violations_count }}
+    });
+    proctor.start();
+  });
+</script>
+{% endblock %}

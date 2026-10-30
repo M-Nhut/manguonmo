@@ -1,0 +1,13 @@
+services:
+  web:
+    build: .
+    container_name: elearning_tin11_web
+    ports:
+      - "5050:5050"
+    environment:
+      - SECRET_KEY=ptpm-mnm-tin11-production-key
+      - PORT=5050
+    volumes:
+      - ./uploads:/app/uploads
+      - ./elearning_tin11.sqlite3:/app/elearning_tin11.sqlite3
+    restart: unless-stopped

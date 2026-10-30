@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Xem Slide PPTX: {{ material.title }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">
+    ← Quay lại Bài học
+  </a>
+  <div style="display: flex; gap: 10px;">
+    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px; font-size: 0.9rem;">
+      ⬇️ Tải Tệp Về Máy
+    </a>
+  </div>
+</div>
+
+<div class="clay-card animate-spring-pop" style="margin-bottom: 24px; padding: 24px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div>
+      <span class="clay-badge badge-pptx" style="margin-bottom: 6px;">📊 Trình Chiếu PowerPoint (.pptx)</span>
+      <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ material.title }}</h1>
+      <p style="color: var(--text-muted); font-size: 0.85rem;">
+        Tổng số: <strong>{{ slides|length }} slide</strong> • Phím tắt: Dùng phím mũi tên <strong>←</strong> và <strong>→</strong> để chuyển slide
+      </p>
+    </div>
+    <div id="slide-counter" class="clay-badge badge-teacher" style="font-size: 1rem; padding: 8px 18px;">
+      Slide 1 / {{ slides|length }}
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Presentation Stage -->
+<div style="max-width: 960px; margin: 0 auto 30px;">
+  <div class="clay-card slide-container" style="min-height: 440px; display: flex; flex-direction: column; justify-content: space-between; padding: 40px; position: relative;">
+    <div id="slide-content-area" class="slide-card">
+      <h2 id="slide-title" style="font-size: 1.8rem; font-weight: 800; color: var(--primary-clay-dark); margin-bottom: 24px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 12px;">
+        Đang tải slide...
+      </h2>
+      <ul id="slide-bullets" style="line-height: 2; margin-top: 16px;">
+        <!-- Bullets injected dynamically -->
+      </ul>
+    </div>
+
+    <!-- Presentation Control Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; border-top: 1px solid #E2E8F0; padding-top: 20px;">
+      <button id="prev-slide-btn" class="clay-btn clay-btn-secondary" style="padding: 10px 22px;">
+        ← Slide Trước
+      </button>
+
+      <span style="color: var(--text-muted); font-size: 0.85rem;">
+        Mẹo: Nhấn <strong>Space</strong> hoặc <strong>→</strong> để tiến tới
+      </span>
+
+      <button id="next-slide-btn" class="clay-btn clay-btn-primary" style="padding: 10px 22px;">
+        Slide Tiếp →
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/doc-viewer.js') }}"></script>
+<script>
+  const slidesData = {{ slides | tojson }};
+  document.addEventListener('DOMContentLoaded', () => {
+    new SlideViewer(slidesData);
+  });
+</script>
+{% endblock %}

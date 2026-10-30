@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}{{ exam.title }} - Chi tiết đề thi{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+  <a href="{{ url_for('main.classroom_detail', class_id=exam.classroom_id) }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">
+    ← Quay lại Lớp: {{ exam.classroom.name }}
+  </a>
+</div>
+
+<!-- Exam Info Banner -->
+<div class="clay-card animate-spring-pop" style="margin-bottom: 30px;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <span class="clay-badge badge-pdf" style="margin-bottom: 8px;">🛡️ Đề Kiểm Tra Chống Gian Lận</span>
+      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main);">{{ exam.title }}</h1>
+      <p style="color: var(--text-muted); margin-top: 6px;">
+        Lớp học: <strong>{{ exam.classroom.name }}</strong> • Thời lượng: <strong>{{ exam.duration_minutes }} phút</strong> • Tối đa vi phạm: <strong>{{ exam.max_violations }} lần</strong>
+      </p>
+      {% if exam.description %}
+        <p style="margin-top: 10px; color: var(--text-main); font-size: 0.95rem;">{{ exam.description }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      {% if current_user.is_student %}
+        {% if student_submission %}
+          <div style="text-align: right;">
+            <span class="clay-badge badge-student" style="font-size: 1rem; padding: 8px 16px;">
+              Đã nộp: {{ student_submission.score }} / {{ student_submission.total_points }} điểm
+            </span>
+            <div style="margin-top: 10px;">
+              <a href="{{ url_for('main.exam_result', submission_id=student_submission.id) }}" class="clay-btn clay-btn-primary">
+                Xem lại kết quả thi
+              </a>
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ url_for('main.take_exam', exam_id=exam.id) }}" class="clay-btn clay-btn-primary" style="padding: 14px 28px; font-size: 1.1rem;">
+            🚀 Bắt Đầu Làm Bài
+          </a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Teacher Question Builder -->
+{% if current_user.is_teacher or current_user.is_admin %}
+<div class="clay-card" style="margin-bottom: 30px; border-left: 6px solid var(--primary-clay);">
+  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 14px;">➕ Thêm Câu Hỏi Trắc Nghiệm Mới</h2>
+
+  <form method="POST" action="{{ url_for('main.add_question', exam_id=exam.id) }}">
+    <div class="clay-input-group">
+      <label class="clay-label">Nội dung câu hỏi</label>
+      <textarea name="content" class="clay-textarea" rows="2" placeholder="Ví dụ: Thẻ HTML nào sau đây được sử dụng để chèn hình ảnh vào trang web?" required></textarea>
+    </div>
+
+    <div class="grid-2">
+      <div class="clay-input-group">
+        <label class="clay-label">Đáp án A</label>
+        <input type="text" name="option_a" class="clay-input" placeholder="Ví dụ: <img>" required>
+      </div>
+
+      <div class="clay-input-group">
+        <label class="clay-label">Đáp án B</label>
+        <input type="text" name="option_b" class="clay-input" placeholder="Ví dụ: <image>" required>
+      </div>
+
+      <div class="clay-input-group">
+        <label class="clay-label">Đáp án C</label>
+        <input type="text" name="option_c" class="clay-input" placeholder="Ví dụ: <picture>" required>
+      </div>
+
+      <div class="clay-input-group">
+        <label class="clay-label">Đáp án D</label>
+        <input type="text" name="option_d" class="clay-input" placeholder="Ví dụ: <src>" required>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="clay-input-group">
+        <label class="clay-label">Đáp án đúng</label>
+        <select name="correct_option" class="clay-select">
+          <option value="A">Đáp án A</option>
+          <option value="B">Đáp án B</option>
+          <option value="C">Đáp án C</option>
+          <option value="D">Đáp án D</option>
+        </select>
+      </div>
+
+      <div class="clay-input-group">
+        <label class="clay-label">Điểm số cho câu này</label>
+        <input type="number" step="0.5" name="points" class="clay-input" value="1.0" min="0.5" max="10" required>
+      </div>
+    </div>
+
+    <button type="submit" class="clay-btn clay-btn-primary">
+      Thêm Câu Hỏi Này
+    </button>
+  </form>
+</div>
+{% endif %}
+
+<!-- Questions List -->
+<div style="margin-bottom: 40px;">
+  <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">
+    📝 Danh Sách Câu Hỏi Trong Đề ({{ questions|length }})
+  </h2>
+
+  {% if questions %}
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      {% for q in questions %}
+        <div class="clay-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Câu {{ loop.index }}: {{ q.content }}</h3>
+            <span class="clay-badge badge-teacher">{{ q.points }} điểm</span>
+          </div>
+
+          <div class="grid-2" style="gap: 12px; margin-top: 10px;">
+            <div style="padding: 10px 16px; border-radius: var(--radius-sm); background: var(--bg-clay); {% if current_user.is_teacher and q.correct_option == 'A' %}border: 2px solid var(--success-clay);{% endif %}">
+              <strong>A.</strong> {{ q.option_a }}
+            </div>
+            <div style="padding: 10px 16px; border-radius: var(--radius-sm); background: var(--bg-clay); {% if current_user.is_teacher and q.correct_option == 'B' %}border: 2px solid var(--success-clay);{% endif %}">
+              <strong>B.</strong> {{ q.option_b }}
+            </div>
+            <div style="padding: 10px 16px; border-radius: var(--radius-sm); background: var(--bg-clay); {% if current_user.is_teacher and q.correct_option == 'C' %}border: 2px solid var(--success-clay);{% endif %}">
+              <strong>C.</strong> {{ q.option_c }}
+            </div>
+            <div style="padding: 10px 16px; border-radius: var(--radius-sm); background: var(--bg-clay); {% if current_user.is_teacher and q.correct_option == 'D' %}border: 2px solid var(--success-clay);{% endif %}">
+              <strong>D.</strong> {{ q.option_d }}
+            </div>
+          </div>
+
+          {% if current_user.is_teacher or current_user.is_admin %}
+            <div style="margin-top: 12px; font-size: 0.85rem; color: var(--success-clay); font-weight: 700;">
+              ✓ Đáp án đúng: {{ q.correct_option }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="clay-card" style="text-align: center; padding: 30px;">
+      <p style="color: var(--text-muted);">Đề thi này chưa có câu hỏi nào. Giáo viên hãy thêm câu hỏi ở form phía trên!</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Submissions & Cheating Audit (For Teacher) -->
+{% if current_user.is_teacher or current_user.is_admin %}
+<div class="clay-card">
+  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🚨 Báo Cáo Thi & Nhật Ký Gian Lận Của Học Sinh ({{ submissions|length }})</h2>
+  {% if submissions %}
+    <div style="overflow-x: auto;">
+      <table class="clay-doc-table">
+        <thead>
+          <tr>
+            <th>Học Sinh</th>
+            <th>Điểm Số</th>
+            <th>Cảnh Báo Gian Lận</th>
+            <th>Trạng Thái</th>
+            <th>Chi Tiết Vi Phạm</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in submissions %}
+            <tr>
+              <td><strong>{{ s.student.full_name }}</strong> ({{ s.student.username }})</td>
+              <td><strong>{{ s.score }}</strong> / {{ s.total_points }}</td>
+              <td>
+                {% if s.violations_count > 0 %}
+                  <span class="clay-badge badge-pdf animate-shake">
+                    ⚠️ {{ s.violations_count }} vi phạm
+                  </span>
+                {% else %}
+                  <span class="clay-badge badge-student">✅ Trung thực (0)</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if s.status == 'auto_submitted_violation' %}
+                  <span style="color: var(--danger-clay); font-weight: 700;">Bị khoá do gian lận</span>
+                {% else %}
+                  <span style="color: var(--success-clay); font-weight: 600;">{{ s.status }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ url_for('main.proctoring_report', submission_id=s.id) }}" class="clay-btn clay-btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">
+                  📋 Xem Nhật Ký Chi Tiết
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p style="color: var(--text-muted); text-align: center; padding: 20px;">Chưa có học sinh nào nộp bài kiểm tra này.</p>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

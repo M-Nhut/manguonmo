@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Bàn làm việc Giáo viên - Tin học 11{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;">
+  <div>
+    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main);">Bàn Làm Việc Giáo Viên</h1>
+    <p style="color: var(--text-muted);">Quản lý lớp học, bài giảng đa phương tiện (PPT/DOCX/PDF) và kỳ thi trực tuyến</p>
+  </div>
+  <div>
+    <button onclick="document.getElementById('create-class-modal').classList.add('active')" class="clay-btn clay-btn-primary">
+      ➕ Tạo Lớp Học Mới
+    </button>
+  </div>
+</div>
+
+<!-- Classrooms Section -->
+<div style="margin-bottom: 40px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">🏫 Danh Sách Lớp Học Của Bạn ({{ classrooms|length }})</h2>
+  </div>
+
+  {% if classrooms %}
+    <div class="grid-3">
+      {% for c in classrooms %}
+        <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.classroom_detail', class_id=c.id) }}'">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">{{ c.name }}</h3>
+            <span class="clay-badge badge-teacher" style="font-family: monospace; font-size: 0.9rem;">
+              {{ c.code }}
+            </span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; min-height: 40px;">
+            {{ c.description or 'Chưa có mô tả cho lớp học này.' }}
+          </p>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid #E2E8F0; padding-top: 14px;">
+            <span>👥 {{ c.students.count() }} học sinh</span>
+            <span>📚 {{ c.courses.count() }} khoá học</span>
+            <span style="color: var(--primary-clay); font-weight: 700;">Vào lớp →</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="clay-card" style="text-align: center; padding: 40px;">
+      <p style="color: var(--text-muted); margin-bottom: 16px;">Bạn chưa tạo lớp học nào. Hãy bấm "Tạo Lớp Học Mới" để bắt đầu!</p>
+      <button onclick="document.getElementById('create-class-modal').classList.add('active')" class="clay-btn clay-btn-primary">
+        ➕ Tạo Lớp Học Đầu Tiên
+      </button>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Exams & Proctoring Overview -->
+<div style="margin-bottom: 40px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">🛡️ Bài Kiểm Tra & Giám Sát Chống Gian Lận ({{ exams|length }})</h2>
+  </div>
+
+  {% if exams %}
+    <div class="grid-2">
+      {% for e in exams %}
+        <div class="clay-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 1.2rem; font-weight: 700;">{{ e.title }}</h3>
+            <span class="clay-badge {% if e.submissions.count() > 0 %}badge-student{% else %}badge-teacher{% endif %}">
+              {{ e.submissions.count() }} Bài đã nộp
+            </span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">
+            Lớp: <strong>{{ e.classroom.name }}</strong> • Thời gian: <strong>{{ e.duration_minutes }} phút</strong> • Tối đa vi phạm: <strong>{{ e.max_violations }} lần</strong>
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="{{ url_for('main.exam_detail', exam_id=e.id) }}" class="clay-btn clay-btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;">
+              ⚙️ Quản lý Đề & Câu hỏi
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="clay-card" style="text-align: center; padding: 30px;">
+      <p style="color: var(--text-muted);">Bạn có thể tạo bài kiểm tra ngay bên trong từng Lớp học.</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Recent Submissions & Proctoring Audits -->
+{% if submissions %}
+<div class="clay-card" style="margin-bottom: 40px;">
+  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🚨 Lịch Sử Nộp Bài & Báo Cáo Chống Gian Lận Mới Nhất</h2>
+  <div style="overflow-x: auto;">
+    <table class="clay-doc-table">
+      <thead>
+        <tr>
+          <th>Học Sinh</th>
+          <th>Đề Kiểm Tra</th>
+          <th>Điểm Số</th>
+          <th>Vi Phạm Phát Hiện</th>
+          <th>Trạng Thái</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in submissions %}
+          <tr>
+            <td><strong>{{ s.student.full_name }}</strong> ({{ s.student.username }})</td>
+            <td>{{ s.exam.title }}</td>
+            <td><strong>{{ s.score }}</strong> / {{ s.total_points }}</td>
+            <td>
+              {% if s.violations_count > 0 %}
+                <span class="clay-badge badge-pdf animate-shake">
+                  ⚠️ {{ s.violations_count }} lần vi phạm
+                </span>
+              {% else %}
+                <span class="clay-badge badge-student">
+                  ✅ 0 vi phạm (Trung thực)
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              {% if s.status == 'auto_submitted_violation' %}
+                <span style="color: var(--danger-clay); font-weight: 700;">Tự nộp do gian lận</span>
+              {% elif s.status == 'submitted' %}
+                <span style="color: var(--success-clay); font-weight: 600;">Đã hoàn thành</span>
+              {% else %}
+                <span style="color: var(--warning-clay); font-weight: 600;">Đang thi</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('main.proctoring_report', submission_id=s.id) }}" class="clay-btn clay-btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">
+                📋 Xem Nhật Ký Vi Phạm
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<!-- Create Classroom Modal -->
+<div id="create-class-modal" class="clay-modal-backdrop">
+  <div class="clay-modal">
+    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 12px;">Tạo Lớp Học Mới</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Hệ thống sẽ tự động cấp một mã mời (Class Code) để học sinh tham gia</p>
+
+    <form method="POST" action="{{ url_for('main.create_classroom') }}">
+      <div class="clay-input-group" style="text-align: left;">
+        <label class="clay-label">Tên lớp học</label>
+        <input type="text" name="name" class="clay-input" placeholder="Ví dụ: 11A1 - Tin học ứng dụng" required>
+      </div>
+
+      <div class="clay-input-group" style="text-align: left;">
+        <label class="clay-label">Mô tả lớp học</label>
+        <textarea name="description" class="clay-textarea" rows="3" placeholder="Ví dụ: Lớp học Tin học ứng dụng HK1, học chuyên đề phần mềm và thiết kế web"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" onclick="document.getElementById('create-class-modal').classList.remove('active')" class="clay-btn clay-btn-secondary">
+          Hủy
+        </button>
+        <button type="submit" class="clay-btn clay-btn-primary">
+          Xác Nhận Tạo Lớp
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

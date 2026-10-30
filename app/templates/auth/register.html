@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Đăng ký tài khoản - Tin học 11{% endblock %}
+
+{% block content %}
+<div style="max-width: 520px; margin: 30px auto;">
+  <div class="clay-card animate-spring-pop">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="clay-logo-icon animate-float" style="margin: 0 auto 14px; width: 54px; height: 54px; font-size: 1.6rem;">
+        📝
+      </div>
+      <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">Tạo Tài Khoản</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">Đăng ký để tham gia học tập hoặc giảng dạy</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.register') }}">
+      <div class="clay-input-group">
+        <label class="clay-label">Họ và tên</label>
+        <input type="text" name="full_name" class="clay-input" placeholder="Ví dụ: Nguyễn Văn Nam" required>
+      </div>
+
+      <div class="grid-2">
+        <div class="clay-input-group">
+          <label class="clay-label">Tên tài khoản</label>
+          <input type="text" name="username" class="clay-input" placeholder="nam.nguyen" required>
+        </div>
+        <div class="clay-input-group">
+          <label class="clay-label">Email</label>
+          <input type="email" name="email" class="clay-input" placeholder="nam@gmail.com" required>
+        </div>
+      </div>
+
+      <div class="clay-input-group">
+        <label class="clay-label">Vai trò của bạn</label>
+        <select name="role" class="clay-select" style="cursor: pointer;">
+          <option value="student">🎓 Học sinh (Tham gia lớp, học bài, thi)</option>
+          <option value="teacher">👨‍🏫 Giáo viên (Tạo lớp, up tài liệu PPT/DOCX/PDF, tạo đề thi)</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="clay-input-group">
+          <label class="clay-label">Mật khẩu</label>
+          <input type="password" name="password" class="clay-input" placeholder="••••••••" required>
+        </div>
+        <div class="clay-input-group">
+          <label class="clay-label">Xác nhận mật khẩu</label>
+          <input type="password" name="confirm_password" class="clay-input" placeholder="••••••••" required>
+        </div>
+      </div>
+
+      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;">
+        Đăng Ký Tài Khoản
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);">
+      Đã có tài khoản? <a href="{{ url_for('auth.login') }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">Đăng nhập ngay</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

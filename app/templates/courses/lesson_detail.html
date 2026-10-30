@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }} - Tin học 11{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+  <a href="{{ url_for('main.course_detail', course_id=lesson.course_id) }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">
+    ← Quay lại Khóa học: {{ lesson.course.title }}
+  </a>
+</div>
+
+<!-- Lesson Content Card -->
+<div class="clay-card animate-spring-pop" style="margin-bottom: 30px;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+    <div>
+      <span class="clay-badge badge-student" style="margin-bottom: 8px;">Bài học #{{ lesson.order_index }}</span>
+      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main);">{{ lesson.title }}</h1>
+    </div>
+  </div>
+
+  {% if lesson.content %}
+    <div style="background: var(--bg-clay); padding: 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-clay-input); margin-bottom: 24px; white-space: pre-line; line-height: 1.8;">
+      {{ lesson.content }}
+    </div>
+  {% endif %}
+</div>
+
+<!-- Upload Material Box (For Teachers) -->
+{% if current_user.is_teacher or current_user.is_admin %}
+<div class="clay-card" style="margin-bottom: 30px; border-left: 6px solid var(--primary-clay);">
+  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 14px;">📤 Tải Lên Tài Liệu Bài Học (PPT / DOCX / PDF)</h2>
+  <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+    Tài liệu bạn tải lên sẽ được hệ thống phân tích và hiển thị trực tiếp cho học sinh trên trình duyệt!
+  </p>
+
+  <form method="POST" action="{{ url_for('main.upload_material', lesson_id=lesson.id) }}" enctype="multipart/form-data">
+    <div class="grid-2">
+      <div class="clay-input-group">
+        <label class="clay-label">Tiêu đề tài liệu</label>
+        <input type="text" name="title" class="clay-input" placeholder="Ví dụ: Slide bài giảng PowerPoint - Bài 1" required>
+      </div>
+
+      <div class="clay-input-group">
+        <label class="clay-label">Chọn tệp (.pptx, .ppt, .docx, .pdf)</label>
+        <input type="file" name="file" class="clay-input" accept=".pdf,.docx,.pptx,.ppt" required style="padding: 10px;">
+      </div>
+    </div>
+
+    <button type="submit" class="clay-btn clay-btn-primary">
+      🚀 Tải Lên & Xử Lý Tài Liệu
+    </button>
+  </form>
+</div>
+{% endif %}
+
+<!-- Uploaded Materials List -->
+<div style="margin-bottom: 40px;">
+  <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">
+    📁 Tài Liệu Học Tập Đi Kèm ({{ materials|length }})
+  </h2>
+
+  {% if materials %}
+    <div class="grid-2">
+      {% for m in materials %}
+        <div class="clay-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              {% if m.file_type == 'pdf' %}
+                <span class="clay-badge badge-pdf" style="font-size: 0.9rem; font-weight: 800;">📄 PDF</span>
+              {% elif m.file_type == 'docx' %}
+                <span class="clay-badge badge-docx" style="font-size: 0.9rem; font-weight: 800;">📝 DOCX</span>
+              {% elif m.file_type in ['pptx', 'ppt'] %}
+                <span class="clay-badge badge-pptx" style="font-size: 0.9rem; font-weight: 800;">📊 PPTX</span>
+              {% endif %}
+            </div>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">
+              {{ m.file_size | filesize }}
+            </span>
+          </div>
+
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">{{ m.title }}</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+            Tên gốc: {{ m.original_name }} • Cập nhật: {{ m.uploaded_at.strftime('%d/%m/%Y') }}
+          </p>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="{{ url_for('main.view_material', material_id=m.id) }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px; font-size: 0.85rem;">
+              👁️ Xem Trực Tuyến
+            </a>
+            <a href="{{ url_for('main.download_material', material_id=m.id) }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px; font-size: 0.85rem;">
+              ⬇️ Tải Về Máy
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="clay-card" style="text-align: center; padding: 40px;">
+      <p style="color: var(--text-muted);">Chưa có tài liệu đính kèm nào trong bài học này.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

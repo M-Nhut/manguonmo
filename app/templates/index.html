@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ - Tin học 11 Ứng dụng{% endblock %}
+
+{% block content %}
+<section class="clay-card animate-spring-pop" style="margin-bottom: 40px; text-align: center; padding: 60px 30px;">
+  <span class="clay-badge badge-teacher animate-float" style="margin-bottom: 16px; font-size: 0.95rem;">
+    ✨ Phong cách Thiết kế Motion-Driven & Claymorphism
+  </span>
+  <h1 style="font-size: 2.8rem; font-weight: 800; color: var(--text-main); line-height: 1.25; margin-bottom: 20px;">
+    Hệ Thống Học Trực Tuyến <br>
+    <span style="color: var(--primary-clay);">Tin Học 11 Ứng Dụng</span>
+  </h1>
+  <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 680px; margin: 0 auto 36px;">
+    Hỗ trợ Giáo viên tổ chức lớp học, tải lên tài liệu <strong>PowerPoint (PPT), Word (DOCX), PDF</strong> xem trực tiếp trên web và tổ chức các kỳ thi trắc nghiệm với <strong>cơ chế chống gian lận thông minh</strong>.
+  </p>
+
+  <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+    <a href="{{ url_for('auth.login') }}" class="clay-btn clay-btn-primary" style="padding: 16px 36px; font-size: 1.1rem;">
+      🚀 Bắt Đầu Ngay
+    </a>
+    <a href="{{ url_for('auth.register') }}" class="clay-btn clay-btn-secondary" style="padding: 16px 36px; font-size: 1.1rem;">
+      Tạo Tài Khoản
+    </a>
+  </div>
+</section>
+
+<!-- Highlights Grid -->
+<div class="grid-3" style="margin-bottom: 50px;">
+  <!-- Card 1 -->
+  <div class="clay-card clay-card-interactive animate-spring-pop" style="animation-delay: 0.1s;">
+    <div style="font-size: 2.5rem; margin-bottom: 16px;">🏫</div>
+    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;">Quản Lý Lớp Học & Khóa Học</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Giáo viên tạo lớp học với mã mời riêng biệt. Học sinh dễ dàng tham gia vào lớp, theo dõi từng chủ đề bài học theo chương trình SGK Tin học 11 mới.
+    </p>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="clay-card clay-card-interactive animate-spring-pop" style="animation-delay: 0.2s;">
+    <div style="font-size: 2.5rem; margin-bottom: 16px;">📑</div>
+    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;">Trình Đọc PPT, DOCX & PDF</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Giáo viên tự do upload bài giảng PowerPoint, giáo án Word và tài liệu PDF. Học sinh có thể xem trực tuyến slide từng trang mượt mà không cần cài thêm phần mềm.
+    </p>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="clay-card clay-card-interactive animate-spring-pop" style="animation-delay: 0.3s;">
+    <div style="font-size: 2.5rem; margin-bottom: 16px;">🛡️</div>
+    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;">Phòng Thi Chống Gian Lận</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Bảo vệ bài kiểm tra với chế độ toàn màn hình bắt buộc, giám sát chuyển tab, chặn phím tắt/chuột phải và tự động nộp bài khi học sinh vi phạm quy chế.
+    </p>
+  </div>
+</div>
+{% endblock %}
