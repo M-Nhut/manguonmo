@@ -3,42 +3,45 @@
 {% block title %}Bảng Quản Trị Hệ Thống - Admin{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 30px;">
-  <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main);">Quản Trị Hệ Thống E-Learning</h1>
-  <p style="color: var(--text-muted);">Thống kê tổng quan và giám sát an toàn thi cử toàn trường</p>
+<div style="margin-bottom: 28px;">
+  <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: var(--danger); background: var(--danger-soft); padding: 4px 12px; border-radius: var(--radius-full); margin-bottom: 6px;">
+    ⚙️ QUẢN TRỊ VIÊN HỆ THỐNG
+  </div>
+  <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Quản Trị Hệ Thống E-Learning</h1>
+  <p style="color: var(--text-muted); font-size: 0.95rem;">Thống kê tổng quan và giám sát an toàn thi cử toàn trường</p>
 </div>
 
 <!-- Stats Grid -->
-<div class="grid-4" style="margin-bottom: 36px;">
-  <div class="clay-card" style="text-align: center; padding: 24px;">
-    <div style="font-size: 2rem; margin-bottom: 6px;">👥</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary-clay);">{{ stats.total_users }}</div>
-    <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">Tổng Người Dùng</div>
+<div class="grid-4" style="margin-bottom: 32px;">
+  <div class="clay-card" style="text-align: center; padding: 22px;">
+    <div style="font-size: 1.8rem; margin-bottom: 4px;">👥</div>
+    <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">{{ stats.total_users }}</div>
+    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">TỔNG NGƯỜI DÙNG</div>
   </div>
 
-  <div class="clay-card" style="text-align: center; padding: 24px;">
-    <div style="font-size: 2rem; margin-bottom: 6px;">👨‍🏫</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--info-clay);">{{ stats.total_teachers }}</div>
-    <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">Giáo Viên</div>
+  <div class="clay-card" style="text-align: center; padding: 22px;">
+    <div style="font-size: 1.8rem; margin-bottom: 4px;">👨‍🏫</div>
+    <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan);">{{ stats.total_teachers }}</div>
+    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">GIÁO VIÊN</div>
   </div>
 
-  <div class="clay-card" style="text-align: center; padding: 24px;">
-    <div style="font-size: 2rem; margin-bottom: 6px;">🎓</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--success-clay);">{{ stats.total_students }}</div>
-    <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">Học Sinh</div>
+  <div class="clay-card" style="text-align: center; padding: 22px;">
+    <div style="font-size: 1.8rem; margin-bottom: 4px;">🎓</div>
+    <div style="font-size: 1.8rem; font-weight: 800; color: var(--success);">{{ stats.total_students }}</div>
+    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">HỌC SINH</div>
   </div>
 
-  <div class="clay-card" style="text-align: center; padding: 24px;">
-    <div style="font-size: 2rem; margin-bottom: 6px;">🚨</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--danger-clay);">{{ stats.total_violations }}</div>
-    <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">Cảnh Báo Gian Lận</div>
+  <div class="clay-card" style="text-align: center; padding: 22px;">
+    <div style="font-size: 1.8rem; margin-bottom: 4px;">🚨</div>
+    <div style="font-size: 1.8rem; font-weight: 800; color: var(--danger);">{{ stats.total_violations }}</div>
+    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">CẢNH BÁO GIAN LẬN</div>
   </div>
 </div>
 
 <!-- Recent System Violations Log -->
-<div class="clay-card" style="margin-bottom: 40px;">
+<div class="clay-card" style="margin-bottom: 36px;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-main);">⚠️ Nhật Ký Giám Sát Gian Lận Toàn Hệ Thống Gần Đây</h2>
+    <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title);">⚠️ Nhật Ký Giám Sát Gian Lận Toàn Hệ Thống Gần Đây</h2>
     <span class="clay-badge badge-pdf animate-radar">Đang Giám Sát</span>
   </div>
 
@@ -57,16 +60,16 @@
         {% if recent_violations %}
           {% for log in recent_violations %}
             <tr>
-              <td style="font-family: monospace; font-size: 0.85rem;">{{ log.timestamp.strftime('%H:%M:%S - %d/%m/%Y') }}</td>
+              <td style="font-family: monospace; font-size: 0.85rem; font-weight: 600;">{{ log.timestamp.strftime('%H:%M:%S - %d/%m/%Y') }}</td>
               <td><strong>{{ log.submission.student.full_name }}</strong></td>
               <td>{{ log.submission.exam.title }}</td>
               <td><span class="clay-badge badge-pdf">{{ log.event_type }}</span></td>
-              <td style="color: var(--text-muted); font-size: 0.9rem;">{{ log.details }}</td>
+              <td style="color: var(--text-body); font-size: 0.88rem;">{{ log.details }}</td>
             </tr>
           {% endfor %}
         {% else %}
           <tr>
-            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">
+            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">
               Chưa có vi phạm nào được ghi nhận. Hệ thống an toàn!
             </td>
           </tr>
@@ -78,7 +81,7 @@
 
 <!-- Users List -->
 <div class="clay-card">
-  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">👤 Danh Sách Tài Khoản Hệ Thống ({{ users|length }})</h2>
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; color: var(--text-title);">👤 Danh Sách Tài Khoản Hệ Thống ({{ users|length }})</h2>
   <div style="overflow-x: auto;">
     <table class="clay-doc-table">
       <thead>

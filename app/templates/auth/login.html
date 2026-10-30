@@ -3,14 +3,17 @@
 {% block title %}Đăng nhập - Tin học 11{% endblock %}
 
 {% block content %}
-<div style="max-width: 480px; margin: 40px auto;">
+<div style="max-width: 440px; margin: 30px auto 50px;">
   <div class="clay-card animate-spring-pop">
-    <div style="text-align: center; margin-bottom: 28px;">
-      <div class="clay-logo-icon animate-float" style="margin: 0 auto 16px; width: 56px; height: 56px; font-size: 1.8rem;">
-        🔐
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="clay-logo-icon" style="margin: 0 auto 14px; width: 50px; height: 50px; font-size: 1.5rem;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
       </div>
-      <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">Đăng Nhập</h2>
-      <p style="color: var(--text-muted); font-size: 0.95rem;">Truy cập cổng học tập Tin học 11</p>
+      <h2 style="font-size: 1.7rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Đăng Nhập</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Truy cập cổng học trực tuyến Tin học 11</p>
     </div>
 
     <form method="POST" action="{{ url_for('auth.login') }}">
@@ -24,28 +27,30 @@
         <input type="password" name="password" class="clay-input" placeholder="••••••••" required>
       </div>
 
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 0.9rem;">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-muted);">
-          <input type="checkbox" name="remember" style="accent-color: var(--primary-clay); width: 16px; height: 16px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; font-size: 0.88rem;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-body);">
+          <input type="checkbox" name="remember" style="accent-color: var(--primary); width: 16px; height: 16px;">
           Ghi nhớ đăng nhập
         </label>
       </div>
 
-      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
-        Đăng Nhập Ngay
+      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;">
+        Đăng Nhập Vào Hệ Thống
       </button>
     </form>
 
-    <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-muted);">
-      Chưa có tài khoản? <a href="{{ url_for('auth.register') }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">Đăng ký tại đây</a>
+    <div style="text-align: center; margin-top: 20px; font-size: 0.88rem; color: var(--text-muted);">
+      Chưa có tài khoản? <a href="{{ url_for('auth.register') }}" style="color: var(--primary); font-weight: 700; text-decoration: none;">Đăng ký tại đây</a>
     </div>
 
     <!-- Quick test credentials box for evaluator -->
-    <div style="margin-top: 24px; padding: 16px; background: #F8FAFC; border-radius: var(--radius-sm); border: 1px dashed #CBD5E1; font-size: 0.85rem; color: var(--text-muted);">
-      <strong>🔑 Tài khoản mặc định để thử nghiệm:</strong><br>
-      • <strong>Admin:</strong> admin / admin123<br>
-      • <strong>Giáo viên:</strong> gv.huong / teacher123<br>
-      • <strong>Học sinh:</strong> hs.nam / student123
+    <div style="margin-top: 24px; padding: 14px 16px; background: var(--primary-soft); border-radius: var(--radius-sm); border: 1px solid var(--primary-border); font-size: 0.82rem; color: var(--text-body);">
+      <div style="font-weight: 700; color: var(--primary); margin-bottom: 6px;">💡 Tài khoản có sẵn để chấm điểm & thử nghiệm:</div>
+      <div style="line-height: 1.6;">
+        • <strong>Admin:</strong> <code>admin</code> / <code>admin123</code><br>
+        • <strong>Giáo viên:</strong> <code>gv.huong</code> / <code>teacher123</code><br>
+        • <strong>Học sinh:</strong> <code>hs.nam</code> / <code>student123</code>
+      </div>
     </div>
   </div>
 </div>

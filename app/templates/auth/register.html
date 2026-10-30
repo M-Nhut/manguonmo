@@ -3,19 +3,24 @@
 {% block title %}Đăng ký tài khoản - Tin học 11{% endblock %}
 
 {% block content %}
-<div style="max-width: 520px; margin: 30px auto;">
+<div style="max-width: 500px; margin: 24px auto 50px;">
   <div class="clay-card animate-spring-pop">
-    <div style="text-align: center; margin-bottom: 24px;">
-      <div class="clay-logo-icon animate-float" style="margin: 0 auto 14px; width: 54px; height: 54px; font-size: 1.6rem;">
-        📝
+    <div style="text-align: center; margin-bottom: 22px;">
+      <div class="clay-logo-icon" style="margin: 0 auto 12px; width: 48px; height: 48px; font-size: 1.4rem;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <line x1="19" x2="19" y1="8" y2="14"/>
+          <line x1="22" x2="16" y1="11" y2="11"/>
+        </svg>
       </div>
-      <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">Tạo Tài Khoản</h2>
-      <p style="color: var(--text-muted); font-size: 0.95rem;">Đăng ký để tham gia học tập hoặc giảng dạy</p>
+      <h2 style="font-size: 1.7rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Tạo Tài Khoản Mới</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Tham gia học tập hoặc quản lý giảng dạy</p>
     </div>
 
     <form method="POST" action="{{ url_for('auth.register') }}">
       <div class="clay-input-group">
-        <label class="clay-label">Họ và tên</label>
+        <label class="clay-label">Họ và tên người dùng</label>
         <input type="text" name="full_name" class="clay-input" placeholder="Ví dụ: Nguyễn Văn Nam" required>
       </div>
 
@@ -25,16 +30,16 @@
           <input type="text" name="username" class="clay-input" placeholder="nam.nguyen" required>
         </div>
         <div class="clay-input-group">
-          <label class="clay-label">Email</label>
+          <label class="clay-label">Địa chỉ Email</label>
           <input type="email" name="email" class="clay-input" placeholder="nam@gmail.com" required>
         </div>
       </div>
 
       <div class="clay-input-group">
-        <label class="clay-label">Vai trò của bạn</label>
+        <label class="clay-label">Vai trò trong hệ thống</label>
         <select name="role" class="clay-select" style="cursor: pointer;">
-          <option value="student">🎓 Học sinh (Tham gia lớp, học bài, thi)</option>
-          <option value="teacher">👨‍🏫 Giáo viên (Tạo lớp, up tài liệu PPT/DOCX/PDF, tạo đề thi)</option>
+          <option value="student">🎓 Học sinh (Học bài, xem PPT/DOCX/PDF, làm bài thi)</option>
+          <option value="teacher">👨‍🏫 Giáo viên (Tạo lớp, đăng tài liệu, tạo đề thi & giám sát)</option>
         </select>
       </div>
 
@@ -49,13 +54,13 @@
         </div>
       </div>
 
-      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;">
-        Đăng Ký Tài Khoản
+      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; margin-top: 8px;">
+        Hoàn Tất Đăng Ký
       </button>
     </form>
 
-    <div style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);">
-      Đã có tài khoản? <a href="{{ url_for('auth.login') }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">Đăng nhập ngay</a>
+    <div style="text-align: center; margin-top: 18px; font-size: 0.88rem; color: var(--text-muted);">
+      Đã có tài khoản? <a href="{{ url_for('auth.login') }}" style="color: var(--primary); font-weight: 700; text-decoration: none;">Đăng nhập ngay</a>
     </div>
   </div>
 </div>

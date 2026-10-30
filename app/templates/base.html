@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Tin học 11 - Học tập trực tuyến{% endblock %}</title>
+  <title>{% block title %}Tin học 11 (Ứng Dụng) - Học tập trực tuyến{% endblock %}</title>
+  
+  <!-- Preconnect & Google Fonts (Inter & Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <!-- Claymorphism & Motion Stylesheets -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/claymorphism.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/motion.css') }}">
@@ -11,17 +17,27 @@
 </head>
 <body>
 
-  <!-- Ambient Blobs for Claymorphism Depth -->
+  <!-- Non-distracting Ambient Background Aura -->
   <div class="clay-ambient-blob blob-1 animate-float"></div>
   <div class="clay-ambient-blob blob-2 animate-float-reverse"></div>
   <div class="clay-ambient-blob blob-3 animate-float"></div>
 
   <div class="container">
-    <!-- Clay Navigation Bar -->
+    <!-- Modern Refined Glass Navigation Bar -->
     <header class="clay-nav">
       <a href="{{ url_for('main.index') }}" class="clay-logo">
-        <div class="clay-logo-icon">💻</div>
-        <span>Tin Học 11 <small style="font-size: 0.65em; color: var(--primary-clay); font-weight: 700;">(Ứng Dụng)</small></span>
+        <div class="clay-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+            <path d="M6 6h10"/>
+            <path d="M6 10h10"/>
+            <path d="M6 14h6"/>
+          </svg>
+        </div>
+        <div>
+          <span>Tin Học 11</span>
+          <span style="display: block; font-size: 0.65rem; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Ứng Dụng • E-Learning</span>
+        </div>
       </a>
 
       <nav>
@@ -37,10 +53,11 @@
             
             <li>
               <span class="clay-badge {% if current_user.is_admin %}badge-admin{% elif current_user.is_teacher %}badge-teacher{% else %}badge-student{% endif %}">
-                👤 {{ current_user.full_name }} ({{ current_user.role | upper }})
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
+                {{ current_user.full_name }} ({{ current_user.role | upper }})
               </span>
             </li>
-            <li><a href="{{ url_for('auth.logout') }}" class="clay-btn clay-btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;">Đăng xuất</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="clay-btn clay-btn-secondary" style="padding: 7px 14px; font-size: 0.85rem;">Đăng xuất</a></li>
           {% else %}
             <li><a href="{{ url_for('auth.login') }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px;">Đăng nhập</a></li>
             <li><a href="{{ url_for('auth.register') }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px;">Đăng ký</a></li>
@@ -56,7 +73,7 @@
           {% for category, message in messages %}
             <div class="clay-alert alert-{{ category }}">
               <span>{{ message }}</span>
-              <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">×</button>
+              <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit; line-height: 1;">×</button>
             </div>
           {% endfor %}
         </div>
@@ -68,10 +85,40 @@
       {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer style="text-align: center; margin: 60px 0 30px; color: var(--text-muted); font-size: 0.9rem;">
-      <p style="font-weight: 600;">Dự án Phát triển phần mềm mã nguồn mở (PTPM.MNM) • Bộ môn Tin học 11 Ứng dụng</p>
-      <p style="font-size: 0.8rem; margin-top: 4px;">Giao diện Motion-Driven & Claymorphism • Bảo vệ thi cử chống gian lận đa tầng</p>
+    <!-- Refined Educational Footer -->
+    <footer style="margin: 60px 0 30px; padding-top: 30px; border-top: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.88rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 24px;">
+        <div style="max-width: 420px;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text-title); margin-bottom: 8px;">
+            💻 Hệ Thống Học Tập Tin Học 11 Ứng Dụng
+          </div>
+          <p style="line-height: 1.6; font-size: 0.85rem;">
+            Đồ án môn học <strong>Phát triển phần mềm mã nguồn mở (PTPM.MNM)</strong>. Nền tảng học tập thông minh hỗ trợ trình đọc tài liệu trực tuyến (PowerPoint, Word, PDF) và phòng thi chống gian lận đa tầng.
+          </p>
+        </div>
+
+        <div>
+          <div style="font-weight: 700; color: var(--text-title); margin-bottom: 8px; font-size: 0.9rem;">CÔNG NGHỆ MÃ NGUỒN MỞ</div>
+          <ul style="list-style: none; line-height: 1.8; font-size: 0.85rem;">
+            <li>• Python / Flask / SQLAlchemy</li>
+            <li>• PyMuPDF & python-docx & python-pptx</li>
+            <li>• Page Visibility & Fullscreen Anti-Cheating</li>
+          </ul>
+        </div>
+
+        <div>
+          <div style="font-weight: 700; color: var(--text-title); margin-bottom: 8px; font-size: 0.9rem;">TIÊU CHUẨN THIẾT KẾ</div>
+          <ul style="list-style: none; line-height: 1.8; font-size: 0.85rem;">
+            <li>• Refined Soft Porcelain Claymorphism</li>
+            <li>• Micro-interactions & Spring Physics</li>
+            <li>• Bản quyền mã nguồn mở <strong>MIT License</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="text-align: center; font-size: 0.82rem; color: var(--text-light); border-top: 1px dashed var(--border-light); padding-top: 16px;">
+        © 2026 PTPM.MNM - Bộ môn Tin học 11 Ứng dụng. Phát triển với tiêu chuẩn UI/UX cao cấp (Taste Skill).
+      </div>
     </footer>
   </div>
 

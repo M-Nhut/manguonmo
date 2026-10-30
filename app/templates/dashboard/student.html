@@ -3,14 +3,18 @@
 {% block title %}Góc học tập - Học sinh{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;">
+<!-- Top Header & Join Class Bar -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
   <div>
-    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main);">Góc Học Tập Của Bạn</h1>
-    <p style="color: var(--text-muted);">Theo dõi bài giảng, xem tài liệu PPT/DOCX/PDF và làm bài kiểm tra</p>
+    <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: var(--success); background: var(--success-soft); padding: 4px 12px; border-radius: var(--radius-full); margin-bottom: 6px;">
+      🎓 GÓC HỌC TẬP HỌC SINH
+    </div>
+    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Xin Chào, {{ current_user.full_name }}</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">Theo dõi bài giảng, xem tài liệu PPT/DOCX/PDF và làm bài kiểm tra trực tuyến</p>
   </div>
   <div>
-    <form method="POST" action="{{ url_for('main.join_classroom') }}" style="display: flex; gap: 10px;">
-      <input type="text" name="code" class="clay-input" placeholder="Nhập Mã Lớp (VD: TIN11-XXXX)" style="width: 240px; text-transform: uppercase;" required>
+    <form method="POST" action="{{ url_for('main.join_classroom') }}" style="display: flex; gap: 8px;">
+      <input type="text" name="code" class="clay-input" placeholder="Mã Lớp (VD: TIN11-A1)" style="width: 220px; text-transform: uppercase; font-family: monospace; font-weight: 700;" required>
       <button type="submit" class="clay-btn clay-btn-primary" style="white-space: nowrap;">
         ➕ Vào Lớp
       </button>
@@ -20,25 +24,29 @@
 
 <!-- Available Exams Alert -->
 {% if available_exams %}
-<div style="margin-bottom: 40px;">
-  <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px;">
-    ⚡ Đề Kiểm Tra Sẵn Sàng ({{ available_exams|length }})
-  </h2>
+<div style="margin-bottom: 36px;">
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-title);">
+      ⚡ Đề Kiểm Tra Sẵn Sàng ({{ available_exams|length }})
+    </h2>
+    <span class="clay-badge badge-pdf animate-radar">Đang mở</span>
+  </div>
+
   <div class="grid-2">
     {% for ex in available_exams %}
-      <div class="clay-card animate-spring-pop" style="border-left: 6px solid var(--primary-clay);">
+      <div class="clay-card animate-spring-pop" style="border-left: 5px solid var(--primary);">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-          <h3 style="font-size: 1.25rem; font-weight: 700;">{{ ex.title }}</h3>
-          <span class="clay-badge badge-teacher">🛡️ Có chống gian lận</span>
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-title);">{{ ex.title }}</h3>
+          <span class="clay-badge badge-teacher">🛡️ Chống gian lận</span>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">
-          Lớp: <strong>{{ ex.classroom.name }}</strong> • Thời gian: <strong>{{ ex.duration_minutes }} phút</strong> • Số câu: <strong>{{ ex.questions.count() }} câu</strong>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+          Lớp: <strong>{{ ex.classroom.name }}</strong> • Thời lượng: <strong>{{ ex.duration_minutes }} phút</strong> • Số câu: <strong>{{ ex.questions.count() }} câu</strong>
         </p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 0.85rem; color: var(--danger-clay); font-weight: 600;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 14px;">
+          <span style="font-size: 0.82rem; color: var(--danger); font-weight: 600;">
             ⚠️ Tối đa {{ ex.max_violations }} lần rời màn hình
           </span>
-          <a href="{{ url_for('main.take_exam', exam_id=ex.id) }}" class="clay-btn clay-btn-primary" style="padding: 10px 20px;">
+          <a href="{{ url_for('main.take_exam', exam_id=ex.id) }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px; font-size: 0.9rem;">
             Bắt Đầu Thi →
           </a>
         </div>
@@ -49,8 +57,8 @@
 {% endif %}
 
 <!-- Enrolled Classrooms -->
-<div style="margin-bottom: 40px;">
-  <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px;">
+<div style="margin-bottom: 36px;">
+  <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-title); margin-bottom: 16px;">
     🏫 Lớp Học Đang Tham Gia ({{ classrooms|length }})
   </h2>
 
@@ -58,24 +66,25 @@
     <div class="grid-3">
       {% for c in classrooms %}
         <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.classroom_detail', class_id=c.id) }}'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <h3 style="font-size: 1.25rem; font-weight: 700;">{{ c.name }}</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-title);">{{ c.name }}</h3>
             <span class="clay-badge badge-student">Đã vào</span>
           </div>
-          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; min-height: 40px;">
+          <p style="color: var(--text-body); font-size: 0.88rem; margin-bottom: 18px; min-height: 40px; line-height: 1.5;">
             Giáo viên: <strong>{{ c.teacher.full_name }}</strong><br>
             {{ c.description or 'Chưa có mô tả' }}
           </p>
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid #E2E8F0; padding-top: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 12px;">
             <span>📚 {{ c.courses.count() }} khoá học</span>
-            <span style="color: var(--primary-clay); font-weight: 700;">Học ngay →</span>
+            <span style="color: var(--primary); font-weight: 700;">Học ngay →</span>
           </div>
         </div>
       {% endfor %}
     </div>
   {% else %}
-    <div class="clay-card" style="text-align: center; padding: 40px;">
-      <p style="color: var(--text-muted); margin-bottom: 16px;">Bạn chưa tham gia lớp học nào. Hãy hỏi Giáo viên mã mời (Class Code) và nhập vào ô phía trên!</p>
+    <div class="clay-card" style="text-align: center; padding: 36px;">
+      <div style="font-size: 2.2rem; margin-bottom: 8px;">🎓</div>
+      <p style="color: var(--text-muted); margin-bottom: 14px;">Bạn chưa tham gia lớp học nào. Hãy hỏi Giáo viên mã mời (Class Code) và nhập vào ô phía trên!</p>
     </div>
   {% endif %}
 </div>
@@ -83,7 +92,9 @@
 <!-- My Exam Submissions History -->
 {% if submissions %}
 <div class="clay-card">
-  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📊 Lịch Sử Làm Bài Của Bạn</h2>
+  <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title); margin-bottom: 16px;">
+    📊 Lịch Sử Làm Bài Kiểm Tra Của Bạn
+  </h2>
   <div style="overflow-x: auto;">
     <table class="clay-doc-table">
       <thead>
@@ -99,7 +110,7 @@
         {% for s in submissions %}
           <tr>
             <td><strong>{{ s.exam.title }}</strong></td>
-            <td><strong style="color: var(--primary-clay); font-size: 1.1rem;">{{ s.score }}</strong> / {{ s.total_points }}</td>
+            <td><strong style="color: var(--primary); font-size: 1.05rem;">{{ s.score }}</strong> / {{ s.total_points }}</td>
             <td>
               {% if s.violations_count > 0 %}
                 <span class="clay-badge badge-pdf">⚠️ {{ s.violations_count }} lần vi phạm</span>
@@ -109,7 +120,7 @@
             </td>
             <td>{{ s.submitted_at.strftime('%H:%M - %d/%m/%Y') if s.submitted_at else 'Chưa nộp' }}</td>
             <td>
-              <a href="{{ url_for('main.exam_result', submission_id=s.id) }}" class="clay-btn clay-btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">
+              <a href="{{ url_for('main.exam_result', submission_id=s.id) }}" class="clay-btn clay-btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">
                 Xem lại bài làm
               </a>
             </td>

@@ -3,16 +3,16 @@
 {% block title %}{{ course.title }} - Tin học 11{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 24px;">
-  <a href="{{ url_for('main.classroom_detail', class_id=course.classroom_id) }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">
+<div style="margin-bottom: 20px;">
+  <a href="{{ url_for('main.classroom_detail', class_id=course.classroom_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
     ← Quay lại Lớp: {{ course.classroom.name }}
   </a>
 </div>
 
-<div class="clay-card animate-spring-pop" style="margin-bottom: 30px;">
-  <span class="clay-badge badge-teacher" style="margin-bottom: 8px;">📚 Khóa Học</span>
-  <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">{{ course.title }}</h1>
-  <p style="color: var(--text-muted); font-size: 1rem;">{{ course.description or 'Chưa có mô tả cho khóa học này.' }}</p>
+<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
+  <span class="clay-badge badge-teacher" style="margin-bottom: 8px;">📚 Khóa Học Số</span>
+  <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-title); margin-bottom: 6px; letter-spacing: -0.02em;">{{ course.title }}</h1>
+  <p style="color: var(--text-muted); font-size: 0.92rem;">{{ course.description or 'Chưa có mô tả cho khóa học này.' }}</p>
 </div>
 
 <!-- Teacher action -->
@@ -25,28 +25,28 @@
 {% endif %}
 
 <!-- Lessons List -->
-<div style="margin-bottom: 40px;">
-  <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">
+<div style="margin-bottom: 36px;">
+  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--text-title);">
     📖 Danh Sách Bài Học ({{ lessons|length }})
   </h2>
 
   {% if lessons %}
-    <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; flex-direction: column; gap: 14px;">
       {% for l in lessons %}
         <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.lesson_detail', lesson_id=l.id) }}'">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--bg-clay); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary-clay); box-shadow: var(--shadow-clay-btn);">
+              <div style="width: 42px; height: 42px; border-radius: 12px; background: var(--primary-soft); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); font-size: 1.1rem; border: 1px solid var(--primary-border);">
                 {{ l.order_index }}
               </div>
               <div>
-                <h3 style="font-size: 1.2rem; font-weight: 700;">{{ l.title }}</h3>
-                <span style="font-size: 0.85rem; color: var(--text-muted);">
-                  📁 {{ l.materials.count() }} Tài liệu (PPT/DOCX/PDF)
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-title);">{{ l.title }}</h3>
+                <span style="font-size: 0.82rem; color: var(--text-muted);">
+                  📁 {{ l.materials.count() }} Tài liệu (PPT / Word / PDF)
                 </span>
               </div>
             </div>
-            <div style="color: var(--primary-clay); font-weight: 700;">
+            <div style="color: var(--primary); font-weight: 700; font-size: 0.88rem;">
               Học bài & Xem tài liệu →
             </div>
           </div>
@@ -54,8 +54,8 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="clay-card" style="text-align: center; padding: 40px;">
-      <p style="color: var(--text-muted);">Khóa học này chưa có bài học nào. Hãy bấm "Thêm Bài Học Mới"!</p>
+    <div class="clay-card" style="text-align: center; padding: 36px;">
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Khóa học này chưa có bài học nào. Hãy bấm "Thêm Bài Học Mới"!</p>
     </div>
   {% endif %}
 </div>
@@ -63,8 +63,8 @@
 <!-- Modal Add Lesson -->
 <div id="create-lesson-modal" class="clay-modal-backdrop">
   <div class="clay-modal">
-    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 12px;">Thêm Bài Học Mới</h3>
-    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Bạn có thể tải lên tài liệu PPT, DOCX, PDF ngay sau khi tạo bài học</p>
+    <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; color: var(--text-title);">Thêm Bài Học Mới</h3>
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Bạn có thể tải lên tài liệu PPT, DOCX, PDF ngay sau khi tạo bài học</p>
 
     <form method="POST" action="{{ url_for('main.create_lesson', course_id=course.id) }}">
       <div class="clay-input-group" style="text-align: left;">
@@ -82,7 +82,7 @@
         <textarea name="content" class="clay-textarea" rows="4" placeholder="Nội dung lý thuyết trọng tâm của bài học..."></textarea>
       </div>
 
-      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
         <button type="button" onclick="document.getElementById('create-lesson-modal').classList.remove('active')" class="clay-btn clay-btn-secondary">
           Hủy
         </button>

@@ -3,33 +3,33 @@
 {% block title %}Xem PDF: {{ material.title }}{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">
+<div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
     ← Quay lại Bài học
   </a>
-  <div style="display: flex; gap: 10px;">
-    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px; font-size: 0.9rem;">
+  <div style="display: flex; gap: 8px;">
+    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
       ⬇️ Tải Tệp Về Máy
     </a>
   </div>
 </div>
 
-<div class="clay-card animate-spring-pop" style="margin-bottom: 24px; padding: 24px;">
+<div class="clay-card animate-spring-pop" style="margin-bottom: 24px; padding: 20px 28px;">
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
     <div>
       <span class="clay-badge badge-pdf" style="margin-bottom: 6px;">📄 Tài liệu PDF</span>
-      <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ material.title }}</h1>
-      <p style="color: var(--text-muted); font-size: 0.85rem;">
+      <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">{{ material.title }}</h1>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
         Số trang: <strong>{{ meta.page_count }} trang</strong> • Dung lượng: <strong>{{ material.file_size | filesize }}</strong>
       </p>
     </div>
   </div>
 </div>
 
-<div class="clay-card" style="padding: 12px; height: 80vh; overflow: hidden; border-radius: var(--radius-lg);">
+<div class="clay-card" style="padding: 8px; height: 82vh; overflow: hidden; border-radius: var(--radius-lg); border: 1px solid var(--border-light);">
   <iframe 
     src="{{ url_for('main.serve_raw_material', material_id=material.id) }}" 
-    style="width: 100%; height: 100%; border: none; border-radius: calc(var(--radius-lg) - 10px);"
+    style="width: 100%; height: 100%; border: none; border-radius: calc(var(--radius-lg) - 8px);"
     title="{{ material.title }}"
   ></iframe>
 </div>

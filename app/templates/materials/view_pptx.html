@@ -1,54 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}Xem Slide PPTX: {{ material.title }}{% endblock %}
+{% block title %}Trình chiếu Slide PPTX: {{ material.title }}{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" style="color: var(--primary-clay); font-weight: 700; text-decoration: none;">
+<div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
     ← Quay lại Bài học
   </a>
-  <div style="display: flex; gap: 10px;">
-    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px; font-size: 0.9rem;">
+  <div style="display: flex; gap: 8px;">
+    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
       ⬇️ Tải Tệp Về Máy
     </a>
   </div>
 </div>
 
-<div class="clay-card animate-spring-pop" style="margin-bottom: 24px; padding: 24px;">
+<!-- Header Card -->
+<div class="clay-card animate-spring-pop" style="margin-bottom: 24px; padding: 20px 28px;">
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
     <div>
-      <span class="clay-badge badge-pptx" style="margin-bottom: 6px;">📊 Trình Chiếu PowerPoint (.pptx)</span>
-      <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ material.title }}</h1>
-      <p style="color: var(--text-muted); font-size: 0.85rem;">
-        Tổng số: <strong>{{ slides|length }} slide</strong> • Phím tắt: Dùng phím mũi tên <strong>←</strong> và <strong>→</strong> để chuyển slide
+      <span class="clay-badge badge-pptx" style="margin-bottom: 6px;">📊 Trình Chiếu PowerPoint</span>
+      <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">{{ material.title }}</h1>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
+        Đã phân tích: <strong>{{ slides|length }} slide</strong> • Phím tắt: Sử dụng phím mũi tên <strong>←</strong> và <strong>→</strong> để đổi trang
       </p>
     </div>
-    <div id="slide-counter" class="clay-badge badge-teacher" style="font-size: 1rem; padding: 8px 18px;">
+    <div id="slide-counter" class="clay-badge badge-teacher" style="font-size: 0.95rem; padding: 6px 16px; font-weight: 800;">
       Slide 1 / {{ slides|length }}
     </div>
   </div>
 </div>
 
 <!-- Interactive Presentation Stage -->
-<div style="max-width: 960px; margin: 0 auto 30px;">
-  <div class="clay-card slide-container" style="min-height: 440px; display: flex; flex-direction: column; justify-content: space-between; padding: 40px; position: relative;">
+<div style="max-width: 980px; margin: 0 auto 36px;">
+  <div class="clay-card slide-container" style="min-height: 460px; display: flex; flex-direction: column; justify-content: space-between; padding: 36px 44px; position: relative; background: #FFFFFF; border: 1px solid var(--border-light);">
     <div id="slide-content-area" class="slide-card">
-      <h2 id="slide-title" style="font-size: 1.8rem; font-weight: 800; color: var(--primary-clay-dark); margin-bottom: 24px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 12px;">
+      <h2 id="slide-title" style="font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-bottom: 22px; border-bottom: 2px solid #E2E8F0; padding-bottom: 12px; letter-spacing: -0.02em;">
         Đang tải slide...
       </h2>
-      <ul id="slide-bullets" style="line-height: 2; margin-top: 16px;">
+      <ul id="slide-bullets" style="line-height: 2; margin-top: 16px; list-style-type: none;">
         <!-- Bullets injected dynamically -->
       </ul>
     </div>
 
     <!-- Presentation Control Bar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; border-top: 1px solid #E2E8F0; padding-top: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 36px; border-top: 1px solid var(--border-light); padding-top: 20px;">
       <button id="prev-slide-btn" class="clay-btn clay-btn-secondary" style="padding: 10px 22px;">
         ← Slide Trước
       </button>
 
-      <span style="color: var(--text-muted); font-size: 0.85rem;">
-        Mẹo: Nhấn <strong>Space</strong> hoặc <strong>→</strong> để tiến tới
+      <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">
+        Nhấn phím <strong>Space</strong> hoặc <strong>→</strong> để tiếp tục
       </span>
 
       <button id="next-slide-btn" class="clay-btn clay-btn-primary" style="padding: 10px 22px;">
