@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Mục Bài Học - Tin học 11 Ứng dụng{% endblock %}
+
+{% block content %}
+<!-- Section Header Banner -->
+<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <span class="clay-badge badge-teacher" style="margin-bottom: 8px;">📖 CHUYÊN ĐỀ & BÀI HỌC</span>
+      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Mục Bài Học Tin Học 11</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
+        Hệ thống hóa toàn bộ bài giảng lý thuyết, giáo án và slide trình chiếu theo chương trình Tin học 11 Ứng dụng
+      </p>
+    </div>
+
+    <!-- Filter by Classroom -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <form method="GET" action="{{ url_for('main.lessons_list') }}" style="display: flex; gap: 8px;">
+        <select name="class_id" class="clay-select" onchange="this.form.submit()" style="padding: 9px 14px; font-size: 0.88rem; min-width: 180px;">
+          <option value="">Tất cả lớp học</option>
+          {% for cl in classrooms %}
+            <option value="{{ cl.id }}" {% if selected_class_id == cl.id %}selected{% endif %}>{{ cl.name }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Lessons Feed -->
+{% if lessons %}
+  <div style="display: flex; flex-direction: column; gap: 18px; margin-bottom: 36px;">
+    {% for l in lessons %}
+      <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.lesson_detail', lesson_id=l.id) }}'">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
+          <div style="display: flex; align-items: flex-start; gap: 16px;">
+            <div style="width: 48px; height: 48px; border-radius: 14px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; border: 1px solid var(--primary-border); flex-shrink: 0;">
+              {{ l.order_index }}
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 2px;">
+                LỚP: {{ l.course.classroom.name }} • KHÓA: {{ l.course.title }}
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 8px;">
+                {{ l.title }}
+              </h2>
+              <p style="color: var(--text-body); font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px; max-width: 780px;">
+                {{ l.content[:160] if l.content else 'Chưa có nội dung lý thuyết tóm tắt.' }}...
+              </p>
+
+              <!-- Attached Materials Badges -->
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Tài liệu:</span>
+                {% if l.materials.count() > 0 %}
+                  {% for m in l.materials %}
+                    {% if m.file_type in ['pptx', 'ppt'] %}
+                      <span class="clay-badge badge-pptx" style="font-size: 0.75rem;">📊 {{ m.title[:20] }}... (PPTX)</span>
+                    {% elif m.file_type == 'docx' %}
+                      <span class="clay-badge badge-docx" style="font-size: 0.75rem;">📝 {{ m.title[:20] }}... (DOCX)</span>
+                    {% elif m.file_type == 'pdf' %}
+                      <span class="clay-badge badge-pdf" style="font-size: 0.75rem;">📄 {{ m.title[:20] }}... (PDF)</span>
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  <span style="font-size: 0.8rem; color: var(--text-light); font-style: italic;">Chưa có tài liệu đính kèm</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+            <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px; font-size: 0.88rem;">
+              Vào Học Bài →
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="clay-card" style="text-align: center; padding: 48px;">
+    <div style="font-size: 2.5rem; margin-bottom: 12px;">📖</div>
+    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">Chưa Có Bài Học Nào</h3>
+    <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 480px; margin: 0 auto 20px;">
+      Hiện tại chưa có bài học nào trong danh sách. Nếu bạn là Giáo viên, hãy truy cập vào một Lớp học để tạo Khóa học và thêm bài học mới!
+    </p>
+  </div>
+{% endif %}
+{% endblock %}

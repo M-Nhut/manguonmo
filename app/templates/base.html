@@ -22,107 +22,262 @@
   <div class="clay-ambient-blob blob-2 animate-float-reverse"></div>
   <div class="clay-ambient-blob blob-3 animate-float"></div>
 
-  <div class="container">
-    <!-- Modern Refined Glass Navigation Bar -->
-    <header class="clay-nav">
-      <a href="{{ url_for('main.index') }}" class="clay-logo">
-        <div class="clay-logo-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
-            <path d="M6 6h10"/>
-            <path d="M6 10h10"/>
-            <path d="M6 14h6"/>
-          </svg>
-        </div>
-        <div>
-          <span>Tin Học 11</span>
-          <span style="display: block; font-size: 0.65rem; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Ứng Dụng • E-Learning</span>
-        </div>
-      </a>
+  {% if current_user.is_authenticated %}
+    <!-- ================= APP SHELL WITH SIDEBAR (LOGGED IN) ================= -->
+    <div class="app-layout">
+      
+      <!-- Mobile Overlay -->
+      <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-      <nav>
-        <ul class="clay-nav-links">
-          {% if current_user.is_authenticated %}
-            {% if current_user.is_admin %}
-              <li><a href="{{ url_for('main.admin_dashboard') }}" class="clay-nav-link">Quản Trị</a></li>
-            {% elif current_user.is_teacher %}
-              <li><a href="{{ url_for('main.teacher_dashboard') }}" class="clay-nav-link">Bàn Làm Việc</a></li>
-            {% else %}
-              <li><a href="{{ url_for('main.student_dashboard') }}" class="clay-nav-link">Góc Học Tập</a></li>
-            {% endif %}
-            
+      <!-- Left Sidebar Navigation -->
+      <aside id="app-sidebar" class="clay-sidebar">
+        <div>
+          <!-- Sidebar Header Brand -->
+          <div class="clay-sidebar-header">
+            <a href="{{ url_for('main.index') }}" class="clay-logo">
+              <div class="clay-logo-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                  <path d="M6 6h10"/>
+                  <path d="M6 10h10"/>
+                  <path d="M6 14h6"/>
+                </svg>
+              </div>
+              <div>
+                <span style="font-size: 1.15rem; font-weight: 800;">Tin Học 11</span>
+                <span style="display: block; font-size: 0.62rem; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Ứng Dụng • E-Learning</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Navigation Menu List -->
+          <ul class="sidebar-menu">
+            <li class="sidebar-heading">KHÔNG GIAN HỌC TẬP</li>
+
+            <!-- 1. Dashboard -->
             <li>
-              <span class="clay-badge {% if current_user.is_admin %}badge-admin{% elif current_user.is_teacher %}badge-teacher{% else %}badge-student{% endif %}">
-                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
-                {{ current_user.full_name }} ({{ current_user.role | upper }})
-              </span>
+              {% if current_user.is_admin %}
+                {% set dash_url = url_for('main.admin_dashboard') %}
+              {% elif current_user.is_teacher %}
+                {% set dash_url = url_for('main.teacher_dashboard') %}
+              {% else %}
+                {% set dash_url = url_for('main.student_dashboard') %}
+              {% endif %}
+              <a href="{{ dash_url }}" class="sidebar-link {% if request.path in ['/admin', '/teacher/dashboard', '/student/dashboard'] %}active{% endif %}">
+                <span class="sidebar-link-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="7" height="9" x="3" y="3" rx="1"/>
+                    <rect width="7" height="5" x="14" y="3" rx="1"/>
+                    <rect width="7" height="9" x="14" y="12" rx="1"/>
+                    <rect width="7" height="5" x="3" y="16" rx="1"/>
+                  </svg>
+                </span>
+                <span>Tổng quan</span>
+              </a>
             </li>
-            <li><a href="{{ url_for('auth.logout') }}" class="clay-btn clay-btn-secondary" style="padding: 7px 14px; font-size: 0.85rem;">Đăng xuất</a></li>
-          {% else %}
+
+            <!-- 2. Mục Bài Học -->
+            <li>
+              <a href="{{ url_for('main.lessons_list') }}" class="sidebar-link {% if request.path.startswith('/lessons') or request.path.startswith('/courses') %}active{% endif %}">
+                <span class="sidebar-link-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                </span>
+                <span>Mục Bài Học</span>
+              </a>
+            </li>
+
+            <!-- 3. Mục Kiểm Tra -->
+            <li>
+              <a href="{{ url_for('main.exams_list') }}" class="sidebar-link {% if request.path.startswith('/exams') %}active{% endif %}">
+                <span class="sidebar-link-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                  </svg>
+                </span>
+                <span>Mục Kiểm Tra</span>
+                <span class="clay-badge badge-pdf sidebar-link-badge">Proctor</span>
+              </a>
+            </li>
+
+            <!-- 4. Kho Tài Liệu (PPT, DOCX, PDF) -->
+            <li>
+              <a href="{{ url_for('main.materials_list') }}" class="sidebar-link {% if request.path.startswith('/materials') %}active{% endif %}">
+                <span class="sidebar-link-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+                    <path d="M8 13h8"/>
+                    <path d="M8 17h5"/>
+                  </svg>
+                </span>
+                <span>Kho Tài Liệu</span>
+              </a>
+            </li>
+
+            <!-- Section 2: QUẢN TRỊ & HỆ THỐNG -->
+            {% if current_user.is_admin or current_user.is_teacher %}
+              <li class="sidebar-heading">QUẢN TRỊ & GIÁM SÁT</li>
+              <li>
+                <a href="{{ url_for('main.admin_manage') }}" class="sidebar-link {% if request.path.startswith('/admin/manage') %}active{% endif %}">
+                  <span class="sidebar-link-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </span>
+                  <span>Mục Quản Trị</span>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <!-- Sidebar User Footer Card -->
+        <div class="sidebar-footer">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; border: 1px solid var(--primary-border); flex-shrink: 0;">
+                {{ current_user.full_name[:1] }}
+              </div>
+              <div style="min-width: 0;">
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ current_user.full_name }}
+                </div>
+                <span class="clay-badge {% if current_user.is_admin %}badge-admin{% elif current_user.is_teacher %}badge-teacher{% else %}badge-student{% endif %}" style="font-size: 0.7rem; padding: 1px 8px;">
+                  {{ current_user.role | upper }}
+                </span>
+              </div>
+            </div>
+            <a href="{{ url_for('auth.logout') }}" title="Đăng xuất" style="color: var(--text-muted); padding: 6px; border-radius: var(--radius-sm); transition: all 0.2s ease;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main App Content Area -->
+      <div class="app-main">
+        <!-- Top Sticky Header -->
+        <header class="app-topbar">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <!-- Hamburger button for mobile -->
+            <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </button>
+            <div style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">
+              Môn học: <span style="color: var(--primary); font-weight: 700;">Tin Học 11 (Ứng Dụng)</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="{{ url_for('main.materials_list') }}" class="clay-btn clay-btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">
+              📁 Kho Tài Liệu
+            </a>
+            <a href="{{ url_for('main.exams_list') }}" class="clay-btn clay-btn-primary" style="padding: 6px 14px; font-size: 0.82rem;">
+              🛡️ Mục Kiểm Tra
+            </a>
+          </div>
+        </header>
+
+        <!-- Flash Alerts inside App Content -->
+        <div class="app-content-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="flash-messages animate-spring-pop" style="margin-bottom: 20px;">
+                {% for category, message in messages %}
+                  <div class="clay-alert alert-{{ category }}">
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit; line-height: 1;">×</button>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+
+          {% block content %}{% endblock %}
+
+          <!-- Clean Subtle Footer -->
+          <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-light); color: var(--text-light); font-size: 0.82rem; text-align: center;">
+            Hệ thống học tập trực tuyến Tin học 11 (Ứng dụng) • Đồ án PTPM.MNM • Bản quyền MIT License
+          </footer>
+        </div>
+      </div>
+
+    </div>
+
+  {% else %}
+    <!-- ================= GUEST TOP NAVIGATION BAR (NOT LOGGED IN) ================= -->
+    <div class="container">
+      <header class="clay-nav">
+        <a href="{{ url_for('main.index') }}" class="clay-logo">
+          <div class="clay-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+              <path d="M6 6h10"/>
+              <path d="M6 10h10"/>
+              <path d="M6 14h6"/>
+            </svg>
+          </div>
+          <div>
+            <span>Tin Học 11</span>
+            <span style="display: block; font-size: 0.65rem; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Ứng Dụng • E-Learning</span>
+          </div>
+        </a>
+
+        <nav>
+          <ul class="clay-nav-links">
             <li><a href="{{ url_for('auth.login') }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px;">Đăng nhập</a></li>
             <li><a href="{{ url_for('auth.register') }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px;">Đăng ký</a></li>
-          {% endif %}
-        </ul>
-      </nav>
-    </header>
+          </ul>
+        </nav>
+      </header>
 
-    <!-- Flash Alerts -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages animate-spring-pop">
-          {% for category, message in messages %}
-            <div class="clay-alert alert-{{ category }}">
-              <span>{{ message }}</span>
-              <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit; line-height: 1;">×</button>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    <!-- Main Page Content -->
-    <main>
-      {% block content %}{% endblock %}
-    </main>
-
-    <!-- Refined Educational Footer -->
-    <footer style="margin: 60px 0 30px; padding-top: 30px; border-top: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.88rem;">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 24px;">
-        <div style="max-width: 420px;">
-          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text-title); margin-bottom: 8px;">
-            💻 Hệ Thống Học Tập Tin Học 11 Ứng Dụng
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-messages animate-spring-pop">
+            {% for category, message in messages %}
+              <div class="clay-alert alert-{{ category }}">
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit; line-height: 1;">×</button>
+              </div>
+            {% endfor %}
           </div>
-          <p style="line-height: 1.6; font-size: 0.85rem;">
-            Đồ án môn học <strong>Phát triển phần mềm mã nguồn mở (PTPM.MNM)</strong>. Nền tảng học tập thông minh hỗ trợ trình đọc tài liệu trực tuyến (PowerPoint, Word, PDF) và phòng thi chống gian lận đa tầng.
-          </p>
-        </div>
+        {% endif %}
+      {% endwith %}
 
-        <div>
-          <div style="font-weight: 700; color: var(--text-title); margin-bottom: 8px; font-size: 0.9rem;">CÔNG NGHỆ MÃ NGUỒN MỞ</div>
-          <ul style="list-style: none; line-height: 1.8; font-size: 0.85rem;">
-            <li>• Python / Flask / SQLAlchemy</li>
-            <li>• PyMuPDF & python-docx & python-pptx</li>
-            <li>• Page Visibility & Fullscreen Anti-Cheating</li>
-          </ul>
-        </div>
+      <main>
+        {% block guest_content %}{{ self.content() }}{% endblock %}
+      </main>
 
-        <div>
-          <div style="font-weight: 700; color: var(--text-title); margin-bottom: 8px; font-size: 0.9rem;">TIÊU CHUẨN THIẾT KẾ</div>
-          <ul style="list-style: none; line-height: 1.8; font-size: 0.85rem;">
-            <li>• Refined Soft Porcelain Claymorphism</li>
-            <li>• Micro-interactions & Spring Physics</li>
-            <li>• Bản quyền mã nguồn mở <strong>MIT License</strong></li>
-          </ul>
-        </div>
-      </div>
-
-      <div style="text-align: center; font-size: 0.82rem; color: var(--text-light); border-top: 1px dashed var(--border-light); padding-top: 16px;">
-        © 2026 PTPM.MNM - Bộ môn Tin học 11 Ứng dụng. Phát triển với tiêu chuẩn UI/UX cao cấp (Taste Skill).
-      </div>
-    </footer>
-  </div>
+      <footer style="margin: 60px 0 30px; padding-top: 30px; border-top: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.88rem; text-align: center;">
+        <p style="font-weight: 700; color: var(--text-title);">💻 Hệ Thống Học Tập Trực Tuyến Tin Học 11 Ứng Dụng</p>
+        <p style="font-size: 0.82rem; margin-top: 4px;">Đồ án Phát triển phần mềm mã nguồn mở (PTPM.MNM) • Chuẩn UI/UX Taste Skill • MIT License</p>
+      </footer>
+    </div>
+  {% endif %}
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('app-sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+      }
+    }
+  </script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

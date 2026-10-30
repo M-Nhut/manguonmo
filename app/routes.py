@@ -557,3 +557,140 @@ def proctoring_report(submission_id):
     submission = ExamSubmission.query.get_or_404(submission_id)
     logs = submission.logs.order_by(ProctoringLog.timestamp.asc()).all()
     return render_template('exams/proctoring_report.html', submission=submission, logs=logs)
+
+
+# ----------------- DEDICATED SIDEBAR SECTION VIEWS -----------------
+
+@main_bp.route('/lessons')
+@login_required
+def lessons_list():
+    """Mục Bài học: hiển thị toàn bộ bài học theo chương trình SGK Tin 11 Ứng dụng"""
+    if current_user.is_admin:
+        lessons = Lesson.query.order_by(Lesson.order_index.asc()).all()
+        classrooms = Classroom.query.all()
+    elif current_user.is_teacher:
+        classrooms = Classroom.query.filter_by(teacher_id=current_user.id).all()
+        class_ids = [c.id for c in classrooms]
+        course_ids = [co.id for co in Course.query.filter(Course.classroom_id.in_(class_ids)).all()] if class_ids else []
+        lessons = Lesson.query.filter(Lesson.course_id.in_(course_ids)).order_by(Lesson.order_index.asc()).all() if course_ids else []
+    else:
+        classrooms = current_user.enrolled_classes
+        class_ids = [c.id for c in classrooms]
+        course_ids = [co.id for co in Course.query.filter(Course.classroom_id.in_(class_ids)).all()] if class_ids else []
+        lessons = Lesson.query.filter(Lesson.course_id.in_(course_ids)).order_by(Lesson.order_index.asc()).all() if course_ids else []
+
+    selected_class_id = request.args.get('class_id', type=int)
+    if selected_class_id:
+        lessons = [l for l in lessons if l.course.classroom_id == selected_class_id]
+
+    return render_template('courses/lessons_list.html', lessons=lessons, classrooms=classrooms, selected_class_id=selected_class_id)
+
+
+@main_bp.route('/exams')
+@login_required
+def exams_list():
+    """Mục Đề kiểm tra: danh sách bài thi và trạng thái làm bài chống gian lận"""
+    if current_user.is_admin:
+        exams = Exam.query.order_by(Exam.created_at.desc()).all()
+        classrooms = Classroom.query.all()
+    elif current_user.is_teacher:
+        classrooms = Classroom.query.filter_by(teacher_id=current_user.id).all()
+        exams = Exam.query.filter_by(teacher_id=current_user.id).order_by(Exam.created_at.desc()).all()
+    else:
+        classrooms = current_user.enrolled_classes
+        class_ids = [c.id for c in classrooms]
+        exams = Exam.query.filter(Exam.classroom_id.in_(class_ids), Exam.is_published == True).order_by(Exam.created_at.desc()).all() if class_ids else []
+
+    # Map student's submissions by exam_id
+    user_submissions = {}
+    if current_user.is_student:
+        subs = ExamSubmission.query.filter_by(student_id=current_user.id).all()
+        for s in subs:
+            user_submissions[s.exam_id] = s
+
+    return render_template('exams/exams_list.html', exams=exams, classrooms=classrooms, user_submissions=user_submissions)
+
+
+@main_bp.route('/materials')
+@login_required
+def materials_list():
+    """Mục Kho Tài liệu: tổng hợp toàn bộ PPTX, DOCX, PDF có thể đọc trực tuyến"""
+    file_type = request.args.get('type', '').lower()
+    
+    query = Material.query.join(Lesson).join(Course).join(Classroom)
+    
+    if not current_user.is_admin:
+        if current_user.is_teacher:
+            query = query.filter(Classroom.teacher_id == current_user.id)
+        else:
+            class_ids = [c.id for c in current_user.enrolled_classes]
+            query = query.filter(Classroom.id.in_(class_ids)) if class_ids else query.filter(Classroom.id == -1)
+
+    if file_type in ['pdf', 'docx', 'pptx']:
+        if file_type == 'pptx':
+            query = query.filter(Material.file_type.in_(['pptx', 'ppt']))
+        else:
+            query = query.filter(Material.file_type == file_type)
+            
+    materials = query.order_by(Material.uploaded_at.desc()).all()
+    
+    # Counts for quick tabs
+    all_materials = query.all()
+    counts = {
+        'all': Material.query.count() if current_user.is_admin else len(all_materials),
+        'pptx': sum(1 for m in all_materials if m.file_type in ['pptx', 'ppt']),
+        'docx': sum(1 for m in all_materials if m.file_type == 'docx'),
+        'pdf': sum(1 for m in all_materials if m.file_type == 'pdf')
+    }
+
+    return render_template('materials/materials_list.html', materials=materials, current_type=file_type, counts=counts)
+
+
+@main_bp.route('/admin/manage')
+@login_required
+def admin_manage():
+    """Mục Quản trị hệ thống: quản lý tài khoản & toàn bộ audit log chống gian lận"""
+    if not current_user.is_admin and not current_user.is_teacher:
+        flash('Bạn không có quyền truy cập mục Quản trị!', 'warning')
+        return redirect(url_for('main.index'))
+        
+    users = User.query.order_by(User.created_at.desc()).all()
+    classrooms = Classroom.query.all()
+    
+    # Filter logs by event type if requested
+    event_filter = request.args.get('event', '')
+    log_query = ProctoringLog.query.order_by(ProctoringLog.timestamp.desc())
+    if event_filter:
+        log_query = log_query.filter_by(event_type=event_filter)
+    violations = log_query.limit(50).all()
+    
+    stats = {
+        'total_users': len(users),
+        'total_teachers': sum(1 for u in users if u.role == 'teacher'),
+        'total_students': sum(1 for u in users if u.role == 'student'),
+        'total_admins': sum(1 for u in users if u.role == 'admin'),
+        'total_classes': len(classrooms),
+        'total_exams': Exam.query.count(),
+        'total_violations': ProctoringLog.query.count()
+    }
+    
+    return render_template('dashboard/admin_manage.html', users=users, violations=violations, stats=stats, current_event=event_filter)
+
+
+@main_bp.route('/admin/users/<int:user_id>/role', methods=['POST'])
+@login_required
+@admin_required
+def update_user_role(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.id == current_user.id:
+        flash('Bạn không thể tự thay đổi vai trò của chính mình!', 'warning')
+        return redirect(url_for('main.admin_manage'))
+        
+    new_role = request.form.get('role', 'student')
+    if new_role in ['student', 'teacher', 'admin']:
+        user.role = new_role
+        db.session.commit()
+        flash(f'Đã cập nhật vai trò của {user.full_name} thành {new_role.upper()}!', 'success')
+        
+    return redirect(url_for('main.admin_manage'))
+

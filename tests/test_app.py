@@ -129,5 +129,29 @@ def test_classroom_and_exam_flow(client):
     }, follow_redirects=True)
     assert submit_resp.status_code == 200
     
-    updated_sub = ExamSubmission.query.get(submission.id)
+    updated_sub = db.session.get(ExamSubmission, submission.id)
     assert updated_sub.score == 10.0
+
+def test_sidebar_sections_access(client):
+    # 1. Login as teacher
+    client.post('/auth/login', data={'login_input': 'test_teacher', 'password': 'pass123'})
+    
+    # 2. Access Mục Bài Học (/lessons)
+    resp_lessons = client.get('/lessons')
+    assert resp_lessons.status_code == 200
+    assert b'M\xe1\xbb\xa5c B\xc3\xa0i H\xe1\xbb\x8dc' in resp_lessons.data  # "Mục Bài Học"
+    
+    # 3. Access Mục Kiểm Tra (/exams)
+    resp_exams = client.get('/exams')
+    assert resp_exams.status_code == 200
+    assert b'M\xe1\xbb\xa5c Ki\xe1\xbb\x83m Tra' in resp_exams.data  # "Mục Kiểm Tra"
+    
+    # 4. Access Mục Kho Tài Liệu (/materials)
+    resp_materials = client.get('/materials')
+    assert resp_materials.status_code == 200
+    assert b'Kho T\xc3\xa0i Li\xe1\xbb\x87u' in resp_materials.data  # "Kho Tài Liệu"
+    
+    # 5. Access Mục Quản Trị (/admin/manage) as teacher
+    resp_manage = client.get('/admin/manage')
+    assert resp_manage.status_code == 200
+    assert b'M\xe1\xbb\xa5c Qu\xe1\xba\xa3n Tr\xe1\xbb\x8b' in resp_manage.data  # "Mục Quản Trị"

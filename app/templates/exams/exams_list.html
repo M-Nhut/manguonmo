@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Mục Kiểm Tra - Tin học 11 Ứng dụng{% endblock %}
+
+{% block content %}
+<!-- Section Header Banner -->
+<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <span class="clay-badge badge-pdf" style="margin-bottom: 8px;">🛡️ KHÔNG GIAN THI CỬ CHỐNG GIAN LẬN</span>
+      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Mục Kiểm Tra Trực Tuyến</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
+        Đề thi trắc nghiệm khách quan được bảo vệ bởi công nghệ giám sát toàn màn hình, khóa tab và chống mở công cụ hỗ trợ
+      </p>
+    </div>
+
+    <div>
+      {% if current_user.is_teacher or current_user.is_admin %}
+        {% if classrooms %}
+          <a href="{{ url_for('main.create_exam', class_id=classrooms[0].id) }}" class="clay-btn clay-btn-success">
+            ➕ Tạo Đề Thi Mới
+          </a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Exams Grid -->
+{% if exams %}
+  <div class="grid-2" style="margin-bottom: 36px;">
+    {% for ex in exams %}
+      {% set sub = user_submissions.get(ex.id) if current_user.is_student else None %}
+      <div class="clay-card animate-spring-pop" style="border-left: 5px solid {% if sub %}var(--success){% else %}var(--primary){% endif %};">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+          <div>
+            <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+              LỚP: {{ ex.classroom.name }}
+            </span>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-top: 2px;">
+              {{ ex.title }}
+            </h2>
+          </div>
+          <span class="clay-badge badge-pdf">
+            🛡️ Proctoring
+          </span>
+        </div>
+
+        <p style="color: var(--text-body); font-size: 0.88rem; line-height: 1.5; margin-bottom: 16px;">
+          {{ ex.description or 'Bài kiểm tra kiến thức Tin học 11 ứng dụng.' }}
+        </p>
+
+        <!-- Exam Security Specifications -->
+        <div style="background: #F8FAFC; border: 1px solid var(--border-light); padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 18px; font-size: 0.82rem; color: var(--text-muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <span>⏱️ Thời gian: <strong>{{ ex.duration_minutes }} phút</strong></span>
+          <span>📝 Số câu: <strong>{{ ex.questions.count() }} câu</strong></span>
+          <span>⚠️ Vi phạm tối đa: <strong>{{ ex.max_violations }} lần</strong></span>
+        </div>
+
+        <!-- Action / Status Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 14px;">
+          {% if current_user.is_student %}
+            {% if sub %}
+              <div>
+                <span class="clay-badge badge-student" style="font-size: 0.88rem;">
+                  ✓ Đã nộp: <strong>{{ sub.score }} / {{ sub.total_points }} điểm</strong>
+                </span>
+              </div>
+              <a href="{{ url_for('main.exam_result', submission_id=sub.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
+                Xem Chi Tiết Bài Làm
+              </a>
+            {% else %}
+              <div style="font-size: 0.82rem; color: var(--danger); font-weight: 600;">
+                ⚠️ Yêu cầu làm bài trung thực
+              </div>
+              <a href="{{ url_for('main.take_exam', exam_id=ex.id) }}" class="clay-btn clay-btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">
+                Bắt Đầu Làm Bài →
+              </a>
+            {% endif %}
+          {% else %}
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              👥 <strong>{{ ex.submissions.count() }}</strong> bài thi đã nộp
+            </div>
+            <a href="{{ url_for('main.exam_detail', exam_id=ex.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
+              ⚙️ Quản Lý & Giám Sát
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="clay-card" style="text-align: center; padding: 48px;">
+    <div style="font-size: 2.5rem; margin-bottom: 12px;">🛡️</div>
+    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">Chưa Có Đề Kiểm Tra Nào</h3>
+    <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 480px; margin: 0 auto 20px;">
+      Hiện tại chưa có đề kiểm tra nào trong các lớp bạn tham gia.
+    </p>
+  </div>
+{% endif %}
+{% endblock %}
