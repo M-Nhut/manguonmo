@@ -8,11 +8,21 @@
 
 ## 🌟 Điểm nổi bật của Dự án
 
-1. **Thiết kế Claymorphism & Motion-Driven:**
-   - Giao diện 3D đất sét mềm mại (Claymorphism) với các khối bo tròn, đổ bóng đa tầng (inner highlights + diffuse outer shadows).
-   - Hiệu ứng chuyển động vật lý mượt mà (Spring physics with `cubic-bezier(0.34, 1.56, 0.64, 1)`), bóng nền chuyển động (ambient floating blobs), hiệu ứng rung cảnh báo và radar giám sát.
+1. **Kiến Trúc App Shell & Thanh Sidebar Điều Hướng Chuẩn Quốc Tế:**
+   - **Thanh Sidebar Trực Quan (Sticky Glass Sidebar):** Phân chia rõ ràng thành các không gian học tập và quản trị:
+     - 📊 **Tổng quan (Dashboard):** Widget tóm tắt chỉ số, lớp học đang học và đề thi sắp tới.
+     - 📖 **Mục Bài học (Lessons):** Danh mục toàn bộ bài học theo chương trình SGK Tin 11 Ứng dụng, lọc theo lớp, hiển thị tài liệu đính kèm.
+     - 🛡️ **Mục Kiểm tra (Exams):** Danh sách đề thi trắc nghiệm kèm trạng thái làm bài, cảnh báo chống gian lận Proctoring và điểm số.
+     - 📁 **Mục Kho Tài liệu (Materials):** Thư viện số tổng hợp các tệp PowerPoint (.pptx), Word (.docx), PDF (.pdf) hỗ trợ đọc trực tiếp trên web.
+     - ⚙️ **Mục Quản trị (Admin Management):** Bảng điều khiển phân quyền tài khoản (RBAC) và nhật ký giám sát vi phạm toàn trường.
+   - **Tối Ưu Mobile/Tablet:** Thanh Sidebar tự động thu gọn thành Drawer trượt mượt mà với lớp phủ kính mờ (Backdrop Blur).
 
-2. **Trình đọc Tài liệu Trực tuyến Đa Định dạng (In-Browser Viewer):**
+2. **Thiết kế Soft Porcelain Claymorphism & Motion-Driven (Taste Skill):**
+   - Bảng màu **Soft Trustworthy Blue** dịu mắt, thân thiện với học đường kết hợp bề mặt sứ trắng (`#FFFFFF`) và viền sắc nét siêu mảnh `1px solid rgba(226, 232, 240, 0.85)`.
+   - Đổ bóng khuếch tán đa tầng mềm mại, chống nhòe và loại bỏ cảm giác méo mó, giữ giao diện phẳng mịn và ổn định tuyệt đối.
+   - Hiệu ứng chuyển động tự nhiên với lò xo vật lý (`cubic-bezier(0.16, 1, 0.3, 1)`).
+
+3. **Trình đọc Tài liệu Trực tuyến Đa Định dạng (In-Browser Viewer):**
    - **PowerPoint (.pptx, .ppt):** Tự động phân tích từng slide và hiển thị dưới dạng Slide Deck tương tác có nút Next/Prev và phím tắt điều hướng.
    - **Word (.docx):** Phân tích các tiêu đề, đoạn văn bản, bảng biểu thành HTML chuẩn mực hiển thị trong trình đọc sách chuyên dụng.
    - **PDF (.pdf):** Xem trực tiếp tài liệu qua trình đọc tài liệu tích hợp trên trình duyệt.
