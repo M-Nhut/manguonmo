@@ -1,35 +1,33 @@
 /* ==========================================================================
-   MOTION SYSTEM - STABLE, SMOOTH & RESPONSIVE (TASTE SKILL)
+   MOTION SYSTEM - ENGAGING, FLUID & REDUCED-MOTION SAFE
    ========================================================================== */
 
-/* 1. Keyframe Animations */
-
-@keyframes float-gentle {
+@keyframes float-ambient {
   0%, 100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
 }
 
-@keyframes float-gentle-reverse {
+@keyframes float-ambient-delayed {
   0%, 100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
 }
 
 @keyframes spring-pop {
   0% {
     opacity: 0;
-    transform: translateY(10px) scale(0.98);
+    transform: translateY(8px) scale(0.97);
   }
   70% {
     opacity: 1;
-    transform: translateY(-2px) scale(1.005);
+    transform: translateY(-1px) scale(1.01);
   }
   100% {
     opacity: 1;
@@ -37,46 +35,10 @@
   }
 }
 
-@keyframes pulse-radar {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(225, 29, 72, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
-  }
-}
-
-@keyframes pulse-green {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-  }
-}
-
-@keyframes clay-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  75% { transform: translateX(6px); }
-}
-
 @keyframes slide-in-fade {
   from {
     opacity: 0;
-    transform: translateX(18px);
+    transform: translateX(16px);
   }
   to {
     opacity: 1;
@@ -84,98 +46,103 @@
   }
 }
 
-/* 2. Utility Animation Classes */
-
-.animate-float {
-  animation: float-gentle 7s ease-in-out infinite;
+@keyframes pulse-live {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.22);
+  }
 }
 
-.animate-float-reverse {
-  animation: float-gentle-reverse 8s ease-in-out infinite;
+@keyframes answer-pop {
+  0% {
+    transform: scale(0.985);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes arena-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes float-up-score {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.9);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-14px) scale(1.06);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.98);
+  }
+}
+
+.animate-float-ambient {
+  animation: float-ambient 5.5s ease-in-out infinite;
+}
+
+.animate-float-ambient-delayed {
+  animation: float-ambient-delayed 6.5s ease-in-out infinite;
 }
 
 .animate-spring-pop {
-  animation: spring-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: spring-pop 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.animate-radar {
-  animation: pulse-radar 2s infinite;
+.animate-live-dot {
+  animation: pulse-live 2s ease-in-out infinite;
 }
 
-.animate-live-green {
-  animation: pulse-green 2s infinite;
+.animate-answer-pop {
+  animation: answer-pop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-shake {
-  animation: clay-shake 0.35s ease-in-out;
+.animate-arena-shake {
+  animation: arena-shake 0.34s ease-in-out;
 }
 
-/* 3. Interactive Motion States */
-
-.clay-interactive {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s ease;
+.animate-float-score {
+  animation: float-up-score 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.clay-interactive:hover {
-  transform: translateY(-3px);
-}
-
-.clay-interactive:active {
-  transform: translateY(1px);
-}
-
-/* Slide Deck Animation */
 .slide-container {
   perspective: 1000px;
 }
 
 .slide-card {
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .slide-enter-active {
-  animation: slide-in-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slide-in-fade 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Modals */
-.clay-modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-.clay-modal-backdrop.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.clay-modal {
-  background: #FFFFFF;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.25), 0 1px 3px rgba(0,0,0,0.05);
-  max-width: 520px;
-  width: 90%;
-  padding: 32px;
-  text-align: center;
-  transform: scale(0.94) translateY(16px);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid var(--border-light);
-}
-
-.clay-modal-backdrop.active .clay-modal {
-  transform: scale(1) translateY(0);
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-ambient,
+  .animate-float-ambient-delayed,
+  .animate-spring-pop,
+  .animate-live-dot,
+  .animate-answer-pop,
+  .animate-arena-shake,
+  .animate-float-score,
+  .slide-enter-active {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

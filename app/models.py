@@ -69,6 +69,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, default='')
+    poster_url = db.Column(db.String(500), default='')
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -83,6 +84,8 @@ class Lesson(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     title = db.Column(db.String(150), nullable=False)
     content = db.Column(db.Text, default='')
+    poster_url = db.Column(db.String(500), default='')
+    video_embed = db.Column(db.Text, default='')
     order_index = db.Column(db.Integer, default=1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -114,6 +117,8 @@ class Exam(db.Model):
     max_violations = db.Column(db.Integer, default=3, nullable=False)
     enable_fullscreen = db.Column(db.Boolean, default=True)
     enable_tab_lock = db.Column(db.Boolean, default=True)
+    access_code = db.Column(db.String(32), default='')
+    shuffle_questions = db.Column(db.Boolean, default=True)
     is_published = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -126,12 +131,13 @@ class Question(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     exam_id = db.Column(db.Integer, db.ForeignKey('exams.id'), nullable=False)
+    question_type = db.Column(db.String(20), default='mcq', nullable=False)  # 'mcq', 'true_false'
     content = db.Column(db.Text, nullable=False)
-    option_a = db.Column(db.String(255), nullable=False)
-    option_b = db.Column(db.String(255), nullable=False)
-    option_c = db.Column(db.String(255), nullable=False)
-    option_d = db.Column(db.String(255), nullable=False)
-    correct_option = db.Column(db.String(2), nullable=False)  # 'A', 'B', 'C', 'D'
+    option_a = db.Column(db.String(255), default='', nullable=False)
+    option_b = db.Column(db.String(255), default='', nullable=False)
+    option_c = db.Column(db.String(255), default='', nullable=False)
+    option_d = db.Column(db.String(255), default='', nullable=False)
+    correct_option = db.Column(db.String(255), nullable=False)  # 'A'-'D' or 'D,S,D,D'
     points = db.Column(db.Float, default=1.0)
 
 
@@ -160,3 +166,25 @@ class ProctoringLog(db.Model):
     event_type = db.Column(db.String(50), nullable=False)  # TAB_SWITCH, WINDOW_BLUR, EXIT_FULLSCREEN, DEVTOOLS_ATTEMPT, AUTO_SUBMIT
     details = db.Column(db.Text, default='')
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class GameScore(db.Model):
+    __tablename__ = 'game_scores'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=True, index=True)
+    game_mode = db.Column(db.String(32), default='blitz', nullable=False)  # 'blitz', 'sql_puzzle', 'memory'
+    topic_code = db.Column(db.String(16), default='ALL', nullable=False)
+    score = db.Column(db.Integer, default=0, nullable=False)
+    xp_earned = db.Column(db.Integer, default=0, nullable=False)
+    correct_count = db.Column(db.Integer, default=0, nullable=False)
+    total_count = db.Column(db.Integer, default=0, nullable=False)
+    max_combo = db.Column(db.Integer, default=0, nullable=False)
+    duration_sec = db.Column(db.Integer, default=0, nullable=False)
+    week_key = db.Column(db.String(16), nullable=False, index=True)  # e.g. '2026-W47'
+    played_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    player = db.relationship('User', backref=db.backref('game_scores', lazy='dynamic'))
+    classroom = db.relationship('Classroom', backref=db.backref('game_scores', lazy='dynamic'))
+

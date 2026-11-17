@@ -1,97 +1,555 @@
 {% extends "base.html" %}
 
-{% block title %}Trang chủ - Tin học 11 Ứng dụng{% endblock %}
+{% block title %}Tin Học 11 — Nền Tảng Học Tập &amp; Khảo Thí Trực Tuyến{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="clay-card clay-hero-card animate-spring-pop" style="margin-bottom: 36px; padding: 50px 36px; text-align: center;">
-  <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--primary-soft); border: 1px solid var(--primary-border); padding: 6px 16px; border-radius: var(--radius-full); margin-bottom: 20px;">
-    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--primary);"></span>
-    <span style="font-size: 0.82rem; font-weight: 700; color: var(--primary); letter-spacing: 0.04em;">CHƯƠNG TRÌNH TIN HỌC 11 (ỨNG DỤNG) • GDPT 2018</span>
-  </div>
+<!-- =========================================================================
+     1. HERO SECTION — LUMINOUS EDTECH SPLIT + FLOATING GLASS BADGES
+     ========================================================================= -->
+<section class="relative pt-10 pb-12 lg:pt-14 lg:pb-16">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
-  <h1 style="font-size: 2.7rem; font-weight: 800; line-height: 1.25; margin-bottom: 18px; color: var(--text-title); max-width: 820px; margin-left: auto; margin-right: auto;">
-    Nền Tảng Học Trực Tuyến & Thi Cử An Toàn <br>
-    <span style="background: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tin Học 11 Ứng Dụng</span>
-  </h1>
+    <!-- Left 6 Cols: High-Impact Copy, Primary CTAs & 1-Click Demo -->
+    <div class="lg:col-span-6 space-y-6">
+      <div data-hero-stagger class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-blue-200 shadow-xs text-[#0B4FD8] text-xs font-bold tracking-wide uppercase">
+        <span class="w-2 h-2 rounded-full bg-[#0B4FD8] animate-live-dot" aria-hidden="true"></span>
+        <span>Tin Học 11 • Chương trình GDPT 2018</span>
+      </div>
 
-  <p style="font-size: 1.1rem; color: var(--text-body); max-width: 660px; margin: 0 auto 32px; line-height: 1.7;">
-    Không gian số hóa dành cho Thầy và Trò: Tự do tải lên & đọc trực tuyến <strong>PowerPoint, Word, PDF</strong> không cần cài phần mềm, kết hợp phòng thi trắc nghiệm với <strong>công nghệ chống gian lận đa tầng</strong>.
-  </p>
+      <h1 data-hero-stagger class="font-display text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.12]">
+        Học Tin học 11
+        <span class="block text-gradient-brand mt-1.5">trực quan &amp; bứt phá điểm số.</span>
+      </h1>
 
-  <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px;">
-    <a href="{{ url_for('auth.login') }}" class="clay-btn clay-btn-primary" style="padding: 14px 32px; font-size: 1rem;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-        <polyline points="10 17 15 12 10 7"/>
-        <line x1="15" y1="12" x2="3" y2="12"/>
-      </svg>
-      Bắt Đầu Học Ngay
-    </a>
-    <a href="{{ url_for('auth.register') }}" class="clay-btn clay-btn-secondary" style="padding: 14px 28px; font-size: 1rem;">
-      Tạo Tài Khoản Mới
-    </a>
-  </div>
+      <p data-hero-stagger class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+        Kho 31 bài giảng chuẩn SGK Kết nối tri thức, phòng ôn luyện sinh đề ngẫu nhiên, AI tư vấn lộ trình và hệ thống thi trực tuyến giám sát 7 cảm biến thời gian thực.
+      </p>
 
-  <!-- Quick Credential Pill Bar -->
-  <div style="display: inline-flex; align-items: center; gap: 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid var(--border-light); border-radius: var(--radius-full); padding: 8px 20px; font-size: 0.82rem; color: var(--text-muted); flex-wrap: wrap; justify-content: center;">
-    <span style="font-weight: 700; color: var(--text-title);">🔑 Thử nghiệm nhanh:</span>
-    <span>Admin: <code style="color: var(--danger); font-weight: 600;">admin / admin123</code></span>
-    <span>•</span>
-    <span>Giáo viên: <code style="color: var(--primary); font-weight: 600;">gv.huong / teacher123</code></span>
-    <span>•</span>
-    <span>Học sinh: <code style="color: var(--success); font-weight: 600;">hs.nam / student123</code></span>
+      <!-- Main CTAs -->
+      <div data-hero-stagger class="flex flex-wrap items-center gap-3.5 pt-1">
+        <a href="{{ url_for('auth.register') }}"
+           class="clay-btn clay-btn-primary text-white px-6 py-3.5 text-sm sm:text-base">
+          <span>Bắt đầu học miễn phí</span>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a href="{{ url_for('auth.login') }}"
+           class="clay-btn clay-btn-secondary text-slate-900 px-6 py-3.5 text-sm sm:text-base">
+          <span>Vào lớp bằng mã</span>
+        </a>
+      </div>
+
+      <!-- Compact 1-Click Demo Access Strip -->
+      <div data-hero-stagger class="pt-4 border-t border-slate-200/90">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Trải nghiệm nhanh theo vai trò (1-Click)</span>
+          <span class="text-xs font-mono font-bold text-[#0B4FD8] bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-md">Lớp mẫu: TIN11-A1</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <form method="POST" action="{{ url_for('auth.login') }}">
+            <input type="hidden" name="login_input" value="hs.nam">
+            <input type="hidden" name="password" value="student123">
+            <button type="submit" class="w-full px-3.5 py-2.5 rounded-xl bg-white/95 border border-slate-200 hover:border-[#047857] hover:bg-emerald-50/40 text-left transition cursor-pointer group shadow-xs">
+              <span class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-900 group-hover:text-[#047857]">Học sinh</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
+              </span>
+              <span class="block text-xs font-mono text-slate-600 mt-0.5">hs.nam</span>
+            </button>
+          </form>
+
+          <form method="POST" action="{{ url_for('auth.login') }}">
+            <input type="hidden" name="login_input" value="gv.huong">
+            <input type="hidden" name="password" value="teacher123">
+            <button type="submit" class="w-full px-3.5 py-2.5 rounded-xl bg-white/95 border border-slate-200 hover:border-[#0B4FD8] hover:bg-blue-50/40 text-left transition cursor-pointer group shadow-xs">
+              <span class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-900 group-hover:text-[#0B4FD8]">Giáo viên</span>
+                <span class="w-2 h-2 rounded-full bg-[#0B4FD8]" aria-hidden="true"></span>
+              </span>
+              <span class="block text-xs font-mono text-slate-600 mt-0.5">gv.huong</span>
+            </button>
+          </form>
+
+          <form method="POST" action="{{ url_for('auth.login') }}">
+            <input type="hidden" name="login_input" value="admin">
+            <input type="hidden" name="password" value="admin123">
+            <button type="submit" class="w-full px-3.5 py-2.5 rounded-xl bg-white/95 border border-slate-200 hover:border-amber-600 hover:bg-amber-50/40 text-left transition cursor-pointer group shadow-xs">
+              <span class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-900 group-hover:text-amber-800">Quản trị</span>
+                <span class="w-2 h-2 rounded-full bg-amber-600" aria-hidden="true"></span>
+              </span>
+              <span class="block text-xs font-mono text-slate-600 mt-0.5">admin</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right 6 Cols: App Frame Showcase Banner + Floating Micro-Badges -->
+    <div data-hero-stagger class="lg:col-span-6 relative">
+      <!-- Floating Top-Right Pill -->
+      <div class="hidden sm:flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-lg absolute -top-4 -right-3 z-20 animate-float-ambient" aria-hidden="true">
+        <span class="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200 text-[#047857] flex items-center justify-center font-mono font-extrabold text-xs">9.5</span>
+        <div class="leading-tight">
+          <div class="text-xs font-extrabold text-slate-900">Tiến độ SQL</div>
+          <div class="text-[11px] font-semibold text-[#047857]">+24% tuần này</div>
+        </div>
+      </div>
+
+      <!-- Floating Bottom-Left Pill -->
+      <div class="hidden sm:flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-lg absolute -bottom-4 -left-3 z-20 animate-float-ambient-delayed" aria-hidden="true">
+        <span class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <div class="leading-tight">
+          <div class="text-xs font-extrabold text-slate-900">Anti-Cheat v2.0</div>
+          <div class="text-[11px] font-semibold text-indigo-700">7/7 cảm biến bật</div>
+        </div>
+      </div>
+
+      <div class="bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200/90 shadow-2xl overflow-hidden">
+        <!-- App Window Top Chrome -->
+        <div class="px-4 py-3 bg-slate-50/90 border-b border-slate-200 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5" aria-hidden="true">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+          </div>
+          <span class="text-xs font-mono font-semibold text-slate-600 truncate">tin11.edu.vn • Không gian học &amp; thi</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-live-dot" aria-hidden="true"></span>
+            Trực tuyến
+          </span>
+        </div>
+
+        <!-- [VỊ TRÍ ẢNH 1 - HERO BANNER]: Thay ảnh của bạn tại thuộc tính src="..." bên dưới -->
+        <div class="relative aspect-[16/10] bg-slate-900 overflow-hidden group">
+          <img src="{{ url_for('static', filename='img/posters/poster_a_os.jpg') }}"
+               alt="Không gian học tập trực tuyến Tin học 11"
+               fetchpriority="high"
+               class="w-full h-full object-cover block group-hover:scale-[1.03] transition duration-500 motion-reduce:transform-none">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/35 to-transparent" aria-hidden="true"></div>
+          <div class="absolute inset-x-0 bottom-0 p-5 text-white flex flex-wrap items-end justify-between gap-3">
+            <div class="space-y-1">
+              <div class="text-base font-display font-bold leading-snug">Hệ sinh thái Học tập &amp; Khảo thí Tin Học 11</div>
+              <div class="text-xs text-slate-200 font-medium">Bài giảng Video • Ngân hàng đề chuẩn • Giám sát 7 lớp</div>
+            </div>
+            <span class="px-3 py-1 rounded-lg bg-[#0B4FD8] border border-blue-300/40 text-white text-xs font-mono font-bold shrink-0 shadow-sm">7 Chủ Đề</span>
+          </div>
+        </div>
+
+        <!-- Feature Strip under Banner -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 bg-white text-center">
+          <div class="p-3.5">
+            <div class="text-sm font-extrabold text-[#0B4FD8]">DOCX • PDF • Video</div>
+            <div class="text-xs text-slate-600 mt-0.5 font-medium">Học liệu đa phương tiện</div>
+          </div>
+          <div class="p-3.5">
+            <div class="text-sm font-extrabold text-indigo-700">24 MCQ + 6 Đ/S</div>
+            <div class="text-xs text-slate-600 mt-0.5 font-medium">Cấu trúc đề chuẩn</div>
+          </div>
+          <div class="p-3.5">
+            <div class="text-sm font-extrabold text-[#0F766E]">Anti-Cheat v2.0</div>
+            <div class="text-xs text-slate-600 mt-0.5 font-medium">Khóa màn hình &amp; PIN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
-<!-- Core Features 3-Column Grid -->
-<div class="grid-3" style="margin-bottom: 40px;">
-  <!-- Card 1 -->
-  <div class="clay-card clay-card-interactive animate-spring-pop" style="animation-delay: 0.05s;">
-    <div style="width: 52px; height: 52px; border-radius: 14px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 18px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);">
-      🏫
+<!-- =========================================================================
+     2. CORE PLATFORM CAPABILITIES STRIP
+     ========================================================================= -->
+<section aria-label="Nền tảng tích hợp" class="py-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-reveal-group>
+    <div data-reveal class="bg-white/95 rounded-2xl border border-slate-200 p-5 shadow-xs flex items-start gap-3.5 hover:border-[#0B4FD8] hover:shadow-md transition">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 text-[#0B4FD8] flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <div>
+        <div class="text-base font-extrabold text-slate-900 font-mono">31 Bài SGK</div>
+        <div class="text-sm text-slate-600 mt-0.5">Chuẩn Kết nối tri thức</div>
+      </div>
     </div>
-    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: var(--text-title);">
-      Lớp Học & Khóa Học Số
-    </h3>
-    <p style="color: var(--text-body); font-size: 0.92rem; line-height: 1.6;">
-      Giáo viên dễ dàng tạo lớp học với mã mời riêng biệt. Học sinh tham gia lớp nhanh chóng, hệ thống hóa kiến thức theo từng chủ đề SGK Tin học 11.
-    </p>
-    <div style="margin-top: 18px; font-size: 0.85rem; font-weight: 700; color: var(--primary);">
-      Quản lý phân quyền RBAC →
+
+    <div data-reveal class="bg-white/95 rounded-2xl border border-slate-200 p-5 shadow-xs flex items-start gap-3.5 hover:border-indigo-400 hover:shadow-md transition">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-50 to-violet-100 border border-indigo-200 text-indigo-700 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+      </div>
+      <div>
+        <div class="text-base font-extrabold text-slate-900 font-mono">AI Lộ Trình</div>
+        <div class="text-sm text-slate-600 mt-0.5">Tư vấn ôn tập 4 bước</div>
+      </div>
     </div>
+
+    <div data-reveal class="bg-white/95 rounded-2xl border border-slate-200 p-5 shadow-xs flex items-start gap-3.5 hover:border-rose-300 hover:shadow-md transition">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-50 to-rose-100 border border-rose-200 text-[#BE123C] flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <div class="text-base font-extrabold text-slate-900 font-mono">7 Cảm Biến</div>
+        <div class="text-sm text-slate-600 mt-0.5">Chống gian lận trực tuyến</div>
+      </div>
+    </div>
+
+    <div data-reveal class="bg-white/95 rounded-2xl border border-slate-200 p-5 shadow-xs flex items-start gap-3.5 hover:border-emerald-300 hover:shadow-md transition">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 text-[#047857] flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <div>
+        <div class="text-base font-extrabold text-slate-900 font-mono">Xuất Excel</div>
+        <div class="text-sm text-slate-600 mt-0.5">Chấm điểm &amp; báo cáo 1 chạm</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     3. 4 VISUAL CORE HIGHLIGHTS (#curriculum) - COLOR-CODED LEARNING TRACKS
+     ========================================================================= -->
+<section id="curriculum" class="py-12">
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-7" data-reveal>
+    <div>
+      <span class="text-xs font-bold uppercase tracking-wider text-[#0B4FD8] block mb-1">Nội Dung Trọng Tâm</span>
+      <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        4 Mảng Kiến Thức Cốt Lõi
+      </h2>
+    </div>
+    <a href="{{ url_for('auth.login') }}" class="text-sm font-bold text-[#0B4FD8] hover:underline inline-flex items-center gap-1">
+      <span>Mở kho bài giảng đầy đủ</span>
+      <span aria-hidden="true">→</span>
+    </a>
   </div>
 
-  <!-- Card 2 -->
-  <div class="clay-card clay-card-interactive animate-spring-pop" style="animation-delay: 0.1s;">
-    <div style="width: 52px; height: 52px; border-radius: 14px; background: #FFF7ED; color: #EA580C; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 18px; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.1);">
-      📑
-    </div>
-    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: var(--text-title);">
-      Trình Đọc PPT, Word & PDF
-    </h3>
-    <p style="color: var(--text-body); font-size: 0.92rem; line-height: 1.6;">
-      Tự động bóc tách slide PowerPoint trình chiếu từng trang, đọc tài liệu Word DOCX có bảng biểu và xem trực tiếp PDF ngay trên trình duyệt mà không cần tải về.
-    </p>
-    <div style="margin-top: 18px; font-size: 0.85rem; font-weight: 700; color: #EA580C;">
-      Tích hợp python-pptx & docx →
-    </div>
-  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-reveal-group>
+    <!-- Card 1: Cobalt -->
+    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+      <!-- [VỊ TRÍ ẢNH 2 - CHỦ ĐỀ 1]: Thay ảnh tại thuộc tính src="..." bên dưới -->
+      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+        <img src="{{ url_for('static', filename='img/posters/poster_a_hardware.jpg') }}"
+             alt="Hệ điều hành và Phần cứng máy tính"
+             loading="lazy"
+             class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+        <div class="h-1 w-full bg-gradient-to-r from-[#0B4FD8] to-sky-500 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
+      </div>
+      <div class="p-5 flex-1">
+        <span class="clay-badge badge-teacher font-mono text-xs mb-2.5">HỆ THỐNG</span>
+        <h3 class="text-base font-bold text-slate-900 mb-1.5">Máy tính &amp; Hệ điều hành</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Phần mềm nguồn mở, kiến trúc phần cứng và kết nối thiết bị số.</p>
+      </div>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
+        <span class="text-slate-600">Chủ đề 1</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-[#0B4FD8] group-hover:underline after:absolute after:inset-0">
+          Khám phá <span aria-hidden="true">→</span>
+        </a>
+      </footer>
+    </article>
 
-  <!-- Card 3 -->
-  <div class="clay-card clay-card-interactive animate-spring-pop" style="animation-delay: 0.15s;">
-    <div style="width: 52px; height: 52px; border-radius: 14px; background: var(--danger-soft); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 18px; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.1);">
-      🛡️
+    <!-- Card 2: Teal -->
+    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+      <!-- [VỊ TRÍ ẢNH 3 - CHỦ ĐỀ 2 & 3]: Thay ảnh tại thuộc tính src="..." bên dưới -->
+      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+        <img src="{{ url_for('static', filename='img/posters/poster_c_cloud.jpg') }}"
+             alt="Lưu trữ đám mây và An toàn thông tin"
+             loading="lazy"
+             class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+        <div class="h-1 w-full bg-gradient-to-r from-teal-600 to-emerald-500 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
+      </div>
+      <div class="p-5 flex-1">
+        <span class="clay-badge badge-teal font-mono text-xs mb-2.5">INTERNET</span>
+        <h3 class="text-base font-bold text-slate-900 mb-1.5">Lưu trữ &amp; An toàn số</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Đám mây, tìm kiếm thông tin nâng cao và giao tiếp mạng an toàn.</p>
+      </div>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
+        <span class="text-slate-600">Chủ đề 2 &amp; 3</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-[#0F766E] group-hover:underline after:absolute after:inset-0">
+          Khám phá <span aria-hidden="true">→</span>
+        </a>
+      </footer>
+    </article>
+
+    <!-- Card 3: Indigo/Violet -->
+    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+      <!-- [VỊ TRÍ ẢNH 4 - CHỦ ĐỀ 4, 5 & 6]: Thay ảnh tại thuộc tính src="..." bên dưới -->
+      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+        <img src="{{ url_for('static', filename='img/posters/poster_f_database.jpg') }}"
+             alt="Cơ sở dữ liệu quan hệ và SQL"
+             loading="lazy"
+             class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+        <div class="h-1 w-full bg-gradient-to-r from-indigo-600 to-violet-600 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
+      </div>
+      <div class="p-5 flex-1">
+        <span class="clay-badge badge-ai font-mono text-xs mb-2.5">DỮ LIỆU &amp; SQL</span>
+        <h3 class="text-base font-bold text-slate-900 mb-1.5">Cơ sở dữ liệu &amp; SQL</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Thiết kế bảng, khóa ngoại và thực hành truy vấn dữ liệu chuẩn.</p>
+      </div>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
+        <span class="text-slate-600">Chủ đề 4, 5 &amp; 6</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-violet-700 group-hover:underline after:absolute after:inset-0">
+          Khám phá <span aria-hidden="true">→</span>
+        </a>
+      </footer>
+    </article>
+
+    <!-- Card 4: Coral/Amber -->
+    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+      <!-- [VỊ TRÍ ẢNH 5 - CHỦ ĐỀ 7]: Thay ảnh tại thuộc tính src="..." bên dưới -->
+      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+        <img src="{{ url_for('static', filename='img/posters/poster_e_gimp.jpg') }}"
+             alt="Chỉnh sửa ảnh GIMP và Làm phim"
+             loading="lazy"
+             class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+        <div class="h-1 w-full bg-gradient-to-r from-orange-600 to-rose-500 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
+      </div>
+      <div class="p-5 flex-1">
+        <span class="clay-badge badge-coral font-mono text-xs mb-2.5">ĐA PHƯƠNG TIỆN</span>
+        <h3 class="text-base font-bold text-slate-900 mb-1.5">Thiết kế ảnh &amp; Dựng phim</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Chỉnh sửa ảnh GIMP, ảnh động và biên tập video hoạt hình.</p>
+      </div>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
+        <span class="text-slate-600">Chủ đề 7</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-[#C2410C] group-hover:underline after:absolute after:inset-0">
+          Khám phá <span aria-hidden="true">→</span>
+        </a>
+      </footer>
+    </article>
+  </div>
+</section>
+
+<!-- =========================================================================
+     4. INTERACTIVE QUIZ DEMO & WAI-ARIA TABBED PATH SWITCHER (#question-types)
+     ========================================================================= -->
+<section id="question-types" class="py-10" data-reveal>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+    <!-- Left 6 Cols: Interactive Live Practice Demo -->
+    <div class="lg:col-span-6 bg-white/95 rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
+          <span class="clay-badge badge-teacher rounded-full px-3 py-1 text-xs uppercase tracking-wide">
+            Thử nghiệm Góc Ôn Luyện
+          </span>
+          <span class="text-xs font-mono font-semibold text-slate-600">24 MCQ (6đ) • 06 Đúng/Sai (4đ)</span>
+        </div>
+
+        <h2 class="font-display text-xl font-extrabold text-slate-900 mb-2">Trải nghiệm câu hỏi thông minh</h2>
+        <p class="text-sm text-slate-600 mb-5">Nhấp chọn một phương án bên dưới để xem cơ chế phản hồi chấm điểm tức thì:</p>
+
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-4">
+          <p class="text-sm font-bold text-slate-900 mb-3" id="landing-quiz-question">
+            Câu hỏi SQL: Mệnh đề nào dùng để lọc các bản ghi thỏa mãn điều kiện?
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm" id="landing-quiz-demo" role="group" aria-labelledby="landing-quiz-question">
+            <button type="button" aria-pressed="false" onclick="demoPick(this, false)" class="min-h-[44px] p-3 rounded-xl bg-white border border-slate-300 hover:border-[#0B4FD8] text-left font-medium text-slate-800 cursor-pointer transition">A. ORDER BY</button>
+            <button type="button" aria-pressed="false" onclick="demoPick(this, true)" class="min-h-[44px] p-3 rounded-xl bg-white border border-slate-300 hover:border-[#0B4FD8] text-left font-medium text-slate-800 cursor-pointer transition">B. WHERE</button>
+            <button type="button" aria-pressed="false" onclick="demoPick(this, false)" class="min-h-[44px] p-3 rounded-xl bg-white border border-slate-300 hover:border-[#0B4FD8] text-left font-medium text-slate-800 cursor-pointer transition">C. SELECT</button>
+            <button type="button" aria-pressed="false" onclick="demoPick(this, false)" class="min-h-[44px] p-3 rounded-xl bg-white border border-slate-300 hover:border-[#0B4FD8] text-left font-medium text-slate-800 cursor-pointer transition">D. GROUP BY</button>
+          </div>
+          <div id="landing-quiz-feedback" aria-live="polite" class="hidden mt-3 text-xs font-bold px-3.5 py-2.5 rounded-xl"></div>
+        </div>
+      </div>
+
+      <div class="pt-3 flex items-center justify-between flex-wrap gap-3 border-t border-slate-100">
+        <span class="text-xs text-slate-600 font-medium">Hỗ trợ cả trắc nghiệm 4 lựa chọn &amp; Đúng/Sai 4 ý</span>
+        <a href="{{ url_for('auth.login') }}" class="text-sm font-bold text-[#0B4FD8] hover:underline">Sinh đề 30 câu ngay →</a>
+      </div>
     </div>
-    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: var(--text-title);">
-      Phòng Thi Chống Gian Lận
-    </h3>
-    <p style="color: var(--text-body); font-size: 0.92rem; line-height: 1.6;">
-      Giám sát thi trực tuyến thời gian thực: Bắt buộc toàn màn hình, phát hiện chuyển tab, chặn phím tắt F12, chuột phải và tự động nộp bài khi vượt ngưỡng vi phạm.
-    </p>
-    <div style="margin-top: 18px; font-size: 0.85rem; font-weight: 700; color: var(--danger);">
-      Biên bản vi phạm thời gian thực →
+
+    <!-- Right 6 Cols: Accessible Tabbed Path Switcher -->
+    <div id="modes" class="lg:col-span-6 bg-white/95 rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col">
+      <div class="grid grid-cols-2 border-b border-slate-200 bg-slate-50" role="tablist" aria-label="Hình thức học tập">
+        <button type="button"
+                role="tab"
+                id="tab-btn-free"
+                aria-selected="true"
+                tabindex="0"
+                onclick="switchLearningMode('free')"
+                class="relative py-3.5 px-4 text-sm font-bold text-[#0B4FD8] bg-white border-b-2 border-[#0B4FD8] cursor-pointer transition">
+          Học Sinh Tự Do
+        </button>
+        <button type="button"
+                role="tab"
+                id="tab-btn-class"
+                aria-selected="false"
+                tabindex="-1"
+                onclick="switchLearningMode('class')"
+                class="relative py-3.5 px-4 text-sm font-bold text-slate-600 hover:text-slate-900 border-b-2 border-transparent cursor-pointer transition">
+          Lớp Học Theo Mã
+        </button>
+      </div>
+
+      <div id="tab-panel-free" role="tabpanel" aria-labelledby="tab-btn-free" class="p-6 flex-1 flex flex-col justify-between">
+        <div>
+          <!-- [VỊ TRÍ ẢNH 6 - HÌNH THỨC HỌC TỰ DO]: Thay ảnh tại thuộc tính src="..." bên dưới -->
+          <img src="{{ url_for('static', filename='img/posters/poster_f_web.jpg') }}"
+               alt="Học tự do qua kho học liệu chung"
+               loading="lazy"
+               class="w-full aspect-[16/7] object-cover rounded-2xl border border-slate-200 mb-4 block">
+          <h3 class="font-display text-xl font-extrabold text-slate-900 mb-2">Mở kho học liệu chung mọi lúc</h3>
+          <p class="text-sm text-slate-600 leading-relaxed mb-4">
+            Đăng ký tài khoản miễn phí để đọc toàn bộ bài giảng Slide, Word, PDF, xem Video YouTube và tự luyện đề 30 câu theo từng chủ đề.
+          </p>
+        </div>
+        <div>
+          <a href="{{ url_for('auth.register') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+            Đăng ký học tự do →
+          </a>
+        </div>
+      </div>
+
+      <div id="tab-panel-class" role="tabpanel" aria-labelledby="tab-btn-class" hidden class="p-6 flex-1 flex flex-col justify-between">
+        <div>
+          <!-- [VỊ TRÍ ẢNH 7 - HÌNH THỨC LỚP HỌC THEO MÃ]: Thay ảnh tại thuộc tính src="..." bên dưới -->
+          <img src="{{ url_for('static', filename='img/posters/poster_a_os.jpg') }}"
+               alt="Học và kiểm tra theo mã lớp học"
+               loading="lazy"
+               class="w-full aspect-[16/7] object-cover rounded-2xl border border-slate-200 mb-4 block">
+          <h3 class="font-display text-xl font-extrabold text-slate-900 mb-2">Kết nối lớp học với Giáo viên</h3>
+          <p class="text-sm text-slate-600 leading-relaxed mb-4">
+            Tham gia lớp bằng mã mời (như <code class="font-mono text-[#0B4FD8] font-bold">TIN11-A1</code>), vào phòng thi có mã PIN bảo mật, đảo đề riêng từng học sinh và xem điểm tức thì.
+          </p>
+        </div>
+        <div>
+          <a href="{{ url_for('auth.login') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+            Đăng nhập vào lớp →
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     5. DARK TECH-GRID PROCTORING SPOTLIGHT BANNER (#teacher-tools)
+     ========================================================================= -->
+<section id="teacher-tools" class="py-10" data-reveal>
+  <div class="ds-banner ds-banner-dark rounded-3xl p-6 sm:p-10 shadow-2xl">
+    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
+      <div class="lg:col-span-7 space-y-5">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/35 text-sky-200 text-xs font-bold uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-300 animate-live-dot" aria-hidden="true"></span>
+            Dành cho Giáo viên &amp; Quản trị
+          </span>
+          <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/35 text-emerald-200 font-mono text-xs font-bold">
+            Anti-Cheat Engine v2.0
+          </span>
+        </div>
+        <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Quản lý giảng dạy &amp; phòng thi chặt chẽ trên một nền tảng
+        </h2>
+        <p class="text-sm sm:text-base text-slate-200 leading-relaxed max-w-2xl">
+          Biên tập bài học, tải đề từ tệp Word/CSV, bật khóa phòng thi 1 chạm và xuất bảng điểm Excel kèm nhật ký vi phạm chi tiết.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-xs">
+            <div class="text-sm font-bold text-white mb-1">Biên tập tự do</div>
+            <div class="text-xs text-slate-200">Sửa tiêu đề, Poster &amp; nhúng Video</div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-xs">
+            <div class="text-sm font-bold text-white mb-1">Khóa PIN &amp; Đảo đề</div>
+            <div class="text-xs text-slate-200">Giám sát Fullscreen &amp; chia đôi màn hình</div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-xs">
+            <div class="text-sm font-bold text-white mb-1">Xuất Excel 1 chạm</div>
+            <div class="text-xs text-slate-200">Tổng hợp điểm &amp; cho phép thi lại</div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-wrap items-center gap-3">
+          <a href="{{ url_for('auth.login') }}" class="inline-flex items-center gap-2 min-h-[44px] px-6 py-3 rounded-xl bg-white hover:bg-blue-50 text-slate-900 font-bold text-sm transition shadow-lg">
+            <span>Đăng nhập không gian Giáo viên</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5">
+        <!-- [VỊ TRÍ ẢNH 8 - CÔNG CỤ GIÁO VIÊN & QUẢN TRỊ]: Thay ảnh tại thuộc tính src="..." bên dưới -->
+        <div class="rounded-2xl overflow-hidden border border-white/20 bg-slate-900 shadow-2xl">
+          <img src="{{ url_for('static', filename='img/posters/poster_f_database.jpg') }}"
+               alt="Công cụ quản lý lớp học và khảo thí cho giáo viên"
+               loading="lazy"
+               class="w-full aspect-[16/10] object-cover block">
+        </div>
+      </div>
+
     </div>
   </div>
-</div>
+</section>
+
+<script>
+function demoPick(btn, isCorrect) {
+  const buttons = document.querySelectorAll('#landing-quiz-demo button');
+  buttons.forEach((b) => {
+    b.className = 'min-h-[44px] p-3 rounded-xl bg-white border border-slate-300 hover:border-[#0B4FD8] text-left font-medium text-slate-800 cursor-pointer transition';
+    b.setAttribute('aria-pressed', 'false');
+  });
+  btn.setAttribute('aria-pressed', 'true');
+
+  const feedback = document.getElementById('landing-quiz-feedback');
+  feedback.classList.remove('hidden', 'animate-answer-pop');
+  void feedback.offsetWidth;
+  feedback.classList.add('animate-answer-pop');
+
+  if (isCorrect) {
+    btn.className = 'min-h-[44px] p-3 rounded-xl bg-emerald-50 border-2 border-emerald-600 text-emerald-900 text-left font-bold cursor-pointer transition animate-answer-pop';
+    feedback.className = 'mt-3 text-xs font-bold px-3.5 py-2.5 rounded-xl bg-emerald-50 text-[#047857] border border-emerald-200 animate-answer-pop';
+    feedback.textContent = '✓ Chính xác (+0,25đ)! Mệnh đề WHERE dùng để lọc bản ghi theo điều kiện.';
+  } else {
+    btn.className = 'min-h-[44px] p-3 rounded-xl bg-rose-50 border-2 border-rose-500 text-rose-900 text-left font-bold cursor-pointer transition animate-answer-pop';
+    feedback.className = 'mt-3 text-xs font-bold px-3.5 py-2.5 rounded-xl bg-rose-50 text-[#BE123C] border border-rose-200 animate-answer-pop';
+    feedback.textContent = '✕ Chưa đúng — hãy thử chọn đáp án B (WHERE).';
+  }
+}
+
+function switchLearningMode(mode, shouldFocusTab) {
+  const btnFree = document.getElementById('tab-btn-free');
+  const btnClass = document.getElementById('tab-btn-class');
+  const panelFree = document.getElementById('tab-panel-free');
+  const panelClass = document.getElementById('tab-panel-class');
+
+  const isFree = (mode === 'free');
+  btnFree.setAttribute('aria-selected', isFree ? 'true' : 'false');
+  btnClass.setAttribute('aria-selected', isFree ? 'false' : 'true');
+  btnFree.tabIndex = isFree ? 0 : -1;
+  btnClass.tabIndex = isFree ? -1 : 0;
+
+  btnFree.className = isFree
+    ? 'relative py-3.5 px-4 text-sm font-bold text-[#0B4FD8] bg-white border-b-2 border-[#0B4FD8] cursor-pointer transition'
+    : 'relative py-3.5 px-4 text-sm font-bold text-slate-600 hover:text-slate-900 border-b-2 border-transparent cursor-pointer transition';
+  btnClass.className = !isFree
+    ? 'relative py-3.5 px-4 text-sm font-bold text-[#0B4FD8] bg-white border-b-2 border-[#0B4FD8] cursor-pointer transition'
+    : 'relative py-3.5 px-4 text-sm font-bold text-slate-600 hover:text-slate-900 border-b-2 border-transparent cursor-pointer transition';
+
+  panelFree.hidden = !isFree;
+  panelClass.hidden = isFree;
+
+  const activePanel = isFree ? panelFree : panelClass;
+  activePanel.classList.remove('animate-spring-pop');
+  void activePanel.offsetWidth;
+  activePanel.classList.add('animate-spring-pop');
+
+  if (shouldFocusTab) {
+    (isFree ? btnFree : btnClass).focus();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = [document.getElementById('tab-btn-free'), document.getElementById('tab-btn-class')].filter(Boolean);
+  tabs.forEach((tab, idx) => {
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const nextIdx = (idx + 1) % tabs.length;
+        switchLearningMode(nextIdx === 0 ? 'free' : 'class', true);
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

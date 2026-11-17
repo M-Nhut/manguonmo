@@ -3,57 +3,52 @@
 {% block title %}Trình chiếu Slide PPTX: {{ material.title }}{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
-    ← Quay lại Bài học
+<div class="mb-4">
+  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" class="text-sm font-semibold text-slate-600 hover:text-[#0B4FD8] inline-flex items-center gap-1.5">
+    ← Quay lại bài học
   </a>
-  <div style="display: flex; gap: 8px;">
-    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
-      ⬇️ Tải Tệp Về Máy
+</div>
+
+<!-- Header Banner -->
+<section class="page-header-bar">
+  <div>
+    <h1>{{ material.title }}</h1>
+    <p>Trình chiếu PowerPoint ({{ slides|length }} trang chiếu) • Dùng phím mũi tên ← và → để chuyển trang</p>
+  </div>
+  <div class="flex items-center gap-2.5">
+    <span id="slide-counter" aria-live="polite" class="clay-badge badge-pptx font-mono text-xs px-3 py-1.5">
+      Slide 1 / {{ slides|length }}
+    </span>
+    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+      Tải về máy
     </a>
   </div>
-</div>
-
-<!-- Header Card -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 24px; padding: 20px 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-    <div>
-      <span class="clay-badge badge-pptx" style="margin-bottom: 6px;">📊 Trình Chiếu PowerPoint</span>
-      <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">{{ material.title }}</h1>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
-        Đã phân tích: <strong>{{ slides|length }} slide</strong> • Phím tắt: Sử dụng phím mũi tên <strong>←</strong> và <strong>→</strong> để đổi trang
-      </p>
-    </div>
-    <div id="slide-counter" class="clay-badge badge-teacher" style="font-size: 0.95rem; padding: 6px 16px; font-weight: 800;">
-      Slide 1 / {{ slides|length }}
-    </div>
-  </div>
-</div>
+</section>
 
 <!-- Interactive Presentation Stage -->
-<div style="max-width: 980px; margin: 0 auto 36px;">
-  <div class="clay-card slide-container" style="min-height: 460px; display: flex; flex-direction: column; justify-content: space-between; padding: 36px 44px; position: relative; background: #FFFFFF; border: 1px solid var(--border-light);">
-    <div id="slide-content-area" class="slide-card">
-      <h2 id="slide-title" style="font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-bottom: 22px; border-bottom: 2px solid #E2E8F0; padding-bottom: 12px; letter-spacing: -0.02em;">
-        Đang tải slide...
+<div class="max-w-[920px] mx-auto mb-9" data-reveal>
+  <div class="clay-card slide-container min-h-[440px] flex flex-col justify-between p-7 sm:p-10 shadow-lg">
+    <div id="slide-content-area" class="slide-card" aria-live="polite">
+      <h2 id="slide-title" class="font-display text-2xl font-extrabold text-[#0B4FD8] mb-5 border-b border-slate-200 pb-3">
+        Đang tải trang chiếu...
       </h2>
-      <ul id="slide-bullets" style="line-height: 2; margin-top: 16px; list-style-type: none;">
+      <ul id="slide-bullets" class="space-y-3 mt-4 pl-5 list-disc">
         <!-- Bullets injected dynamically -->
       </ul>
     </div>
 
     <!-- Presentation Control Bar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 36px; border-top: 1px solid var(--border-light); padding-top: 20px;">
-      <button id="prev-slide-btn" class="clay-btn clay-btn-secondary" style="padding: 10px 22px;">
-        ← Slide Trước
+    <div class="flex flex-wrap justify-between items-center gap-3 mt-8 border-t border-slate-200 pt-4">
+      <button type="button" id="prev-slide-btn" class="clay-btn clay-btn-secondary clay-btn-sm">
+        ← Trang trước
       </button>
 
-      <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">
-        Nhấn phím <strong>Space</strong> hoặc <strong>→</strong> để tiếp tục
+      <span class="text-slate-600 text-xs font-medium">
+        Nhấn phím <kbd class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-300 font-mono text-slate-800">Space</kbd> hoặc <kbd class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-300 font-mono text-slate-800">→</kbd> để tiếp tục
       </span>
 
-      <button id="next-slide-btn" class="clay-btn clay-btn-primary" style="padding: 10px 22px;">
-        Slide Tiếp →
+      <button type="button" id="next-slide-btn" class="clay-btn clay-btn-primary clay-btn-sm">
+        Trang tiếp →
       </button>
     </div>
   </div>

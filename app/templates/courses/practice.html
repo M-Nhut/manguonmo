@@ -1,0 +1,935 @@
+{% extends "base.html" %}
+
+{% block title %}Góc Ôn Luyện &amp; Sinh Đề Ngẫu Nhiên - Tin học 11 Ứng dụng{% endblock %}
+
+{% block extra_css %}
+<style>
+  .practice-option-btn,
+  button.practice-option-btn {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 48px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    background: #F8FAFC;
+    border: 1.5px solid #CBD5E1;
+    color: var(--color-text-title);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .practice-option-btn:hover,
+  button.practice-option-btn:hover {
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+  }
+
+  .practice-option-btn.is-correct,
+  button.practice-option-btn.is-correct {
+    background: var(--color-success-soft);
+    border-color: var(--color-success);
+    color: #065F46;
+    font-weight: 600;
+  }
+
+  .practice-option-btn.is-wrong,
+  button.practice-option-btn.is-wrong {
+    background: var(--color-danger-soft);
+    border-color: var(--color-danger);
+    color: #9F1239;
+  }
+
+  .practice-option-key {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: 1px solid #94A3B8;
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+  }
+
+  .practice-option-btn.is-correct .practice-option-key {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: #FFFFFF;
+  }
+
+  .practice-option-btn.is-wrong .practice-option-key {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    color: #FFFFFF;
+  }
+
+  .tf-choice-btn,
+  button.tf-choice-btn {
+    min-width: 64px;
+    min-height: 38px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #64748B;
+    background: #FFFFFF;
+    color: #1E293B;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .tf-choice-btn:hover,
+  button.tf-choice-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .tf-choice-btn.is-selected,
+  button.tf-choice-btn.is-selected {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #FFFFFF;
+  }
+
+  .tf-choice-btn.is-hit,
+  button.tf-choice-btn.is-hit {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: #FFFFFF;
+  }
+
+  .tf-choice-btn.is-miss,
+  button.tf-choice-btn.is-miss {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    color: #FFFFFF;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header Banner -->
+<section class="page-header-bar">
+  <div>
+    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+      <span class="clay-badge badge-student font-mono text-xs">CHẾ ĐỘ TỰ HỌC • KHÔNG GIÁM SÁT</span>
+      <span class="clay-badge badge-teacher font-mono text-xs">NGÂN HÀNG {{ bank_count }} CÂU</span>
+    </div>
+    <h1>Góc Ôn Luyện &amp; Sinh Đề Tự Học</h1>
+    <p>Chọn chủ đề và thời gian làm bài để hệ thống sinh đề ngẫu nhiên 30 câu (24 MCQ + 06 Đúng/Sai). Không khóa màn hình, thoải mái tra cứu bài học!</p>
+  </div>
+
+  <div class="flex items-center gap-2.5 flex-wrap">
+    <a href="{{ url_for('main.arena_hub', topic=current_topic) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+      Đấu Trường Game &amp; BXH Tuần →
+    </a>
+    <button type="button" onclick="openPracticeGenerator()" class="clay-btn clay-btn-secondary clay-btn-sm">
+      Chọn Chủ Đề &amp; Sinh Đề Mới
+    </button>
+  </div>
+</section>
+
+<!-- Live Score & Structure Strip (Only visible after generating exam) -->
+<div id="practice-metrics-strip" class="metric-strip {% if not is_generated %}hidden{% endif %}" aria-live="polite" data-reveal-group>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Cấu trúc đề chuẩn</span>
+    <span class="metric-cell-value text-slate-900" id="stat-total">{{ part1_questions|length + part2_questions|length }} câu</span>
+    <span class="text-xs font-mono font-semibold text-slate-600">24 MCQ + 06 Đúng/Sai</span>
+  </div>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Điểm Phần I (24 × 0,25đ)</span>
+    <span class="metric-cell-value" id="stat-part1-score">0.00 / 6.00</span>
+  </div>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Điểm Phần II (06 câu Đ/S)</span>
+    <span class="metric-cell-value" id="stat-part2-score">0.00 / 6.00</span>
+  </div>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Tổng điểm đạt được</span>
+    <span class="metric-cell-value text-[#047857]" id="stat-total-score">0.00 điểm</span>
+  </div>
+</div>
+
+<!-- Main 2-Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+  <!-- Left 8 Cols: Generator Setup Card OR Generated Exam Workspace -->
+  <div class="lg:col-span-8 flex flex-col gap-6">
+
+    <!-- =====================================================================
+         STEP 1: BẢNG CẤU HÌNH & SINH ĐỀ ÔN LUYỆN (Visible before clicking Sinh Đề)
+         ===================================================================== -->
+    <section id="practice-setup-panel"
+             aria-labelledby="setup-heading"
+             class="clay-card p-6 sm:p-8 border-2 border-blue-200/90 {% if is_generated %}hidden{% endif %}">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-slate-200">
+        <div>
+          <span class="clay-badge badge-teacher font-mono text-xs mb-1.5">TRÌNH SINH ĐỀ TỰ HỌC</span>
+          <h2 id="setup-heading" class="font-display text-xl sm:text-2xl font-extrabold text-slate-900">
+            Thiết Lập Đề Ôn Luyện Ngẫu Nhiên
+          </h2>
+        </div>
+        <span class="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[#047857] text-xs font-bold">
+          ✓ Không giám sát • Tự do xem tài liệu
+        </span>
+      </div>
+
+      <form id="practice-generator-form" method="GET" action="{{ url_for('main.practice_hub') }}" onsubmit="handleGeneratePracticeSubmit(event)">
+        <input type="hidden" name="generated" value="1">
+
+        <!-- 1. Choose Topic -->
+        <fieldset class="mb-6">
+          <legend class="text-sm font-extrabold text-slate-900 mb-3">
+            1. Chọn chủ đề kiến thức muốn sinh đề:
+          </legend>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for t_code, t_badge, t_title, t_desc in [
+              ('ALL', 'TỔNG HỢP 7 CHỦ ĐỀ', 'Đề Tổng Hợp Toàn Bộ Chương Trình', 'Bao phủ đầy đủ 31 bài học SGK Kết nối tri thức (Chuẩn đề thi cuối kỳ).'),
+              ('A', 'CHỦ ĐỀ 1 (BÀI 1–5)', 'Máy Tính & Hệ Điều Hành', 'Hệ điều hành, phần mềm nguồn mở, CPU, RAM và thiết bị ngoại vi.'),
+              ('C', 'CHỦ ĐỀ 2 & 3 (BÀI 6–9)', 'Lưu Trữ Đám Mây & An Toàn Số', 'Lưu trữ trực tuyến, toán tử tìm kiếm, bảo mật 2FA và phòng chống lừa đảo.'),
+              ('F', 'CHỦ ĐỀ 4, 5 & 6 (BÀI 10–24)', 'Hệ Cơ Sở Dữ Liệu & Truy Vấn SQL', 'Khóa chính, khóa ngoại, truy vấn SELECT ... WHERE ... INNER JOIN và sao lưu CSDL.'),
+              ('E', 'CHỦ ĐỀ 7 (BÀI 25–31)', 'Chỉnh Sửa Ảnh GIMP & Làm Phim', 'Lớp ảnh Layer, kênh Alpha tách nền PNG, ảnh động và dựng video trên Timeline.')
+            ] %}
+            <label class="exam-choice-card p-4 rounded-2xl cursor-pointer flex items-start gap-3 {% if loop.first %}sm:col-span-2{% endif %}">
+              <input type="radio"
+                     name="topic"
+                     value="{{ t_code }}"
+                     class="w-5 h-5 accent-[#0B4FD8] mt-0.5 shrink-0"
+                     {% if current_topic == t_code %}checked{% endif %}>
+              <div class="min-w-0">
+                <span class="inline-block font-mono text-[11px] font-extrabold text-[#0B4FD8] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded mb-1">
+                  {{ t_badge }}
+                </span>
+                <span class="block text-sm sm:text-base font-extrabold text-slate-900">{{ t_title }}</span>
+                <span class="block text-xs text-slate-600 mt-0.5 leading-relaxed">{{ t_desc }}</span>
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <!-- 2. Choose Duration -->
+        <fieldset class="mb-6">
+          <legend class="text-sm font-extrabold text-slate-900 mb-3">
+            2. Chọn thời gian đếm ngược cho phiên ôn luyện:
+          </legend>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {% for mins, m_label in [
+              (15, '15 phút • Ôn nhanh'),
+              (30, '30 phút • Vừa sức'),
+              (45, '45 phút • Chuẩn thi'),
+              (60, '60 phút • Thư thả')
+            ] %}
+            <label class="exam-choice-card p-3 rounded-xl cursor-pointer flex items-center gap-2.5 text-xs sm:text-sm font-bold text-slate-800">
+              <input type="radio"
+                     name="duration"
+                     value="{{ mins }}"
+                     class="w-4 h-4 accent-[#0B4FD8] shrink-0"
+                     {% if selected_duration == mins %}checked{% endif %}>
+              <span>{{ m_label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <!-- Info Box: No Proctoring -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 flex items-start gap-3 text-xs sm:text-sm text-slate-700">
+          <svg class="w-5 h-5 text-[#047857] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <div>
+            <strong class="text-slate-900">Lưu ý chế độ Tự Học:</strong> Đề ôn luyện có đồng hồ đếm ngược để bạn tự rèn tốc độ làm bài nhưng <strong>không bật giám sát chống gian lận</strong>. Bạn có thể tạm dừng đồng hồ, xem giải thích từng câu ngay lập tức hoặc mở sang tab bài học để ôn lại lý thuyết.
+          </div>
+        </div>
+
+        <button type="submit" id="btn-generate-practice" class="clay-btn clay-btn-primary w-full py-3.5 text-base">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Bấm Sinh Đề Ôn Luyện &amp; Bắt Đầu Tính Giờ →</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- =====================================================================
+         STEP 2: ĐỀ ÔN LUYỆN & ĐỒNG HỒ ĐẾM NGƯỢC (Hidden until Sinh Đề is clicked)
+         ===================================================================== -->
+    <div id="practice-exam-workspace" class="flex flex-col gap-6 {% if not is_generated %}hidden{% endif %}">
+
+      <!-- Sticky Self-Study Timer & Control Bar (No Proctoring) -->
+      <div class="sticky top-20 z-30 clay-card p-4 border-2 border-[#0B4FD8]/30 bg-white/95 backdrop-blur-md shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-200 flex items-center gap-2">
+              <svg class="w-4 h-4 text-[#0B4FD8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span class="text-xs font-bold text-slate-600">Thời gian còn:</span>
+              <span id="practice-timer-clock" class="font-mono text-lg font-extrabold text-[#0B4FD8] tabular-nums">{{ selected_duration }}:00</span>
+            </div>
+
+            <button type="button"
+                    id="practice-pause-btn"
+                    onclick="togglePracticeTimerPause()"
+                    class="clay-btn clay-btn-secondary clay-btn-sm">
+              Tạm dừng
+            </button>
+
+            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-[#047857] text-xs font-bold">
+              Tự học • Không giám sát
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="gradeAllPractice()" class="clay-btn clay-btn-primary clay-btn-sm">
+              Nộp &amp; Chấm Toàn Đề
+            </button>
+            <button type="button" onclick="resetPracticeSession()" class="clay-btn clay-btn-secondary clay-btn-sm">
+              Làm Lại
+            </button>
+            <button type="button" onclick="openPracticeGenerator()" class="clay-btn clay-btn-secondary clay-btn-sm">
+              Đổi Chủ Đề / Sinh Đề Mới
+            </button>
+          </div>
+        </div>
+
+        <!-- Timer Progress Bar -->
+        <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden mt-3" aria-hidden="true">
+          <div id="practice-timer-progress" class="h-full rounded-full bg-gradient-to-r from-[#0B4FD8] via-indigo-500 to-emerald-500 transition-all duration-300" style="width: 100%"></div>
+        </div>
+
+        <div id="practice-timeup-banner" role="status" class="hidden mt-3 p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs sm:text-sm font-bold flex items-center justify-between gap-2">
+          <span>Đã hết thời gian làm đề ôn luyện! Hệ thống đã tự động chấm điểm và mở lời giải chi tiết cho cả 30 câu bên dưới.</span>
+        </div>
+      </div>
+
+      <!-- PHẦN I -->
+      <section aria-labelledby="part1-heading">
+      <div class="ds-banner ds-banner-grid-bg border-l-4 border-l-[#0B4FD8] rounded-2xl p-5 mb-4">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h2 id="part1-heading" class="font-display text-lg font-extrabold text-slate-900">
+            PHẦN I. Câu hỏi trắc nghiệm nhiều lựa chọn ({{ part1_questions|length }} câu)
+          </h2>
+          <span class="px-3 py-1 rounded-lg bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-bold">
+            0,25 điểm / câu • Tối đa 6,0 điểm
+          </span>
+        </div>
+        <p class="text-sm text-slate-600 mt-1">
+          Mỗi câu hỏi có 4 phương án lựa chọn (A, B, C, D); chọn 01 phương án đúng nhất.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        {% for q in part1_questions %}
+          <article class="clay-card practice-mcq-card" data-question-id="{{ q.id }}" data-correct="{{ q.correct_option }}">
+            <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="clay-badge badge-teacher">Câu {{ loop.index }}/24</span>
+                <span class="text-xs font-semibold text-slate-600">{{ q.topic_label }}</span>
+              </div>
+              <span class="text-xs font-mono font-bold text-slate-600" id="status-badge-{{ q.id }}">
+                0,25 điểm
+              </span>
+            </div>
+
+            <h3 class="text-base font-bold text-slate-900 leading-relaxed mb-4">
+              Câu {{ loop.index }}. {{ q.content }}
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" role="group" aria-label="Phương án Câu {{ loop.index }}">
+              <button type="button" aria-pressed="false" class="practice-option-btn" onclick="checkMcqAnswer('{{ q.id }}', 'A', this)">
+                <span class="practice-option-key" aria-hidden="true">A</span>
+                <span><span class="sr-only">A. </span>{{ q.option_a }}</span>
+              </button>
+              <button type="button" aria-pressed="false" class="practice-option-btn" onclick="checkMcqAnswer('{{ q.id }}', 'B', this)">
+                <span class="practice-option-key" aria-hidden="true">B</span>
+                <span><span class="sr-only">B. </span>{{ q.option_b }}</span>
+              </button>
+              <button type="button" aria-pressed="false" class="practice-option-btn" onclick="checkMcqAnswer('{{ q.id }}', 'C', this)">
+                <span class="practice-option-key" aria-hidden="true">C</span>
+                <span><span class="sr-only">C. </span>{{ q.option_c }}</span>
+              </button>
+              <button type="button" aria-pressed="false" class="practice-option-btn" onclick="checkMcqAnswer('{{ q.id }}', 'D', this)">
+                <span class="practice-option-key" aria-hidden="true">D</span>
+                <span><span class="sr-only">D. </span>{{ q.option_d }}</span>
+              </button>
+            </div>
+
+            <div id="explanation-{{ q.id }}" aria-live="polite" class="hidden mt-4 p-4 rounded-xl border border-blue-200 bg-blue-50/70 text-sm text-slate-800 leading-relaxed">
+              <div class="font-bold text-[#0B4FD8] mb-1" id="feedback-headline-{{ q.id }}">Giải thích:</div>
+              <p class="text-slate-700 text-sm">{{ q.explanation }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- PHẦN II -->
+    <section aria-labelledby="part2-heading">
+      <div class="ds-banner ds-banner-indigo border-l-4 border-l-indigo-700 rounded-2xl p-5 mb-4">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-1.5">
+          <h2 id="part2-heading" class="font-display text-lg font-extrabold text-slate-900">
+            PHẦN II. Câu hỏi trắc nghiệm Đúng / Sai ({{ part2_questions|length }} câu)
+          </h2>
+          <span class="px-3 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono text-xs font-bold">
+            4 ý (a, b, c, d) • Tối đa 1,0 điểm / câu
+          </span>
+        </div>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Gồm <strong>Phần chung</strong> và <strong>Phần riêng theo định hướng</strong>.
+          Thang điểm: Đúng <strong>1 ý = 0,1đ</strong> • <strong>2 ý = 0,25đ</strong> • <strong>3 ý = 0,5đ</strong> • <strong>4 ý = 1,0đ</strong>.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        {% for q in part2_questions %}
+          <article class="clay-card practice-tf-card" data-question-id="{{ q.id }}" data-correct="{{ q.correct_option }}">
+            <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="clay-badge badge-student">Câu {{ loop.index }}/6</span>
+                <span class="clay-badge badge-ai">{{ q.group_label or 'Phần chung' }}</span>
+                <span class="text-xs font-semibold text-slate-600">{{ q.topic_label }}</span>
+              </div>
+              <span class="text-xs font-mono font-bold text-[#0B4FD8]" id="tf-score-badge-{{ q.id }}">
+                0,00 / 1,00 điểm
+              </span>
+            </div>
+
+            <h3 class="text-base font-bold text-slate-900 leading-relaxed mb-4">
+              Câu {{ loop.index }}. {{ q.content }}
+            </h3>
+
+            <!-- 4 Statements (a, b, c, d) -->
+            <div class="rounded-xl border border-slate-200 overflow-hidden mb-3">
+              {% set statements = [('a', q.option_a), ('b', q.option_b), ('c', q.option_c), ('d', q.option_d)] %}
+              {% for key, stmt_text in statements %}
+                <div class="p-3.5 bg-white {% if not loop.last %}border-b border-slate-200{% endif %} flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                     data-sub-row="{{ key }}">
+                  <div class="text-sm text-slate-800 leading-relaxed flex-1">
+                    <strong class="text-[#0B4FD8] font-mono mr-1">{{ key }})</strong> {{ stmt_text }}
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0" role="group" aria-label="Câu {{ loop.index }} ý {{ key }}">
+                    <button type="button"
+                            class="tf-choice-btn"
+                            data-sub="{{ key }}"
+                            data-val="D"
+                            aria-pressed="false"
+                            aria-label="Ý {{ key }}: Đúng"
+                            onclick="selectTfSubAnswer('{{ q.id }}', '{{ key }}', 'D', this)">
+                      Đúng
+                    </button>
+                    <button type="button"
+                            class="tf-choice-btn"
+                            data-sub="{{ key }}"
+                            data-val="S"
+                            aria-pressed="false"
+                            aria-label="Ý {{ key }}: Sai"
+                            onclick="selectTfSubAnswer('{{ q.id }}', '{{ key }}', 'S', this)">
+                      Sai
+                    </button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="text-xs text-slate-600">Chọn Đúng hoặc Sai cho cả 4 ý a, b, c, d để tính điểm.</span>
+              <button type="button" onclick="gradeTfCard('{{ q.id }}')" class="clay-btn clay-btn-secondary clay-btn-sm">
+                Kiểm tra câu này
+              </button>
+            </div>
+
+            <div id="explanation-{{ q.id }}" aria-live="polite" class="hidden mt-4 p-4 rounded-xl border border-blue-200 bg-blue-50/70 text-sm text-slate-800 leading-relaxed">
+              <div class="font-bold text-[#0B4FD8] mb-1" id="feedback-headline-{{ q.id }}">Giải thích chi tiết 4 ý:</div>
+              <p class="text-slate-700 text-sm">{{ q.explanation }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    </div><!-- /#practice-exam-workspace -->
+
+  </div>
+
+  <!-- Right 4 Cols: Scoring Spec, Flashcards & Exam Link (All H2 at card level) -->
+  <aside class="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-20">
+
+    <!-- Scoring Spec -->
+    <div class="clay-card">
+      <h2 class="font-display text-base font-extrabold text-slate-900 mb-3">Quy tắc tính điểm chuẩn</h2>
+      <div class="space-y-2.5 text-sm text-slate-700">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="font-bold text-[#0B4FD8]">Phần I: Trắc nghiệm 4 lựa chọn</div>
+          <div>24 câu × 0,25 điểm = <strong>6,0 điểm</strong></div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="font-bold text-indigo-700 mb-1">Phần II: Đúng / Sai (06 câu × 4 ý)</div>
+          <ul class="space-y-1 text-xs sm:text-sm text-slate-700 list-disc pl-4">
+            <li>Chính xác <strong>01 ý</strong>: <strong>0,10 điểm</strong></li>
+            <li>Chính xác <strong>02 ý</strong>: <strong>0,25 điểm</strong></li>
+            <li>Chính xác <strong>03 ý</strong>: <strong>0,50 điểm</strong></li>
+            <li>Chính xác <strong>cả 04 ý</strong>: <strong>1,00 điểm</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-4 pt-3 border-t border-slate-200">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
+          <span>Tiến độ phiên luyện</span>
+          <span id="practice-answered-count" class="font-mono text-[#0B4FD8]">0 / {{ part1_questions|length + part2_questions|length }} câu</span>
+        </div>
+        <div class="w-full h-2.5 rounded-full bg-slate-100 border border-slate-200/80 overflow-hidden" role="progressbar" aria-label="Tiến độ trả lời câu hỏi" aria-valuemin="0" aria-valuemax="{{ part1_questions|length + part2_questions|length }}" aria-valuenow="0" id="practice-progressbar">
+          <div id="practice-progress-bar" class="h-full rounded-full bg-gradient-to-r from-[#0B4FD8] via-[#4F46E5] to-[#0F766E] transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="mt-4 flex flex-col gap-2">
+        <button type="button" onclick="gradeAllPractice()" class="clay-btn clay-btn-primary clay-btn-sm w-full">
+          Chấm Điểm Toàn Đề
+        </button>
+      </div>
+    </div>
+
+    <!-- Flashcard Deck -->
+    <div class="clay-card">
+      <div class="flex items-center justify-between mb-2">
+        <span class="clay-badge badge-ai">Flashcards 3D</span>
+        <span class="text-sm font-mono font-bold text-[#0B4FD8]" id="flashcard-counter" aria-live="polite">1 / {{ flashcards|length }}</span>
+      </div>
+      <h2 class="font-display text-base font-extrabold text-slate-900 mb-1">Thẻ Ghi Nhớ Nhanh</h2>
+      <p class="text-sm text-slate-600 mb-4">Nhấn vào thẻ để xoay 3D xem định nghĩa.</p>
+
+      <div class="flip-stage">
+        {% for card in flashcards %}
+          <div class="flashcard-slide {% if not loop.first %}hidden{% endif %}" data-index="{{ loop.index0 }}">
+            <button type="button"
+                    aria-pressed="false"
+                    aria-label="Thẻ ghi nhớ {{ loop.index }}: {{ card.term }}"
+                    class="flip-card-btn flashcard-item group"
+                    onclick="toggleFlashcardFlip(this)">
+              <div class="flip-card-inner">
+                <div class="flip-face flip-face-front" aria-hidden="false">
+                  <div class="flex items-center justify-between w-full">
+                    <span class="clay-badge badge-teacher">{{ card.topic }}</span>
+                    <span class="text-xs font-bold text-[#0B4FD8]">Khái niệm</span>
+                  </div>
+
+                  <div class="my-3 w-full">
+                    <h3 class="text-base font-extrabold text-slate-900 leading-snug">{{ card.term }}</h3>
+                  </div>
+
+                  <div class="flex items-center justify-between w-full pt-2 border-t border-blue-200/70 text-xs font-medium text-slate-600">
+                    <span>Nhấn để lật thẻ</span>
+                    <span class="font-mono font-bold text-[#0B4FD8]">#{{ loop.index }}</span>
+                  </div>
+                </div>
+
+                <div class="flip-face flip-face-back" aria-hidden="true">
+                  <div class="flex items-center justify-between w-full">
+                    <span class="clay-badge badge-ai">{{ card.topic }}</span>
+                    <span class="text-xs font-bold text-[#6D28D9]">Định nghĩa</span>
+                  </div>
+
+                  <div class="my-3 w-full overflow-y-auto max-h-[115px] pr-1">
+                    <p class="text-sm font-medium text-slate-800 leading-relaxed">{{ card.definition }}</p>
+                  </div>
+
+                  <div class="flex items-center justify-between w-full pt-2 border-t border-violet-200/80 text-xs font-medium text-slate-600">
+                    <span>Nhấn để quay lại</span>
+                    <span class="font-mono font-bold text-[#6D28D9]">#{{ loop.index }}</span>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="flex items-center justify-between gap-2 mt-4">
+        <button type="button" onclick="stepFlashcard(-1)" class="clay-btn clay-btn-secondary clay-btn-sm flex-1">
+          ← Thẻ trước
+        </button>
+        <button type="button" onclick="stepFlashcard(1)" class="clay-btn clay-btn-secondary clay-btn-sm flex-1">
+          Thẻ tiếp →
+        </button>
+      </div>
+    </div>
+
+    <!-- Exam Navigation Card -->
+    <div class="clay-card">
+      <h2 class="font-display text-base font-extrabold text-slate-900 mb-2">Phòng thi chính thức</h2>
+      <p class="text-sm text-slate-600 leading-relaxed mb-4">
+        Sau khi ôn luyện xong, vào Mục Kiểm Tra để làm đề có tính giờ và lưu điểm.
+      </p>
+      <a href="{{ url_for('main.exams_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm w-full">
+        Vào Mục Kiểm Tra →
+      </a>
+    </div>
+  </aside>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const TF_POINTS = [0.0, 0.1, 0.25, 0.5, 1.0];
+  const practiceState = {
+    mcqScores: {},
+    tfChoices: {},
+    tfScores: {}
+  };
+
+  function checkMcqAnswer(qId, selectedOpt, btnEl) {
+    const card = document.querySelector(`.practice-mcq-card[data-question-id="${qId}"]`);
+    if (!card) return;
+    const correctOpt = (card.getAttribute('data-correct') || 'A').trim().toUpperCase();
+    const allButtons = card.querySelectorAll('.practice-option-btn');
+    const expBox = document.getElementById(`explanation-${qId}`);
+    const headline = document.getElementById(`feedback-headline-${qId}`);
+    const statusBadge = document.getElementById(`status-badge-${qId}`);
+
+    allButtons.forEach((b) => {
+      b.classList.remove('is-correct', 'is-wrong');
+      b.setAttribute('aria-pressed', b === btnEl ? 'true' : 'false');
+      const keySpan = b.querySelector('.practice-option-key');
+      if (keySpan && keySpan.textContent.trim() === correctOpt) {
+        b.classList.add('is-correct');
+      }
+    });
+
+    const isCorrect = (selectedOpt === correctOpt);
+    if (!isCorrect && btnEl) {
+      btnEl.classList.add('is-wrong');
+    }
+
+    practiceState.mcqScores[qId] = isCorrect ? 0.25 : 0.0;
+
+    if (expBox) {
+      expBox.classList.remove('hidden', 'animate-answer-pop');
+      void expBox.offsetWidth;
+      expBox.classList.add('animate-answer-pop');
+    }
+    if (headline) {
+      headline.textContent = isCorrect
+        ? `✓ Chính xác (+0,25 điểm)! Đáp án đúng là ${correctOpt}.`
+        : `✕ Chưa chính xác (0 điểm). Đáp án đúng là ${correctOpt}.`;
+    }
+    if (statusBadge) {
+      statusBadge.textContent = isCorrect ? '+0,25 / 0,25 điểm' : `0,00 điểm (Đáp án: ${correctOpt})`;
+      statusBadge.style.color = isCorrect ? '#047857' : '#BE123C';
+    }
+
+    updatePracticeMetrics();
+  }
+
+  function selectTfSubAnswer(qId, subKey, val, btnEl) {
+    if (!practiceState.tfChoices[qId]) {
+      practiceState.tfChoices[qId] = {};
+    }
+    practiceState.tfChoices[qId][subKey] = val;
+
+    const card = document.querySelector(`.practice-tf-card[data-question-id="${qId}"]`);
+    if (card) {
+      card.querySelectorAll(`.tf-choice-btn[data-sub="${subKey}"]`).forEach((b) => {
+        b.classList.remove('is-selected', 'is-hit', 'is-miss');
+        b.setAttribute('aria-pressed', b === btnEl ? 'true' : 'false');
+      });
+      if (btnEl) btnEl.classList.add('is-selected');
+    }
+
+    computeTfScore(qId, false);
+    updatePracticeMetrics();
+  }
+
+  function computeTfScore(qId, revealVisuals) {
+    const card = document.querySelector(`.practice-tf-card[data-question-id="${qId}"]`);
+    if (!card) return 0;
+    const correctList = (card.getAttribute('data-correct') || 'D,S,D,D').split(',').map(s => s.trim().toUpperCase());
+    const subKeys = ['a', 'b', 'c', 'd'];
+    const userMap = practiceState.tfChoices[qId] || {};
+
+    let hits = 0;
+    let answeredCount = 0;
+    subKeys.forEach((k, idx) => {
+      const uVal = userMap[k] || '';
+      const cVal = correctList[idx] || 'D';
+      if (uVal) {
+        answeredCount += 1;
+        if (uVal === cVal) hits += 1;
+      }
+      if (revealVisuals) {
+        card.querySelectorAll(`.tf-choice-btn[data-sub="${k}"]`).forEach((btn) => {
+          btn.classList.remove('is-selected', 'is-hit', 'is-miss');
+          const bVal = btn.getAttribute('data-val');
+          if (bVal === cVal) {
+            btn.classList.add('is-hit');
+          } else if (uVal && bVal === uVal && uVal !== cVal) {
+            btn.classList.add('is-miss');
+          }
+        });
+      }
+    });
+
+    const pts = TF_POINTS[hits] || 0.0;
+    practiceState.tfScores[qId] = pts;
+
+    const badge = document.getElementById(`tf-score-badge-${qId}`);
+    if (badge) {
+      badge.textContent = `Đúng ${hits}/4 ý • +${pts.toFixed(2)} điểm`;
+      badge.style.color = hits === 4 ? '#047857' : (hits > 0 ? '#0B4FD8' : '#475569');
+    }
+
+    if (revealVisuals || answeredCount === 4) {
+      const expBox = document.getElementById(`explanation-${qId}`);
+      const headline = document.getElementById(`feedback-headline-${qId}`);
+      if (expBox) {
+        expBox.classList.remove('hidden', 'animate-answer-pop');
+        void expBox.offsetWidth;
+        expBox.classList.add('animate-answer-pop');
+      }
+      if (headline) {
+        headline.textContent = `Kết quả: Trả lời đúng ${hits}/4 ý → Đạt ${pts} điểm (Đáp án chuẩn: a-${correctList[0]}, b-${correctList[1]}, c-${correctList[2]}, d-${correctList[3]})`;
+      }
+    }
+    return pts;
+  }
+
+  function gradeTfCard(qId) {
+    computeTfScore(qId, true);
+    updatePracticeMetrics();
+  }
+
+  function gradeAllPractice() {
+    document.querySelectorAll('.practice-tf-card').forEach((card) => {
+      computeTfScore(card.getAttribute('data-question-id'), true);
+    });
+    document.querySelectorAll('.practice-mcq-card').forEach((card) => {
+      const qId = card.getAttribute('data-question-id');
+      const expBox = document.getElementById(`explanation-${qId}`);
+      if (expBox) {
+        expBox.classList.remove('hidden');
+        expBox.classList.add('animate-answer-pop');
+      }
+    });
+    updatePracticeMetrics();
+  }
+
+  function updatePracticeMetrics() {
+    const part1Sum = Object.values(practiceState.mcqScores).reduce((a, b) => a + b, 0);
+    const part2Sum = Object.values(practiceState.tfScores).reduce((a, b) => a + b, 0);
+    const totalSum = part1Sum + part2Sum;
+
+    const p1El = document.getElementById('stat-part1-score');
+    const p2El = document.getElementById('stat-part2-score');
+    const totEl = document.getElementById('stat-total-score');
+
+    if (p1El) p1El.textContent = `${part1Sum.toFixed(2)} / 6.00`;
+    if (p2El) p2El.textContent = `${part2Sum.toFixed(2)} / 6.00`;
+    if (totEl) totEl.textContent = `${totalSum.toFixed(2)} điểm`;
+
+    const mcqDone = Object.keys(practiceState.mcqScores).length;
+    const tfDone = Object.keys(practiceState.tfChoices).filter((qId) => {
+      const ch = practiceState.tfChoices[qId];
+      return ch && Object.keys(ch).length > 0;
+    }).length;
+    const answeredTotal = mcqDone + tfDone;
+    const totalQuestions = document.querySelectorAll('.practice-mcq-card, .practice-tf-card').length;
+    const pct = totalQuestions ? Math.min(100, Math.round((answeredTotal / totalQuestions) * 100)) : 0;
+
+    const countEl = document.getElementById('practice-answered-count');
+    const barEl = document.getElementById('practice-progress-bar');
+    const pbEl = document.getElementById('practice-progressbar');
+    if (countEl) countEl.textContent = `${answeredTotal} / ${totalQuestions} câu`;
+    if (barEl) barEl.style.width = `${pct}%`;
+    if (pbEl) pbEl.setAttribute('aria-valuenow', String(answeredTotal));
+  }
+
+  function resetPracticeSession() {
+    practiceState.mcqScores = {};
+    practiceState.tfChoices = {};
+    practiceState.tfScores = {};
+
+    document.querySelectorAll('.practice-mcq-card').forEach((card) => {
+      const qId = card.getAttribute('data-question-id');
+      card.querySelectorAll('.practice-option-btn').forEach((b) => {
+        b.classList.remove('is-correct', 'is-wrong');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      const exp = document.getElementById(`explanation-${qId}`);
+      if (exp) exp.classList.add('hidden');
+      const badge = document.getElementById(`status-badge-${qId}`);
+      if (badge) {
+        badge.textContent = '0,25 điểm';
+        badge.style.color = '';
+      }
+    });
+
+    document.querySelectorAll('.practice-tf-card').forEach((card) => {
+      const qId = card.getAttribute('data-question-id');
+      card.querySelectorAll('.tf-choice-btn').forEach((b) => {
+        b.classList.remove('is-selected', 'is-hit', 'is-miss');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      const exp = document.getElementById(`explanation-${qId}`);
+      if (exp) exp.classList.add('hidden');
+      const badge = document.getElementById(`tf-score-badge-${qId}`);
+      if (badge) {
+        badge.textContent = '0,00 / 1,00 điểm';
+        badge.style.color = '#0B4FD8';
+      }
+    });
+
+    updatePracticeMetrics();
+  }
+
+  let activeFlashcardIdx = 0;
+  function stepFlashcard(delta) {
+    const slides = document.querySelectorAll('.flashcard-slide');
+    if (!slides.length) return;
+    slides[activeFlashcardIdx].classList.add('hidden');
+    activeFlashcardIdx = (activeFlashcardIdx + delta + slides.length) % slides.length;
+    slides[activeFlashcardIdx].classList.remove('hidden');
+    const counter = document.getElementById('flashcard-counter');
+    if (counter) counter.textContent = `${activeFlashcardIdx + 1} / ${slides.length}`;
+  }
+
+  function toggleFlashcardFlip(cardEl) {
+    const front = cardEl.querySelector('.flip-face-front');
+    const back = cardEl.querySelector('.flip-face-back');
+    const isFlipped = cardEl.classList.toggle('is-flipped');
+    cardEl.setAttribute('aria-pressed', isFlipped ? 'true' : 'false');
+    if (front) front.setAttribute('aria-hidden', isFlipped ? 'true' : 'false');
+    if (back) back.setAttribute('aria-hidden', isFlipped ? 'false' : 'true');
+  }
+
+  // =========================================================================
+  // PRACTICE EXAM GENERATOR & SELF-STUDY COUNTDOWN TIMER (NO PROCTORING)
+  // =========================================================================
+  const INITIAL_TOPIC = {{ current_topic | tojson }};
+  const INITIAL_GENERATED = {{ is_generated | tojson }};
+  const INITIAL_DURATION_MIN = {{ selected_duration | tojson }};
+
+  let practiceTimerInterval = null;
+  let practiceRemainingSec = INITIAL_DURATION_MIN * 60;
+  let practiceTotalSec = INITIAL_DURATION_MIN * 60;
+  let practiceTimerPaused = false;
+  let hasRevealedCurrentSet = INITIAL_GENERATED;
+
+  function formatMmSs(totalSec) {
+    const s = Math.max(0, Math.floor(totalSec));
+    const mm = String(Math.floor(s / 60)).padStart(2, '0');
+    const ss = String(s % 60).padStart(2, '0');
+    return `${mm}:${ss}`;
+  }
+
+  function updatePracticeTimerUI() {
+    const clockEl = document.getElementById('practice-timer-clock');
+    const progEl = document.getElementById('practice-timer-progress');
+    if (clockEl) {
+      clockEl.textContent = formatMmSs(practiceRemainingSec);
+      if (practiceRemainingSec <= 60) {
+        clockEl.style.color = '#BE123C';
+      } else if (practiceRemainingSec <= 300) {
+        clockEl.style.color = '#D97706';
+      } else {
+        clockEl.style.color = '#0B4FD8';
+      }
+    }
+    if (progEl && practiceTotalSec > 0) {
+      const pct = Math.max(0, Math.min(100, Math.round((practiceRemainingSec / practiceTotalSec) * 100)));
+      progEl.style.width = `${pct}%`;
+    }
+  }
+
+  function startPracticeCountdown(durationMinutes) {
+    clearInterval(practiceTimerInterval);
+    practiceTotalSec = Math.max(1, durationMinutes) * 60;
+    practiceRemainingSec = practiceTotalSec;
+    practiceTimerPaused = false;
+
+    const pauseBtn = document.getElementById('practice-pause-btn');
+    if (pauseBtn) pauseBtn.textContent = 'Tạm dừng';
+    const timeupBanner = document.getElementById('practice-timeup-banner');
+    if (timeupBanner) timeupBanner.classList.add('hidden');
+
+    updatePracticeTimerUI();
+
+    practiceTimerInterval = setInterval(() => {
+      if (practiceTimerPaused) return;
+      practiceRemainingSec = Math.max(0, practiceRemainingSec - 1);
+      updatePracticeTimerUI();
+
+      if (practiceRemainingSec <= 0) {
+        clearInterval(practiceTimerInterval);
+        const banner = document.getElementById('practice-timeup-banner');
+        if (banner) banner.classList.remove('hidden');
+        gradeAllPractice();
+      }
+    }, 1000);
+  }
+
+  function togglePracticeTimerPause() {
+    practiceTimerPaused = !practiceTimerPaused;
+    const pauseBtn = document.getElementById('practice-pause-btn');
+    if (pauseBtn) {
+      pauseBtn.textContent = practiceTimerPaused ? 'Tiếp tục tính giờ' : 'Tạm dừng';
+    }
+  }
+
+  function openPracticeGenerator() {
+    clearInterval(practiceTimerInterval);
+    const setupPanel = document.getElementById('practice-setup-panel');
+    const workspace = document.getElementById('practice-exam-workspace');
+    const metrics = document.getElementById('practice-metrics-strip');
+    if (setupPanel) {
+      setupPanel.classList.remove('hidden');
+      setupPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (workspace) workspace.classList.add('hidden');
+    if (metrics) metrics.classList.add('hidden');
+  }
+
+  function handleGeneratePracticeSubmit(event) {
+    const form = event.target;
+    const topicRadio = form.querySelector('input[name="topic"]:checked');
+    const durRadio = form.querySelector('input[name="duration"]:checked');
+    const chosenTopic = topicRadio ? topicRadio.value : 'ALL';
+    const chosenMinutes = durRadio ? parseInt(durRadio.value, 10) : 45;
+
+    // If first time revealing on this page load and topic matches preloaded set, reveal immediately
+    if (!hasRevealedCurrentSet && chosenTopic === INITIAL_TOPIC) {
+      event.preventDefault();
+      hasRevealedCurrentSet = true;
+      const setupPanel = document.getElementById('practice-setup-panel');
+      const workspace = document.getElementById('practice-exam-workspace');
+      const metrics = document.getElementById('practice-metrics-strip');
+
+      if (setupPanel) setupPanel.classList.add('hidden');
+      if (metrics) metrics.classList.remove('hidden');
+      if (workspace) {
+        workspace.classList.remove('hidden');
+        workspace.classList.add('animate-spring-pop');
+      }
+      resetPracticeSession();
+      startPracticeCountdown(chosenMinutes);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    // Otherwise let the form submit GET /practice?generated=1&topic=...&duration=... to generate a fresh random exam
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (INITIAL_GENERATED) {
+      startPracticeCountdown(INITIAL_DURATION_MIN);
+    }
+  });
+</script>
+{% endblock %}

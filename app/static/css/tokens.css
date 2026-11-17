@@ -1,0 +1,182 @@
+/* ==========================================================================
+   TIN HỌC 11 (ỨNG DỤNG) - THREE-LAYER DESIGN TOKENS (v2.1 Luminous EdTech)
+   Layer 1: Primitives -> Layer 2: Semantic -> Layer 3: Component
+   ========================================================================== */
+
+:root {
+  /* ---------------- LAYER 1: PRIMITIVES ---------------- */
+  --primitive-white: #FFFFFF;
+
+  --primitive-slate-50: #F8FAFC;
+  --primitive-slate-100: #F1F5F9;
+  --primitive-slate-200: #E2E8F0;
+  --primitive-slate-300: #CBD5E1;
+  --primitive-slate-400: #94A3B8;
+  --primitive-slate-500: #64748B;
+  --primitive-slate-600: #475569;
+  --primitive-slate-700: #334155;
+  --primitive-slate-800: #1E293B;
+  --primitive-slate-900: #0F172A;
+  --primitive-slate-950: #020617;
+
+  --primitive-cobalt-50: #EFF6FF;
+  --primitive-cobalt-100: #DBEAFE;
+  --primitive-cobalt-200: #BFDBFE;
+  --primitive-cobalt-300: #93C5FD;
+  --primitive-cobalt-500: #2563EB;
+  --primitive-cobalt-600: #0B4FD8;
+  --primitive-cobalt-700: #093EB0;
+  --primitive-cobalt-800: #08328C;
+  --primitive-cobalt-900: #062466;
+
+  --primitive-indigo-50: #EEF2FF;
+  --primitive-indigo-200: #C7D2FE;
+  --primitive-indigo-600: #4F46E5;
+  --primitive-indigo-700: #4338CA;
+
+  --primitive-violet-50: #F5F3FF;
+  --primitive-violet-200: #DDD6FE;
+  --primitive-violet-700: #6D28D9;
+
+  --primitive-teal-50: #F0FDFA;
+  --primitive-teal-200: #99F6E4;
+  --primitive-teal-700: #0F766E;
+
+  --primitive-coral-50: #FFF7ED;
+  --primitive-coral-200: #FED7AA;
+  --primitive-coral-700: #C2410C;
+
+  --primitive-sky-50: #F0F9FF;
+  --primitive-sky-200: #BAE6FD;
+  --primitive-sky-700: #0369A1;
+
+  --primitive-emerald-50: #ECFDF5;
+  --primitive-emerald-200: #A7F3D0;
+  --primitive-emerald-600: #059669;
+  --primitive-emerald-700: #047857;
+
+  --primitive-amber-50: #FFFBEB;
+  --primitive-amber-200: #FDE68A;
+  --primitive-amber-700: #B45309;
+  --primitive-amber-800: #92400E;
+
+  --primitive-rose-50: #FFF1F2;
+  --primitive-rose-200: #FECDD3;
+  --primitive-rose-600: #E11D48;
+  --primitive-rose-700: #BE123C;
+
+  /* Fonts & Radii */
+  --font-display: 'Be Vietnam Pro', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* ---------------- LAYER 2: SEMANTIC TOKENS ---------------- */
+  --color-bg-canvas: #F3F6FC;
+  --color-bg-surface: var(--primitive-white);
+  --color-bg-subtle: var(--primitive-slate-100);
+  --color-bg-inset: var(--primitive-slate-50);
+  --color-bg-glass: rgba(255, 255, 255, 0.84);
+  --color-bg-glass-strong: rgba(255, 255, 255, 0.94);
+
+  --color-text-title: var(--primitive-slate-900);
+  --color-text-body: var(--primitive-slate-700);
+  --color-text-muted: var(--primitive-slate-600);
+  --color-text-placeholder: var(--primitive-slate-500);
+
+  --color-primary: var(--primitive-cobalt-600);
+  --color-primary-hover: var(--primitive-cobalt-700);
+  --color-primary-active: var(--primitive-cobalt-800);
+  --color-primary-soft: var(--primitive-cobalt-50);
+  --color-primary-border: var(--primitive-cobalt-200);
+
+  --color-secondary: var(--primitive-indigo-700);
+  --color-secondary-soft: var(--primitive-indigo-50);
+  --color-secondary-border: var(--primitive-indigo-200);
+
+  --color-accent: var(--primitive-sky-700);
+  --color-accent-soft: var(--primitive-sky-50);
+  --color-accent-border: var(--primitive-sky-200);
+
+  --color-success: var(--primitive-emerald-700);
+  --color-success-soft: var(--primitive-emerald-50);
+  --color-success-border: var(--primitive-emerald-200);
+
+  --color-warning: var(--primitive-amber-800);
+  --color-warning-soft: var(--primitive-amber-50);
+  --color-warning-border: var(--primitive-amber-200);
+
+  --color-danger: var(--primitive-rose-700);
+  --color-danger-solid: var(--primitive-rose-600);
+  --color-danger-soft: var(--primitive-rose-50);
+  --color-danger-border: var(--primitive-rose-200);
+
+  --color-border-subtle: var(--primitive-slate-200);
+  --color-border-strong: var(--primitive-slate-300);
+  --color-border-control: var(--primitive-slate-500);
+  --color-focus-ring: var(--primitive-cobalt-600);
+
+  /* Document Format Tokens */
+  --doc-pptx: var(--primitive-amber-800);
+  --doc-pptx-soft: var(--primitive-amber-50);
+  --doc-pptx-border: var(--primitive-amber-200);
+
+  --doc-docx: var(--primitive-cobalt-600);
+  --doc-docx-soft: var(--primitive-cobalt-50);
+  --doc-docx-border: var(--primitive-cobalt-200);
+
+  --doc-pdf: var(--primitive-rose-700);
+  --doc-pdf-soft: var(--primitive-rose-50);
+  --doc-pdf-border: var(--primitive-rose-200);
+
+  /* ---------------- LAYER 3: COMPONENT TOKENS ---------------- */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 4px 16px -4px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 16px 36px -10px rgba(11, 79, 216, 0.16), 0 6px 14px -6px rgba(15, 23, 42, 0.08);
+  --shadow-primary: 0 6px 18px -4px rgba(11, 79, 216, 0.42);
+  --shadow-modal: 0 28px 60px -14px rgba(15, 23, 42, 0.3), 0 6px 18px rgba(15, 23, 42, 0.08);
+
+  --gradient-brand: linear-gradient(135deg, #0B4FD8 0%, #4F46E5 100%);
+  --gradient-brand-hover: linear-gradient(135deg, #093EB0 0%, #4338CA 100%);
+  --gradient-hero-text: linear-gradient(120deg, #0B4FD8 0%, #4F46E5 55%, #0369A1 100%);
+
+  --sidebar-width: 268px;
+  --topbar-height: 64px;
+  --duration-fast: 160ms;
+  --duration-normal: 260ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Legacy aliases */
+  --bg-canvas: var(--color-bg-canvas);
+  --bg-subtle: var(--color-bg-subtle);
+  --bg-surface: var(--color-bg-surface);
+  --text-title: var(--color-text-title);
+  --text-body: var(--color-text-body);
+  --text-muted: var(--color-text-muted);
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-soft: var(--color-primary-soft);
+  --primary-border: var(--color-primary-border);
+  --success: var(--color-success);
+  --success-soft: var(--color-success-soft);
+  --success-border: var(--color-success-border);
+  --warning: var(--color-warning);
+  --warning-soft: var(--color-warning-soft);
+  --warning-border: var(--color-warning-border);
+  --danger: var(--color-danger);
+  --danger-soft: var(--color-danger-soft);
+  --danger-border: var(--color-danger-border);
+  --border-subtle: var(--color-border-subtle);
+  --border-light: var(--color-border-subtle);
+  --border-strong: var(--color-border-strong);
+  --soft-shadow: var(--shadow-card);
+  --soft-shadow-sm: var(--shadow-xs);
+  --soft-shadow-hover: var(--shadow-hover);
+}

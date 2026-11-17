@@ -1,98 +1,105 @@
-{% extends "base.html" %}
-
-{% block title %}Biên Bản Giám Sát: {{ submission.student.full_name }}{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Hồ Sơ Giám Sát Thi - {{ submission.student.full_name }}{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 20px;">
-  <a href="{{ url_for('main.exam_detail', exam_id=submission.exam_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
-    ← Quay lại Đề kiểm tra: {{ submission.exam.title }}
-  </a>
-</div>
-
-<!-- Header Card -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+<section class="ds-banner ds-banner-grid-bg p-6 sm:p-7">
+  <div class="flex flex-wrap justify-between items-center gap-4">
     <div>
-      <span class="clay-badge badge-pdf" style="margin-bottom: 8px;">🚨 Biên Bản Giám Sát Thi Trực Tuyến</span>
-      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">
-        Học sinh: {{ submission.student.full_name }}
-      </h1>
-      <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.9rem;">
-        Đề thi: <strong>{{ submission.exam.title }}</strong> • Lớp: <strong>{{ submission.exam.classroom.name }}</strong>
+      <span class="inline-block px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] text-xs font-bold uppercase tracking-wide mb-2">
+        Báo Cáo An Ninh Khảo Thí (Proctoring v2.0)
+      </span>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Nhật Ký Giám Sát: {{ submission.student.full_name }}</h1>
+      <p class="text-sm text-slate-600 mt-1">
+        Đề kiểm tra: <strong class="text-slate-900">{{ submission.exam.title }}</strong> • Lớp: <strong class="text-slate-900">{{ submission.exam.classroom.name }}</strong>
       </p>
     </div>
 
-    <div style="text-align: right;">
-      <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">
-        {{ submission.score }} / {{ submission.total_points }} điểm
-      </div>
-      <div style="margin-top: 4px;">
-        {% if submission.violations_count > 0 %}
-          <span class="clay-badge badge-pdf">
-            ⚠️ {{ submission.violations_count }} Lần Vi Phạm Quy Chế
-          </span>
-        {% else %}
-          <span class="clay-badge badge-student">
-            ✅ Bài làm trung thực (0 vi phạm)
-          </span>
-        {% endif %}
-      </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <a href="{{ url_for('main.exam_result', submission_id=submission.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+        Xem bài làm chi tiết
+      </a>
+      <form action="{{ url_for('main.reset_submission', submission_id=submission.id) }}" method="POST" onsubmit="return confirm('Xóa lượt thi này để cho phép học sinh {{ submission.student.full_name }} làm lại bài?');">
+        <button type="submit" class="clay-btn clay-btn-danger clay-btn-sm">
+          Mở Khóa Cho Thi Lại
+        </button>
+      </form>
+      <a href="{{ url_for('main.exam_detail', exam_id=submission.exam_id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+        Quay lại đề thi
+      </a>
     </div>
+  </div>
+</section>
+
+{% set trust_pct = [0, (100 - (submission.violations_count * 100 // submission.exam.max_violations))]|max %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+    <div class="text-xs font-bold uppercase text-slate-600 mb-1">Điểm số đạt được</div>
+    <div class="text-3xl font-extrabold text-[#0B4FD8] font-mono tabular-nums">{{ submission.score }} <span class="text-base font-semibold text-slate-600">/ {{ submission.total_points }}đ</span></div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+    <div class="text-xs font-bold uppercase text-slate-600 mb-1">Số lần vi phạm</div>
+    <div class="text-3xl font-extrabold text-[#BE123C] font-mono tabular-nums">{{ submission.violations_count }} <span class="text-base font-semibold text-slate-600">/ {{ submission.exam.max_violations }}</span></div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+    <div class="text-xs font-bold uppercase text-slate-600 mb-1">Chỉ số tin cậy</div>
+    <div class="text-3xl font-extrabold font-mono tabular-nums {% if trust_pct >= 70 %}text-[#047857]{% elif trust_pct >= 40 %}text-amber-700{% else %}text-[#BE123C]{% endif %}">{{ trust_pct }}%</div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+    <div class="text-xs font-bold uppercase text-slate-600 mb-2">Trạng thái bài thi</div>
+    {% if submission.status == 'submitted' %}
+      <span class="clay-badge badge-student">Nộp bài hợp lệ</span>
+    {% elif submission.status == 'auto_submitted_violation' %}
+      <span class="clay-badge badge-pdf">Thu bài tự động (Vượt ngưỡng)</span>
+    {% else %}
+      <span class="clay-badge badge-admin">Đang làm bài</span>
+    {% endif %}
   </div>
 </div>
 
-<!-- Timeline of Events -->
-<div class="clay-card">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title);">
-      ⏱️ Nhật Ký Thời Gian Thực (Proctoring Event Logs)
-    </h2>
-    <span class="clay-badge badge-teacher">Hệ thống ghi nhận</span>
+<section class="clay-card">
+  <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+    <h2 class="font-display text-lg font-extrabold text-slate-900">Dòng Thời Gian Sự Kiện Giám Sát ({{ logs|length }})</h2>
+    <span class="text-xs font-mono text-slate-600">Bắt đầu lúc: {{ submission.started_at.strftime('%H:%M:%S %d/%m/%Y') if submission.started_at else 'N/A' }}</span>
   </div>
 
   {% if logs %}
-    <div style="overflow-x: auto;">
-      <table class="clay-doc-table">
-        <thead>
-          <tr>
-            <th>Thời Điểm Ghi Nhận</th>
-            <th>Loại Sự Kiện Vi Phạm</th>
-            <th>Mô Tả Chi Tiết Hành Vi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for log in logs %}
-            <tr>
-              <td style="font-family: monospace; font-size: 0.88rem; font-weight: 600;">
-                {{ log.timestamp.strftime('%H:%M:%S (%d/%m/%Y)') }}
-              </td>
-              <td>
-                {% if log.event_type == 'TAB_SWITCH' %}
-                  <span class="clay-badge badge-pdf">🔄 RỜI TAB / CHUYỂN ỨNG DỤNG</span>
-                {% elif log.event_type == 'EXIT_FULLSCREEN' %}
-                  <span class="clay-badge badge-pptx">🖥️ THOÁT TOÀN MÀN HÌNH</span>
-                {% elif log.event_type == 'DEVTOOLS_ATTEMPT' %}
-                  <span class="clay-badge badge-pdf">🛑 MỞ DEV TOOLS / PHÍM TẮT</span>
-                {% elif log.event_type == 'WINDOW_BLUR' %}
-                  <span class="clay-badge badge-docx">⚡ MẤT TIÊU ĐIỂM (BLUR)</span>
-                {% else %}
-                  <span class="clay-badge badge-teacher">{{ log.event_type }}</span>
-                {% endif %}
-              </td>
-              <td style="color: var(--text-body); font-weight: 500;">
-                {{ log.details }}
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+  <div class="overflow-x-auto">
+    <table class="clay-doc-table">
+      <thead>
+        <tr>
+          <th scope="col" class="w-[60px]">#</th>
+          <th scope="col" class="w-[220px]">Cảm Biến Phát Hiện</th>
+          <th scope="col">Chi Tiết Hành Vi Ghi Nhận</th>
+          <th scope="col" class="text-right w-[180px]">Thời Điểm</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td class="font-bold text-slate-600 font-mono">{{ loop.index }}</td>
+          <td>
+            {% if log.event_type in ['TAB_SWITCH', 'WINDOW_BLUR'] %}
+              <span class="px-2.5 py-0.5 rounded bg-rose-50 border border-rose-200 text-[#BE123C] font-mono text-xs font-bold">{{ log.event_type }}</span>
+            {% elif log.event_type in ['EXIT_FULLSCREEN', 'FULLSCREEN_TIMEOUT'] %}
+              <span class="px-2.5 py-0.5 rounded bg-amber-50 border border-amber-200 text-amber-800 font-mono text-xs font-bold">{{ log.event_type }}</span>
+            {% elif log.event_type == 'SPLIT_SCREEN_RESIZE' %}
+              <span class="px-2.5 py-0.5 rounded bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-bold">{{ log.event_type }}</span>
+            {% else %}
+              <span class="px-2.5 py-0.5 rounded bg-slate-900 text-white font-mono text-xs font-bold">{{ log.event_type }}</span>
+            {% endif %}
+          </td>
+          <td class="text-sm text-slate-700">{{ log.details }}</td>
+          <td class="text-right font-mono text-xs text-slate-600">{{ log.timestamp.strftime('%H:%M:%S - %d/%m/%Y') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% else %}
-    <div style="text-align: center; padding: 36px; color: var(--text-muted);">
-      <div style="font-size: 2.2rem; margin-bottom: 8px;">🌟</div>
-      <p style="font-size: 1.05rem; font-weight: 700; color: var(--success);">Không phát hiện bất kỳ hành vi khả nghi nào!</p>
-      <p style="font-size: 0.88rem;">Học sinh làm bài liên tục trên màn hình và tuân thủ nghiêm túc quy chế thi.</p>
-    </div>
+  <div class="p-8 rounded-xl border border-slate-200 bg-slate-50 text-center">
+    <p class="font-bold text-[#047857] mb-1">100% Nghiêm Túc — Không phát hiện vi phạm quy chế thi</p>
+    <p class="text-sm text-slate-600">Học sinh giữ nguyên màn hình làm bài trong suốt thời gian kiểm tra.</p>
+  </div>
   {% endif %}
-</div>
+</section>
 {% endblock %}

@@ -3,82 +3,72 @@
 {% block title %}Mục Quản Trị Hệ Thống - Tin học 11{% endblock %}
 
 {% block content %}
-<!-- Section Header Banner -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+<!-- Hero Banner (Consistent with Admin Dashboard) -->
+<section class="ds-banner ds-banner-grid-bg p-6 sm:p-7">
+  <div class="flex flex-wrap justify-between items-center gap-4">
     <div>
-      <span class="clay-badge badge-admin" style="margin-bottom: 8px;">⚙️ TRUNG TÂM ĐIỀU HÀNH</span>
-      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Mục Quản Trị & Giám Sát</h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
-        Quản lý người dùng, phân quyền Giáo viên / Học sinh và theo dõi nhật ký vi phạm quy chế thi cử
-      </p>
-    </div>
-
-    <div style="display: flex; gap: 10px;">
-      <span class="clay-badge badge-pdf animate-radar" style="font-size: 0.85rem; padding: 6px 16px;">
-        Hệ thống Proctoring Đang Bật
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] text-xs font-bold uppercase tracking-wide mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0B4FD8]" aria-hidden="true"></span>
+        Mục Quản Trị &amp; Kiểm Soát
       </span>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        Quản Trị &amp; Giám Sát Toàn Diện
+      </h1>
+      <p class="text-sm text-slate-600 mt-1">Phân quyền tài khoản, biên tập bài học và theo dõi nhật ký phòng thi chi tiết</p>
     </div>
-  </div>
-</div>
 
-<!-- Stats Grid -->
-<div class="grid-4" style="margin-bottom: 32px;">
-  <div class="clay-card" style="text-align: center; padding: 22px;">
-    <div style="font-size: 1.8rem; margin-bottom: 4px;">👥</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">{{ stats.total_users }}</div>
-    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">TỔNG TÀI KHOẢN</div>
+    <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+      Quản Lý &amp; Sửa Bài Học →
+    </a>
   </div>
+</section>
 
-  <div class="clay-card" style="text-align: center; padding: 22px;">
-    <div style="font-size: 1.8rem; margin-bottom: 4px;">👨‍🏫</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan);">{{ stats.total_teachers }}</div>
-    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">GIÁO VIÊN</div>
+<!-- Compact Metric Strip -->
+<div class="metric-strip" data-reveal-group>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Tổng tài khoản</span>
+    <span class="metric-cell-value" data-countup="{{ stats.total_users }}">{{ stats.total_users }}</span>
   </div>
-
-  <div class="clay-card" style="text-align: center; padding: 22px;">
-    <div style="font-size: 1.8rem; margin-bottom: 4px;">🎓</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--success);">{{ stats.total_students }}</div>
-    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">HỌC SINH</div>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Giáo viên</span>
+    <span class="metric-cell-value" data-countup="{{ stats.total_teachers }}">{{ stats.total_teachers }}</span>
   </div>
-
-  <div class="clay-card" style="text-align: center; padding: 22px;">
-    <div style="font-size: 1.8rem; margin-bottom: 4px;">🚨</div>
-    <div style="font-size: 1.8rem; font-weight: 800; color: var(--danger);">{{ stats.total_violations }}</div>
-    <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;">CẢNH BÁO VI PHẠM</div>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Học sinh</span>
+    <span class="metric-cell-value" data-countup="{{ stats.total_students }}">{{ stats.total_students }}</span>
+  </div>
+  <div class="metric-cell" data-reveal>
+    <span class="metric-cell-label">Lượt vi phạm</span>
+    <span class="metric-cell-value text-[#BE123C]" data-countup="{{ stats.total_violations }}">{{ stats.total_violations }}</span>
   </div>
 </div>
 
 <!-- Section 1: User Management & RBAC -->
-<div class="clay-card" style="margin-bottom: 36px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
-    <div>
-      <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title);">
-        👤 Quản Lý Tài Khoản & Phân Quyền Người Dùng
-      </h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem;">Phân quyền Giáo viên hoặc Học sinh theo phân công chuyên môn</p>
-    </div>
+<section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs mb-6">
+  <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+    <h2 class="font-display text-lg font-extrabold text-slate-900">Quản Lý Tài Khoản &amp; Phân Quyền</h2>
+    <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">{{ users|length }} tài khoản</span>
   </div>
 
-  <div style="overflow-x: auto;">
+  <div class="overflow-x-auto">
     <table class="clay-doc-table">
       <thead>
         <tr>
-          <th>Họ và Tên</th>
-          <th>Tên Đăng Nhập</th>
-          <th>Email</th>
-          <th>Vai Trò Hiện Tại</th>
+          <th scope="col">Họ và Tên</th>
+          <th scope="col">Tên Đăng Nhập</th>
+          <th scope="col">Email</th>
+          <th scope="col">Vai Trò</th>
           {% if current_user.is_admin %}
-            <th>Thay Đổi Quyền</th>
+            <th scope="col">Cập Nhật Quyền</th>
           {% endif %}
         </tr>
       </thead>
       <tbody>
         {% for u in users %}
           <tr>
-            <td><strong>{{ u.full_name }}</strong></td>
-            <td><code>{{ u.username }}</code></td>
-            <td>{{ u.email }}</td>
+            <td class="font-bold text-slate-900">{{ u.full_name }}</td>
+            <td><code class="text-xs font-mono bg-slate-100 px-2 py-0.5 rounded">{{ u.username }}</code></td>
+            <td class="text-slate-700">{{ u.email }}</td>
             <td>
               <span class="clay-badge {% if u.role == 'admin' %}badge-admin{% elif u.role == 'teacher' %}badge-teacher{% else %}badge-student{% endif %}">
                 {{ u.role | upper }}
@@ -87,18 +77,19 @@
             {% if current_user.is_admin %}
               <td>
                 {% if u.id != current_user.id %}
-                  <form method="POST" action="{{ url_for('main.update_user_role', user_id=u.id) }}" style="display: flex; gap: 6px; align-items: center;">
-                    <select name="role" class="clay-select" style="padding: 4px 8px; font-size: 0.82rem; width: 130px;">
+                  <form method="POST" action="{{ url_for('main.update_user_role', user_id=u.id) }}" class="flex items-center gap-2">
+                    <label for="manage-role-{{ u.id }}" class="sr-only">Vai trò của {{ u.full_name }}</label>
+                    <select id="manage-role-{{ u.id }}" name="role" class="clay-select py-1.5 px-2.5 text-xs min-h-[36px] w-[130px]">
                       <option value="student" {% if u.role == 'student' %}selected{% endif %}>Học sinh</option>
                       <option value="teacher" {% if u.role == 'teacher' %}selected{% endif %}>Giáo viên</option>
                       <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
                     </select>
-                    <button type="submit" class="clay-btn clay-btn-primary" style="padding: 5px 10px; font-size: 0.78rem;">
+                    <button type="submit" class="clay-btn clay-btn-primary clay-btn-sm">
                       Lưu
                     </button>
                   </form>
                 {% else %}
-                  <span style="font-size: 0.8rem; color: var(--text-muted);">(Tài khoản hiện tại)</span>
+                  <span class="text-xs font-semibold text-slate-600">Tài khoản hiện tại</span>
                 {% endif %}
               </td>
             {% endif %}
@@ -107,80 +98,77 @@
       </tbody>
     </table>
   </div>
-</div>
+</section>
 
 <!-- Section 2: Comprehensive Proctoring Audit Log -->
-<div class="clay-card">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-    <div>
-      <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title);">
-        🚨 Nhật Ký Giám Sát Chống Gian Lận Toàn Hệ Thống
-      </h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem;">Ghi nhận tự động các hành vi chuyển tab, thoát toàn màn hình và phím tắt</p>
-    </div>
+<section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+  <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+    <h2 class="font-display text-lg font-extrabold text-slate-900">Nhật Ký Giám Sát Phòng Thi</h2>
 
-    <!-- Event filter buttons -->
-    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-      <a href="{{ url_for('main.admin_manage') }}" class="clay-btn {% if not current_event %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 5px 12px; font-size: 0.78rem;">
+    <nav aria-label="Lọc sự kiện vi phạm" class="segmented-tabs">
+      <a href="{{ url_for('main.admin_manage') }}" {% if not current_event %}aria-current="page"{% endif %} class="segmented-tab {% if not current_event %}active{% endif %}">
         Tất cả
       </a>
-      <a href="{{ url_for('main.admin_manage', event='TAB_SWITCH') }}" class="clay-btn {% if current_event == 'TAB_SWITCH' %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 5px 12px; font-size: 0.78rem;">
+      <a href="{{ url_for('main.admin_manage', event='TAB_SWITCH') }}" {% if current_event == 'TAB_SWITCH' %}aria-current="page"{% endif %} class="segmented-tab {% if current_event == 'TAB_SWITCH' %}active{% endif %}">
         Rời Tab
       </a>
-      <a href="{{ url_for('main.admin_manage', event='EXIT_FULLSCREEN') }}" class="clay-btn {% if current_event == 'EXIT_FULLSCREEN' %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 5px 12px; font-size: 0.78rem;">
+      <a href="{{ url_for('main.admin_manage', event='EXIT_FULLSCREEN') }}" {% if current_event == 'EXIT_FULLSCREEN' %}aria-current="page"{% endif %} class="segmented-tab {% if current_event == 'EXIT_FULLSCREEN' %}active{% endif %}">
         Thoát Fullscreen
       </a>
-      <a href="{{ url_for('main.admin_manage', event='DEVTOOLS_ATTEMPT') }}" class="clay-btn {% if current_event == 'DEVTOOLS_ATTEMPT' %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 5px 12px; font-size: 0.78rem;">
-        Phím Tắt / F12
+      <a href="{{ url_for('main.admin_manage', event='DEVTOOLS_ATTEMPT') }}" {% if current_event == 'DEVTOOLS_ATTEMPT' %}aria-current="page"{% endif %} class="segmented-tab {% if current_event == 'DEVTOOLS_ATTEMPT' %}active{% endif %}">
+        Phím tắt / F12
       </a>
-    </div>
+    </nav>
   </div>
 
-  <div style="overflow-x: auto;">
+  <div class="overflow-x-auto">
     <table class="clay-doc-table">
       <thead>
         <tr>
-          <th>Thời Điểm</th>
-          <th>Học Sinh</th>
-          <th>Đề Thi</th>
-          <th>Hành Vi Vi Phạm</th>
-          <th>Mô Tả Chi Tiết</th>
+          <th scope="col">Thời Điểm</th>
+          <th scope="col">Học Sinh</th>
+          <th scope="col">Đề Thi</th>
+          <th scope="col">Loại Vi Phạm</th>
+          <th scope="col">Chi Tiết</th>
         </tr>
       </thead>
       <tbody>
         {% if violations %}
           {% for log in violations %}
             <tr>
-              <td style="font-family: monospace; font-size: 0.85rem; font-weight: 600;">
-                {{ log.timestamp.strftime('%H:%M:%S (%d/%m/%Y)') }}
+              <td class="font-mono text-xs text-slate-600">
+                {{ log.timestamp.strftime('%H:%M:%S %d/%m/%Y') }}
               </td>
-              <td><strong>{{ log.submission.student.full_name }}</strong> ({{ log.submission.student.username }})</td>
-              <td>{{ log.submission.exam.title }}</td>
+              <td>
+                <strong class="text-slate-900">{{ log.submission.student.full_name }}</strong>
+                <span class="text-slate-600 text-xs font-mono">({{ log.submission.student.username }})</span>
+              </td>
+              <td class="text-slate-800">{{ log.submission.exam.title }}</td>
               <td>
                 {% if log.event_type == 'TAB_SWITCH' %}
-                  <span class="clay-badge badge-pdf">🔄 RỜI TAB</span>
+                  <span class="clay-badge badge-pdf">RỜI TAB</span>
                 {% elif log.event_type == 'EXIT_FULLSCREEN' %}
-                  <span class="clay-badge badge-pptx">🖥️ THOÁT TOÀN MÀN HÌNH</span>
+                  <span class="clay-badge badge-pptx">THOÁT FULLSCREEN</span>
                 {% elif log.event_type == 'DEVTOOLS_ATTEMPT' %}
-                  <span class="clay-badge badge-pdf">🛑 PHÍM TẮT / F12</span>
+                  <span class="clay-badge badge-pdf">PHÍM TẮT / F12</span>
                 {% elif log.event_type == 'WINDOW_BLUR' %}
-                  <span class="clay-badge badge-docx">⚡ MẤT TIÊU ĐIỂM</span>
+                  <span class="clay-badge badge-docx">MẤT TIÊU ĐIỂM</span>
                 {% else %}
                   <span class="clay-badge badge-teacher">{{ log.event_type }}</span>
                 {% endif %}
               </td>
-              <td style="color: var(--text-body); font-size: 0.88rem;">{{ log.details }}</td>
+              <td class="text-slate-700 text-sm">{{ log.details }}</td>
             </tr>
           {% endfor %}
         {% else %}
           <tr>
-            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">
-              Chưa ghi nhận vi phạm nào. Hệ thống phòng thi an toàn tuyệt đối!
+            <td colspan="5" class="text-center text-slate-600 py-6">
+              Chưa ghi nhận vi phạm nào.
             </td>
           </tr>
         {% endif %}
       </tbody>
     </table>
   </div>
-</div>
+</section>
 {% endblock %}

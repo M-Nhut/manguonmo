@@ -3,90 +3,90 @@
 {% block title %}Kho Tài Liệu Số - Tin học 11 Ứng dụng{% endblock %}
 
 {% block content %}
-<!-- Section Header Banner -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-    <div>
-      <span class="clay-badge badge-teacher" style="margin-bottom: 8px;">📁 KHO HỌC LIỆU SỐ</span>
-      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Kho Tài Liệu PPT, DOCX & PDF</h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
-        Truy cập và xem trực tiếp tất cả slide bài giảng, văn bản giáo trình và tài liệu PDF môn Tin học 11 ngay trên trình duyệt
-      </p>
-    </div>
-
-    <!-- Upload hint for teacher -->
-    {% if current_user.is_teacher or current_user.is_admin %}
-      <div>
-        <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary" style="padding: 9px 18px; font-size: 0.88rem;">
-          📤 Tải Lên Trong Bài Học
-        </a>
-      </div>
-    {% endif %}
+<section class="page-header-bar">
+  <div>
+    <h1>Kho Tài Liệu</h1>
+    <p>Tài liệu Word, PDF, PowerPoint và Video bài giảng chuẩn chương trình Tin học 11</p>
   </div>
-</div>
 
-<!-- Format Filter Tabs -->
-<div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
-  <a href="{{ url_for('main.materials_list') }}" class="clay-btn {% if not current_type %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 8px 16px; font-size: 0.88rem;">
-    Tất cả tài liệu ({{ counts.all }})
-  </a>
-  <a href="{{ url_for('main.materials_list', type='pptx') }}" class="clay-btn {% if current_type == 'pptx' %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 8px 16px; font-size: 0.88rem;">
-    📊 Slide PowerPoint ({{ counts.pptx }})
-  </a>
-  <a href="{{ url_for('main.materials_list', type='docx') }}" class="clay-btn {% if current_type == 'docx' %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 8px 16px; font-size: 0.88rem;">
-    📝 Văn bản Word (.docx) ({{ counts.docx }})
-  </a>
-  <a href="{{ url_for('main.materials_list', type='pdf') }}" class="clay-btn {% if current_type == 'pdf' %}clay-btn-primary{% else %}clay-btn-secondary{% endif %}" style="padding: 8px 16px; font-size: 0.88rem;">
-    📄 Tài liệu PDF ({{ counts.pdf }})
-  </a>
-</div>
+  {% if current_user.is_teacher or current_user.is_admin %}
+    <div>
+      <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+        + Tải lên trong bài học
+      </a>
+    </div>
+  {% endif %}
+</section>
+
+<!-- Segmented Format Filter Tabs -->
+<nav aria-label="Lọc theo định dạng tài liệu" class="mb-6">
+  <div class="segmented-tabs">
+    <a href="{{ url_for('main.materials_list') }}" {% if not current_type %}aria-current="page"{% endif %} class="segmented-tab {% if not current_type %}active{% endif %}">
+      Tất cả ({{ counts.all }})
+    </a>
+    <a href="{{ url_for('main.materials_list', type='docx') }}" {% if current_type == 'docx' %}aria-current="page"{% endif %} class="segmented-tab {% if current_type == 'docx' %}active{% endif %}">
+      Word DOCX ({{ counts.docx }})
+    </a>
+    <a href="{{ url_for('main.materials_list', type='pdf') }}" {% if current_type == 'pdf' %}aria-current="page"{% endif %} class="segmented-tab {% if current_type == 'pdf' %}active{% endif %}">
+      Tài liệu PDF ({{ counts.pdf }})
+    </a>
+    <a href="{{ url_for('main.materials_list', type='pptx') }}" {% if current_type == 'pptx' %}aria-current="page"{% endif %} class="segmented-tab {% if current_type == 'pptx' %}active{% endif %}">
+      PowerPoint ({{ counts.pptx }})
+    </a>
+    <a href="{{ url_for('main.materials_list', type='video') }}" {% if current_type == 'video' %}aria-current="page"{% endif %} class="segmented-tab {% if current_type == 'video' %}active{% endif %}">
+      Video Bài Giảng ({{ counts.video | default(0) }})
+    </a>
+  </div>
+</nav>
 
 <!-- Materials Grid -->
 {% if materials %}
-  <div class="grid-3" style="margin-bottom: 36px;">
+  <div class="grid-3 mb-9" data-reveal-group>
     {% for m in materials %}
-      <div class="clay-card animate-spring-pop">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-          <div>
+      <article class="clay-card card-interactive flex flex-col justify-between gap-4 group" data-reveal>
+        <div>
+          <div class="flex justify-between items-center mb-3">
             {% if m.file_type in ['pptx', 'ppt'] %}
-              <span class="clay-badge badge-pptx" style="font-weight: 800; font-size: 0.82rem;">📊 POWERPOINT</span>
+              <span class="clay-badge badge-pptx">PPTX</span>
             {% elif m.file_type == 'docx' %}
-              <span class="clay-badge badge-docx" style="font-weight: 800; font-size: 0.82rem;">📝 WORD (.DOCX)</span>
+              <span class="clay-badge badge-docx">DOCX</span>
             {% elif m.file_type == 'pdf' %}
-              <span class="clay-badge badge-pdf" style="font-weight: 800; font-size: 0.82rem;">📄 TÀI LIỆU PDF</span>
+              <span class="clay-badge badge-pdf">PDF</span>
+            {% elif m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}
+              <span class="clay-badge badge-video">VIDEO {{ m.file_type | upper }}</span>
             {% endif %}
+            <span class="text-xs text-slate-600 font-mono">
+              {{ m.file_size | filesize }}
+            </span>
           </div>
-          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
-            {{ m.file_size | filesize }}
+
+          <h2 class="font-display text-base font-bold text-slate-900 mb-1.5 leading-snug">
+            <a href="{{ url_for('main.view_material', material_id=m.id) }}" class="card-link hover:text-[#0B4FD8] transition after:absolute after:inset-0">
+              {{ m.title }}
+            </a>
+          </h2>
+
+          <p class="text-xs text-slate-600">
+            {{ m.lesson.title }}
+          </p>
+        </div>
+
+        <footer class="flex gap-2 border-t border-slate-100 pt-3">
+          <span class="clay-btn clay-btn-primary clay-btn-sm flex-1" aria-hidden="true">
+            {% if m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}Xem Video{% else %}Xem trực tuyến{% endif %}
           </span>
-        </div>
-
-        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-title); margin-bottom: 6px; line-height: 1.4;">
-          {{ m.title }}
-        </h3>
-
-        <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5;">
-          Thuộc bài: <strong>{{ m.lesson.title }}</strong><br>
-          Tên tệp: <code>{{ m.original_name }}</code>
-        </div>
-
-        <div style="display: flex; gap: 8px; border-top: 1px solid var(--border-light); padding-top: 14px;">
-          <a href="{{ url_for('main.view_material', material_id=m.id) }}" class="clay-btn clay-btn-primary" style="padding: 7px 14px; font-size: 0.82rem; flex: 1; text-align: center;">
-            👁️ Xem Trực Tuyến
+          <a href="{{ url_for('main.download_material', material_id=m.id) }}" class="relative z-20 clay-btn clay-btn-secondary clay-btn-sm" aria-label="Tải về {{ m.title }}">
+            Tải về
           </a>
-          <a href="{{ url_for('main.download_material', material_id=m.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 12px; font-size: 0.82rem;" title="Tải xuống">
-            ⬇️
-          </a>
-        </div>
-      </div>
+        </footer>
+      </article>
     {% endfor %}
   </div>
 {% else %}
-  <div class="clay-card" style="text-align: center; padding: 48px;">
-    <div style="font-size: 2.5rem; margin-bottom: 12px;">📁</div>
-    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">Không Tìm Thấy Tài Liệu Phù Hợp</h3>
-    <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 480px; margin: 0 auto 20px;">
-      Hiện tại chưa có tài liệu nào thuộc định dạng này. Giáo viên có thể truy cập vào bài học để tải lên tệp PPT, DOCX hoặc PDF!
+  <div class="clay-card text-center py-10">
+    <h2 class="font-display text-lg font-extrabold text-slate-900 mb-1.5">Chưa có tài liệu thuộc định dạng này</h2>
+    <p class="text-slate-600 text-sm">
+      Giáo viên có thể truy cập vào bài học để tải lên tệp DOCX, PDF, PPTX hoặc Video (.mp4, .webm).
     </p>
   </div>
 {% endif %}

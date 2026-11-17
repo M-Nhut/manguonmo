@@ -55,10 +55,10 @@ def seed_database():
         db.session.add(classroom)
         db.session.commit()
 
-        # 4. Tạo Khóa học mẫu
+        # 4. Tạo Khóa học mẫu thuộc lớp 11A1
         course = Course(
-            title='Chủ đề F: Thiết kế và tạo trang web cơ bản',
-            description='Khám phá ngôn ngữ HTML/CSS, bố cục trang web và chuẩn xuất bản nội dung đa phương tiện.',
+            title='Chủ đề 4. Giới thiệu các hệ cơ sở dữ liệu (Lớp 11A1)',
+            description='Lớp học chuyên đề Cơ sở dữ liệu quan hệ, khóa chính, khóa ngoại và ngôn ngữ truy vấn SQL.',
             classroom_id=classroom.id,
             teacher_id=teacher.id
         )
@@ -68,9 +68,9 @@ def seed_database():
         # 5. Tạo Bài học mẫu (sẵn sàng để giáo viên tải thêm PPT/DOCX/PDF vào)
         lesson1 = Lesson(
             course_id=course.id,
-            title='Bài 1. Khái niệm cơ bản về trang web và ngôn ngữ HTML',
-            content='Trong bài học này, chúng ta sẽ tìm hiểu:\n1. Trang web tĩnh và trang web động.\n2. Cấu trúc cơ bản của một văn bản HTML (<!DOCTYPE html>, <html>, <head>, <body>).\n3. Các thẻ định dạng tiêu đề <h1> đến <h6> và đoạn văn bản <p>.\n\nGiáo viên có thể tải thêm các slide bài giảng PowerPoint (.pptx), tài liệu đọc Word (.docx) hoặc tài liệu PDF ngay bên dưới!',
-            order_index=1
+            title='Bài 14. SQL – Ngôn ngữ truy vấn có cấu trúc',
+            content='# I. Trọng tâm kiến thức\n1. Khái niệm ngôn ngữ truy vấn có cấu trúc SQL (DDL, DML, DCL).\n2. Cú pháp câu lệnh truy vấn cơ bản: SELECT <cột> FROM <bảng> WHERE <điều kiện> ORDER BY <cột>.\n# II. Nội dung thực hành\n- Kết nối dữ liệu giữa các bảng bằng mệnh đề INNER JOIN ... ON.',
+            order_index=14
         )
         db.session.add(lesson1)
 

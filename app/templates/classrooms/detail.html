@@ -3,168 +3,201 @@
 {% block title %}{{ classroom.name }} - Tin học 11{% endblock %}
 
 {% block content %}
-<!-- Classroom Header Banner -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-    <div>
-      <span class="clay-badge badge-teacher" style="margin-bottom: 8px;">🏫 Lớp Học Trực Tuyến</span>
-      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">{{ classroom.name }}</h1>
-      <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.92rem;">
-        Giáo viên phụ trách: <strong>{{ classroom.teacher.full_name }}</strong> • {{ students|length }} Học sinh tham gia
-      </p>
-      {% if classroom.description %}
-        <p style="color: var(--text-body); margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">{{ classroom.description }}</p>
-      {% endif %}
-    </div>
-
-    <div style="text-align: right;">
-      <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.05em;">MÃ MỜI LỚP (CLASS CODE)</div>
-      <div style="background: var(--primary-soft); border: 1px solid var(--primary-border); padding: 8px 18px; border-radius: var(--radius-md); font-family: monospace; font-size: 1.3rem; font-weight: 800; color: var(--primary); display: inline-block;">
-        {{ classroom.code }}
-      </div>
-    </div>
+<!-- Classroom Banner Header -->
+<section class="page-header-bar">
+  <div>
+    <h1>{{ classroom.name }}</h1>
+    <p>
+      Giáo viên: <strong class="text-slate-900">{{ classroom.teacher.full_name }}</strong> • {{ students|length }} học
+      sinh
+      {% if classroom.description %} • {{ classroom.description }}{% endif %}
+    </p>
   </div>
-</div>
 
-<!-- Teacher Control Bar -->
-{% if current_user.is_teacher or current_user.is_admin %}
-<div style="display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap;">
-  <button onclick="document.getElementById('create-course-modal').classList.add('active')" class="clay-btn clay-btn-primary">
-    ➕ Tạo Khóa Học Mới
-  </button>
-  <a href="{{ url_for('main.create_exam', class_id=classroom.id) }}" class="clay-btn clay-btn-success">
-    🛡️ Tạo Đề Kiểm Tra Chống Gian Lận
-  </a>
-</div>
-{% endif %}
+  <div class="flex items-center gap-2.5 flex-wrap">
+    <span class="clay-badge badge-teacher font-mono text-sm px-3 py-1.5" title="Mã mời lớp học">
+      Mã lớp: {{ classroom.code }}
+    </span>
+    {% if current_user.is_teacher or current_user.is_admin %}
+    <button type="button" onclick="openDsDialog('create-course-modal')" class="clay-btn clay-btn-primary clay-btn-sm">
+      + Tạo Chuyên Đề
+    </button>
+    <a href="{{ url_for('main.create_exam', class_id=classroom.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+      + Tạo Đề Thi
+    </a>
+    {% endif %}
+  </div>
+</section>
 
 <!-- Courses Section -->
-<div style="margin-bottom: 36px;">
-  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--text-title);">
-    📚 Khóa Học & Chủ Đề ({{ courses|length }})
+<section class="mb-8">
+  <h2 class="font-display text-lg font-extrabold text-slate-900 mb-4">
+    Chuyên Đề &amp; Khóa Học ({{ courses|length }})
   </h2>
 
   {% if courses %}
-    <div class="grid-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" data-reveal-group>
       {% for cr in courses %}
-        <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.course_detail', course_id=cr.id) }}'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-title);">{{ cr.title }}</h3>
-            <span class="clay-badge badge-student">{{ cr.lessons.count() }} Bài học</span>
+        <article class="clay-card p-0 card-interactive overflow-hidden flex flex-col justify-between group" data-reveal>
+          <div>
+            <div class="relative aspect-[16/9] bg-slate-900 overflow-hidden border-b border-slate-100">
+              <img src="{{ cr|poster_src }}"
+                   alt="Poster {{ cr.title }}"
+                   loading="lazy"
+                   class="w-full h-full object-cover block group-hover:scale-[1.03] transition duration-300 motion-reduce:transform-none">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" aria-hidden="true"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 text-[#0B4FD8] font-mono text-xs font-extrabold shadow-sm">
+                {{ cr.lessons.count() }} BÀI HỌC
+              </span>
+            </div>
+            <div class="p-4">
+              <h3 class="text-base font-bold text-slate-900 leading-snug mb-1.5">{{ cr.title }}</h3>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                {{ cr.description or 'Chuyên đề học tập và tài liệu đa phương tiện.' }}
+              </p>
+            </div>
           </div>
-          <p style="color: var(--text-body); font-size: 0.9rem; margin-bottom: 16px; line-height: 1.5;">
-            {{ cr.description or 'Chưa có mô tả khóa học' }}
-          </p>
-          <div style="display: flex; justify-content: flex-end; color: var(--primary); font-weight: 700; font-size: 0.88rem;">
-            Vào học bài →
-          </div>
-        </div>
+          <footer class="px-4 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-sm">
+            <span class="text-slate-600">GV: {{ classroom.teacher.full_name }}</span>
+            <a href="{{ url_for('main.course_detail', course_id=cr.id) }}" class="card-link font-bold text-[#0B4FD8] group-hover:underline after:absolute after:inset-0">
+              Xem chuyên đề <span aria-hidden="true">→</span>
+            </a>
+          </footer>
+        </article>
       {% endfor %}
     </div>
   {% else %}
-    <div class="clay-card" style="text-align: center; padding: 30px;">
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Lớp học này chưa có khóa học nào được tạo.</p>
-    </div>
+  <div class="clay-card text-center py-8">
+    <p class="text-slate-600 text-sm">Lớp học này chưa có chuyên đề nào.</p>
+  </div>
   {% endif %}
-</div>
+</section>
 
 <!-- Exams Section -->
-<div style="margin-bottom: 36px;">
-  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--text-title);">
-    🛡️ Đề Kiểm Tra Trong Lớp ({{ exams|length }})
+<section class="mb-8">
+  <h2 class="font-display text-lg font-extrabold text-slate-900 mb-4">
+    Đề Kiểm Tra Trong Lớp ({{ exams|length }})
   </h2>
 
   {% if exams %}
-    <div class="grid-2">
-      {% for ex in exams %}
-        <div class="clay-card">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-title);">{{ ex.title }}</h3>
-            <span class="clay-badge badge-pdf">🛡️ Chống gian lận</span>
-          </div>
-          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
-            Thời gian: <strong>{{ ex.duration_minutes }} phút</strong> • Tối đa vi phạm: <strong>{{ ex.max_violations }} lần</strong>
-          </p>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            {% if current_user.is_student %}
-              <a href="{{ url_for('main.take_exam', exam_id=ex.id) }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px; font-size: 0.88rem;">
-                Bắt đầu làm bài thi
-              </a>
-            {% else %}
-              <a href="{{ url_for('main.exam_detail', exam_id=ex.id) }}" class="clay-btn clay-btn-secondary" style="padding: 8px 18px; font-size: 0.88rem;">
-                ⚙️ Quản lý Đề & Xem Báo Cáo
-              </a>
-            {% endif %}
-          </div>
+  <div class="grid-2">
+    {% for ex in exams %}
+    <div class="clay-card flex flex-col justify-between gap-4">
+      <div>
+        <div class="flex justify-between items-start gap-2 mb-2">
+          <h3 class="text-base font-bold text-slate-900">{{ ex.title }}</h3>
+          <span class="clay-badge badge-pdf shrink-0">{{ ex.duration_minutes }} phút</span>
         </div>
-      {% endfor %}
+        <p class="text-slate-600 text-sm">
+          Số câu: <strong class="text-slate-900">{{ ex.questions.count() }}</strong> • Giới hạn vi phạm: <strong
+            class="text-slate-900">{{ ex.max_violations }} lần</strong>
+        </p>
+      </div>
+      <div class="flex justify-end border-t border-slate-100 pt-3">
+        {% if current_user.is_student %}
+        <a href="{{ url_for('main.take_exam', exam_id=ex.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+          Làm bài thi →
+        </a>
+        {% else %}
+        <div class="flex gap-2">
+          <a href="{{ url_for('main.export_exam_excel', exam_id=ex.id) }}"
+            class="clay-btn clay-btn-secondary clay-btn-sm">
+            Xuất Excel
+          </a>
+          <a href="{{ url_for('main.exam_detail', exam_id=ex.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+            Quản lý đề →
+          </a>
+        </div>
+        {% endif %}
+      </div>
     </div>
+    {% endfor %}
+  </div>
   {% else %}
-    <div class="clay-card" style="text-align: center; padding: 24px;">
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Chưa có đề kiểm tra nào cho lớp này.</p>
-    </div>
+  <div class="clay-card text-center py-6">
+    <p class="text-slate-600 text-sm">Chưa có đề kiểm tra nào cho lớp này.</p>
+  </div>
   {% endif %}
-</div>
+</section>
 
 <!-- Students Roster -->
-<div class="clay-card">
-  <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 14px; color: var(--text-title);">
-    👥 Danh Sách Học Sinh Trong Lớp ({{ students|length }})
+<section class="clay-card">
+  <h2 class="font-display text-lg font-extrabold text-slate-900 mb-4">
+    Danh Sách Học Sinh ({{ students|length }})
   </h2>
   {% if students %}
-    <div style="overflow-x: auto;">
-      <table class="clay-doc-table">
-        <thead>
-          <tr>
-            <th>Họ và Tên</th>
-            <th>Tên Đăng Nhập</th>
-            <th>Email</th>
-            <th>Trạng Thái</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for s in students %}
-            <tr>
-              <td><strong>{{ s.full_name }}</strong></td>
-              <td><code>{{ s.username }}</code></td>
-              <td>{{ s.email }}</td>
-              <td><span class="clay-badge badge-student">Đang học</span></td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+  <div class="overflow-x-auto">
+    <table class="clay-doc-table">
+      <thead>
+        <tr>
+          <th scope="col">Họ và Tên</th>
+          <th scope="col">Tên Đăng Nhập</th>
+          <th scope="col">Email</th>
+          <th scope="col">Trạng Thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+        <tr>
+          <td class="font-bold text-slate-900">{{ s.full_name }}</td>
+          <td><code class="text-xs font-mono bg-slate-100 px-2 py-0.5 rounded">{{ s.username }}</code></td>
+          <td>{{ s.email }}</td>
+          <td><span class="clay-badge badge-student">Đang học</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% else %}
-    <p style="color: var(--text-muted); text-align: center; padding: 18px; font-size: 0.9rem;">Chưa có học sinh nào nhập mã để tham gia lớp này.</p>
+  <p class="text-slate-600 text-center py-5 text-sm">Chưa có học sinh nào tham gia lớp học này.</p>
   {% endif %}
-</div>
+</section>
 
-<!-- Modal Create Course -->
-<div id="create-course-modal" class="clay-modal-backdrop">
-  <div class="clay-modal">
-    <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; color: var(--text-title);">Tạo Khóa Học Mới</h3>
-    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Khóa học sẽ chứa các bài học và tài liệu PPT, DOCX, PDF</p>
+<!-- Native <dialog> Modal Create Course -->
+{% if current_user.is_teacher or current_user.is_admin %}
+<dialog id="create-course-modal" class="ds-dialog ds-dialog-sm" closedby="any" aria-labelledby="create-course-title">
+  <div class="p-6 sm:p-7">
+    <div class="flex items-start justify-between gap-3 pb-3 mb-4 border-b border-slate-200">
+      <div>
+        <h2 id="create-course-title" class="font-display text-xl font-extrabold text-slate-900">Tạo Chuyên Đề Học Tập
+        </h2>
+        <p class="text-slate-600 text-sm mt-0.5">Chuyên đề chứa các bài giảng và tài liệu PPTX, DOCX, PDF</p>
+      </div>
+      <button type="button" onclick="closeDsDialog('create-course-modal')"
+        class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0"
+        aria-label="Đóng hộp thoại">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+          aria-hidden="true">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
 
     <form method="POST" action="{{ url_for('main.create_course', class_id=classroom.id) }}">
-      <div class="clay-input-group" style="text-align: left;">
-        <label class="clay-label">Tiêu đề khóa học</label>
-        <input type="text" name="title" class="clay-input" placeholder="Ví dụ: Chủ đề F: Thiết kế và tạo trang web cơ bản" required>
+      <div class="clay-input-group">
+        <label for="course-title-input" class="clay-label">Tiêu đề chuyên đề <span class="text-[#BE123C]"
+            aria-hidden="true">*</span></label>
+        <input type="text" id="course-title-input" name="title" class="clay-input"
+          placeholder="Ví dụ: Chủ đề F. Cơ sở dữ liệu và SQL" required autofocus>
       </div>
 
-      <div class="clay-input-group" style="text-align: left;">
-        <label class="clay-label">Mô tả khóa học</label>
-        <textarea name="description" class="clay-textarea" rows="3" placeholder="Ví dụ: Tìm hiểu về HTML, CSS, cấu trúc trang web và đa phương tiện"></textarea>
+      <div class="clay-input-group">
+        <label for="course-desc-input" class="clay-label">Mô tả ngắn</label>
+        <textarea id="course-desc-input" name="description" class="clay-textarea" rows="3"
+          placeholder="Ví dụ: Kiến thức nền tảng về hệ CSDL quan hệ và truy vấn dữ liệu"></textarea>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-        <button type="button" onclick="document.getElementById('create-course-modal').classList.remove('active')" class="clay-btn clay-btn-secondary">
+      <div class="flex gap-2.5 justify-end mt-5 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeDsDialog('create-course-modal')" class="clay-btn clay-btn-secondary">
           Hủy
         </button>
         <button type="submit" class="clay-btn clay-btn-primary">
-          Tạo Khóa Học
+          Tạo Chuyên Đề
         </button>
       </div>
     </form>
   </div>
-</div>
+</dialog>
+{% endif %}
 {% endblock %}

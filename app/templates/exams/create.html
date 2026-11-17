@@ -1,66 +1,94 @@
-{% extends "base.html" %}
-
-{% block title %}Tạo Đề Kiểm Tra Chống Gian Lận - {{ classroom.name }}{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Tạo Đề Kiểm Tra - {{ classroom.name }}{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 20px;">
-  <a href="{{ url_for('main.classroom_detail', class_id=classroom.id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
-    ← Quay lại Lớp: {{ classroom.name }}
-  </a>
-</div>
-
-<div style="max-width: 660px; margin: 0 auto 40px;">
-  <div class="clay-card animate-spring-pop">
-    <div style="text-align: center; margin-bottom: 24px;">
-      <div class="clay-logo-icon" style="margin: 0 auto 12px; width: 50px; height: 50px; font-size: 1.5rem; background: linear-gradient(135deg, #F43F5E, #BE123C);">
-        🛡️
+<div class="max-w-3xl mx-auto py-4">
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
+      <div>
+        <span class="inline-block px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] text-xs font-bold mb-1.5">
+          Lớp: {{ classroom.name }} ({{ classroom.code }})
+        </span>
+        <h1 class="font-display text-2xl font-extrabold text-slate-900 tracking-tight">Khởi Tạo Phòng Thi &amp; Chống Gian Lận</h1>
       </div>
-      <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Tạo Đề Kiểm Tra Chống Gian Lận</h1>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Cấu hình thời gian và các tầng bảo vệ giám sát học sinh</p>
+      <a href="{{ url_for('main.classroom_detail', class_id=classroom.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+        Quay lại
+      </a>
     </div>
 
-    <form method="POST" action="{{ url_for('main.create_exam', class_id=classroom.id) }}">
-      <div class="clay-input-group">
-        <label class="clay-label">Tiêu đề đề kiểm tra</label>
-        <input type="text" name="title" class="clay-input" placeholder="Ví dụ: Kiểm tra 15 phút: Chủ đề F - Kiến thức cơ bản HTML/CSS" required>
+    <form method="POST" class="space-y-5">
+      <div>
+        <label for="create-exam-title" class="clay-label">Tiêu đề bài kiểm tra <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+        <input type="text" id="create-exam-title" name="title" class="clay-input" placeholder="Ví dụ: Kiểm tra 15 phút - Chủ đề 4: Hệ Cơ sở dữ liệu" required autofocus>
       </div>
 
-      <div class="clay-input-group">
-        <label class="clay-label">Mô tả / Hướng dẫn làm bài</label>
-        <textarea name="description" class="clay-textarea" rows="3" placeholder="Ví dụ: Đề thi gồm 10 câu trắc nghiệm. Học sinh không được rời màn hình làm bài."></textarea>
+      <div>
+        <label for="create-exam-desc" class="clay-label">Hướng dẫn &amp; Quy định phòng thi</label>
+        <textarea id="create-exam-desc" name="description" class="clay-textarea" rows="2" placeholder="Yêu cầu học sinh bật toàn màn hình, không thoát tab hoặc sử dụng tài liệu..."></textarea>
       </div>
 
-      <div class="grid-2">
-        <div class="clay-input-group">
-          <label class="clay-label">Thời gian làm bài (Phút)</label>
-          <input type="number" name="duration_minutes" class="clay-input" value="15" min="1" max="180" required>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label for="create-exam-duration" class="clay-label">Thời gian làm bài (Phút) <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="number" id="create-exam-duration" name="duration_minutes" class="clay-input" value="15" min="1" max="180" required>
         </div>
-
-        <div class="clay-input-group">
-          <label class="clay-label">Số lần vi phạm tối đa</label>
-          <input type="number" name="max_violations" class="clay-input" value="3" min="1" max="10" required>
-          <small style="color: var(--text-muted); font-size: 0.8rem;">(Vượt quá sẽ tự động nộp bài ngay lập tức)</small>
+        <div>
+          <label for="create-exam-max-viol" class="clay-label">Giới hạn vi phạm tối đa <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="number" id="create-exam-max-viol" name="max_violations" class="clay-input" value="3" min="1" max="10" aria-describedby="max-viol-help" required>
+          <p id="max-viol-help" class="text-xs text-slate-600 mt-1">Đạt ngưỡng sẽ tự động thu bài</p>
+        </div>
+        <div>
+          <label for="create-exam-pin" class="clay-label">Mã PIN vào phòng thi</label>
+          <input type="text" id="create-exam-pin" name="access_code" class="clay-input uppercase font-mono" placeholder="Trống = Mở tự do" maxlength="16" aria-describedby="pin-help" autocorrect="off" autocapitalize="characters">
+          <p id="pin-help" class="text-xs text-slate-600 mt-1">Cấp mã PIN khi bắt đầu thi</p>
         </div>
       </div>
 
-      <!-- Anti-cheating options -->
-      <div style="background: var(--primary-soft); border: 1px solid var(--primary-border); padding: 18px 20px; border-radius: var(--radius-md); margin-bottom: 22px;">
-        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--primary);">🛡️ Cấu hình cơ chế chống gian lận:</h4>
-        
-        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; font-size: 0.9rem; color: var(--text-body);">
-          <input type="checkbox" name="enable_fullscreen" value="1" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
-          <span><strong>Toàn màn hình bắt buộc:</strong> Cảnh báo khi học sinh thoát toàn màn hình</span>
-        </label>
+      <fieldset class="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200">
+        <legend class="px-2 text-xs font-extrabold text-[#0B4FD8] uppercase tracking-wide">
+          Cơ Chế Giám Sát Chặt Chẽ (Anti-Cheating Engine v2.0)
+        </legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm pt-2">
+          <label for="fsCheck" class="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" name="enable_fullscreen" id="fsCheck" checked class="mt-1 w-4 h-4 accent-[#0B4FD8] rounded">
+            <span>
+              <strong class="block text-slate-900">Khóa màn hình (Fullscreen Shield)</strong>
+              <span class="text-xs text-slate-600">Làm mờ đề thi ngay khi thoát toàn màn hình</span>
+            </span>
+          </label>
 
-        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem; color: var(--text-body);">
-          <input type="checkbox" name="enable_tab_lock" value="1" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
-          <span><strong>Khóa Tab & Focus:</strong> Phát hiện khi mở tab mới, chuyển ứng dụng hoặc bấm phím tắt</span>
-        </label>
+          <label for="tabCheck" class="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" name="enable_tab_lock" id="tabCheck" checked class="mt-1 w-4 h-4 accent-[#0B4FD8] rounded">
+            <span>
+              <strong class="block text-slate-900">Chống chuyển Tab, Split-Screen &amp; Copy</strong>
+              <span class="text-xs text-slate-600">Phát hiện Alt+Tab, chia đôi màn hình, DevTools</span>
+            </span>
+          </label>
+
+          <label for="shuffleCheck" class="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" name="shuffle_questions" id="shuffleCheck" checked class="mt-1 w-4 h-4 accent-[#0B4FD8] rounded">
+            <span>
+              <strong class="block text-slate-900">Đảo thứ tự câu hỏi theo từng học sinh</strong>
+              <span class="text-xs text-slate-600">Mỗi học sinh nhận thứ tự câu khác nhau</span>
+            </span>
+          </label>
+
+          <label for="pubCheck" class="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" name="is_published" id="pubCheck" checked class="mt-1 w-4 h-4 accent-[#0B4FD8] rounded">
+            <span>
+              <strong class="block text-slate-900">Mở phòng thi ngay sau khi tạo</strong>
+              <span class="text-xs text-slate-600">Có thể khóa/mở lại bằng 1 chạm</span>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <a href="{{ url_for('main.classroom_detail', class_id=classroom.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">Hủy</a>
+        <button type="submit" class="clay-btn clay-btn-primary">
+          Tạo Đề &amp; Thêm Câu Hỏi →
+        </button>
       </div>
-
-      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;">
-        Tiếp Tục: Thêm Câu Hỏi Trắc Nghiệm →
-      </button>
     </form>
   </div>
 </div>

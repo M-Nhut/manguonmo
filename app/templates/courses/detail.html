@@ -3,87 +3,243 @@
 {% block title %}{{ course.title }} - Tin học 11{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 20px;">
-  <a href="{{ url_for('main.classroom_detail', class_id=course.classroom_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
-    ← Quay lại Lớp: {{ course.classroom.name }}
+<div class="mb-4 flex justify-between items-center flex-wrap gap-3">
+  <a href="{{ url_for('main.classroom_detail', class_id=course.classroom_id) }}" class="text-sm font-semibold text-slate-600 hover:text-[#0B4FD8] inline-flex items-center gap-1.5">
+    ← Quay lại lớp {{ course.classroom.name }}
   </a>
-</div>
-
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <span class="clay-badge badge-teacher" style="margin-bottom: 8px;">📚 Khóa Học Số</span>
-  <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-title); margin-bottom: 6px; letter-spacing: -0.02em;">{{ course.title }}</h1>
-  <p style="color: var(--text-muted); font-size: 0.92rem;">{{ course.description or 'Chưa có mô tả cho khóa học này.' }}</p>
-</div>
-
-<!-- Teacher action -->
-{% if current_user.is_teacher or current_user.is_admin %}
-<div style="margin-bottom: 24px;">
-  <button onclick="document.getElementById('create-lesson-modal').classList.add('active')" class="clay-btn clay-btn-primary">
-    ➕ Thêm Bài Học Mới
-  </button>
-</div>
-{% endif %}
-
-<!-- Lessons List -->
-<div style="margin-bottom: 36px;">
-  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--text-title);">
-    📖 Danh Sách Bài Học ({{ lessons|length }})
-  </h2>
-
-  {% if lessons %}
-    <div style="display: flex; flex-direction: column; gap: 14px;">
-      {% for l in lessons %}
-        <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.lesson_detail', lesson_id=l.id) }}'">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-            <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="width: 42px; height: 42px; border-radius: 12px; background: var(--primary-soft); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); font-size: 1.1rem; border: 1px solid var(--primary-border);">
-                {{ l.order_index }}
-              </div>
-              <div>
-                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-title);">{{ l.title }}</h3>
-                <span style="font-size: 0.82rem; color: var(--text-muted);">
-                  📁 {{ l.materials.count() }} Tài liệu (PPT / Word / PDF)
-                </span>
-              </div>
-            </div>
-            <div style="color: var(--primary); font-weight: 700; font-size: 0.88rem;">
-              Học bài & Xem tài liệu →
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="clay-card" style="text-align: center; padding: 36px;">
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Khóa học này chưa có bài học nào. Hãy bấm "Thêm Bài Học Mới"!</p>
+  {% if current_user.is_teacher or current_user.is_admin %}
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" onclick="openDsDialog('edit-course-modal')" class="clay-btn clay-btn-secondary clay-btn-sm">
+        Chỉnh sửa Chủ đề &amp; Poster
+      </button>
+      <button type="button" onclick="openDsDialog('create-lesson-modal')" class="clay-btn clay-btn-primary clay-btn-sm">
+        + Thêm Bài Học Mới
+      </button>
     </div>
   {% endif %}
 </div>
 
-<!-- Modal Add Lesson -->
-<div id="create-lesson-modal" class="clay-modal-backdrop">
-  <div class="clay-modal">
-    <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; color: var(--text-title);">Thêm Bài Học Mới</h3>
-    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Bạn có thể tải lên tài liệu PPT, DOCX, PDF ngay sau khi tạo bài học</p>
+<!-- =========================================================================
+     EDITORIAL TOPIC BANNER
+     ========================================================================= -->
+<section class="typo-poster">
+  <div class="typo-poster-topbar">
+    <span>{{ course.classroom.name }}</span>
+    <span>GV: {{ course.classroom.teacher.full_name }}</span>
+  </div>
 
-    <form method="POST" action="{{ url_for('main.create_lesson', course_id=course.id) }}">
-      <div class="clay-input-group" style="text-align: left;">
-        <label class="clay-label">Thứ tự bài học</label>
-        <input type="number" name="order_index" class="clay-input" value="{{ lessons|length + 1 }}" required>
+  <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 p-6 sm:p-7">
+    <div class="lg:col-span-7">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-extrabold mb-3">
+        {{ lessons|length }} BÀI HỌC
+      </div>
+      <h1 class="typo-poster-title">
+        {{ course.title }}
+      </h1>
+      <p class="typo-poster-subtitle">
+        {{ course.description or 'Chuyên đề học tập tích hợp lý thuyết SGK và học liệu đa phương tiện.' }}
+      </p>
+    </div>
+
+    <div class="lg:col-span-5">
+      <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-md">
+        <img src="{{ course|poster_src }}"
+             alt="Poster {{ course.title }}"
+             class="w-full h-full object-cover block">
+        {% if current_user.is_admin or current_user.is_teacher %}
+          <button type="button"
+                  onclick="openDsDialog('edit-course-modal')"
+                  class="absolute bottom-3 right-3 px-3 py-1.5 rounded-lg bg-white/95 text-[#0B4FD8] text-xs font-bold shadow border border-slate-200 hover:bg-white cursor-pointer">
+            Đổi Poster Chủ đề
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/90">
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Tổng số bài giảng</span>
+      <span class="block font-display text-sm font-bold text-slate-900 mt-0.5">{{ lessons|length }} bài học</span>
+    </div>
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Định dạng hỗ trợ</span>
+      <span class="block font-display text-sm font-bold text-slate-900 mt-0.5">DOCX, PDF, PPTX, YouTube/Video</span>
+    </div>
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Củng cố kiến thức</span>
+      <a href="{{ url_for('main.practice_hub') }}" class="inline-block font-display text-sm font-bold text-[#0B4FD8] hover:underline mt-0.5">
+        Ôn luyện chủ đề →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Lessons Syllabus List -->
+<section class="mb-9">
+  <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+    <h2 class="font-display text-lg font-extrabold text-slate-900">
+      Danh Sách Bài Học Trong Chủ Đề ({{ lessons|length }})
+    </h2>
+  </div>
+
+  {% if lessons %}
+    <div class="syllabus-list" data-reveal-group>
+      {% for l in lessons %}
+        <article class="syllabus-row card-interactive" data-reveal>
+          <div class="syllabus-row-left">
+            <img src="{{ l|poster_src }}" alt="Poster {{ l.title }}" loading="lazy" class="w-20 h-12 rounded-lg object-cover border border-slate-200 shrink-0 hidden sm:block shadow-sm">
+            <span class="syllabus-index">BÀI {% if l.order_index < 10 %}0{{ l.order_index }}{% else %}{{ l.order_index }}{% endif %}</span>
+            <div class="min-w-0">
+              <h3 class="syllabus-title">
+                <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}" class="card-link hover:text-[#0B4FD8] after:absolute after:inset-0">
+                  {{ l.title }}
+                </a>
+              </h3>
+              <div class="syllabus-meta">
+                {{ l.materials.count() }} tệp đính kèm {% if l.video_embed %}• Có Video YouTube/HTML{% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="syllabus-row-right">
+            {% if l.video_embed %}
+              <span class="clay-badge badge-video">YOUTUBE / VIDEO</span>
+            {% endif %}
+            {% for m in l.materials %}
+              {% if m.file_type == 'docx' %}
+                <span class="clay-badge badge-docx">DOCX</span>
+              {% elif m.file_type == 'pdf' %}
+                <span class="clay-badge badge-pdf">PDF</span>
+              {% elif m.file_type in ['pptx', 'ppt'] %}
+                <span class="clay-badge badge-pptx">PPTX</span>
+              {% elif m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}
+                <span class="clay-badge badge-video">VIDEO</span>
+              {% endif %}
+            {% endfor %}
+            {% if current_user.is_admin or current_user.is_teacher %}
+              <a href="{{ url_for('main.lesson_detail', lesson_id=l.id, edit=1) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+                Sửa bài
+              </a>
+            {% endif %}
+            <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+              Mở bài học →
+            </a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="clay-card text-center py-8">
+      <p class="text-slate-600 text-sm">Chủ đề này chưa có bài học nào.</p>
+    </div>
+  {% endif %}
+</section>
+
+{% if current_user.is_teacher or current_user.is_admin %}
+<!-- Native <dialog> Modal Edit Course & Poster -->
+<dialog id="edit-course-modal" class="ds-dialog" closedby="any" aria-labelledby="edit-course-title">
+  <div class="p-6 sm:p-7">
+    <div class="flex items-start justify-between gap-3 pb-3 mb-4 border-b border-slate-200">
+      <div>
+        <h2 id="edit-course-title" class="font-display text-xl font-extrabold text-slate-900">Chỉnh Sửa Chủ Đề &amp; Ảnh Poster</h2>
+        <p class="text-sm text-slate-600 mt-0.5">Cập nhật tên chủ đề, mô tả và ảnh Poster đại diện</p>
+      </div>
+      <button type="button" onclick="closeDsDialog('edit-course-modal')" class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0" aria-label="Đóng hộp thoại">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <form method="POST" action="{{ url_for('main.edit_course', course_id=course.id) }}" enctype="multipart/form-data">
+      <div class="clay-input-group">
+        <label for="edit-course-name" class="clay-label">Tiêu đề chủ đề / chuyên đề <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+        <input type="text" id="edit-course-name" name="title" class="clay-input" value="{{ course.title }}" required autofocus>
       </div>
 
-      <div class="clay-input-group" style="text-align: left;">
-        <label class="clay-label">Tên bài học</label>
-        <input type="text" name="title" class="clay-input" placeholder="Ví dụ: Bài 1. Giới thiệu cấu trúc trang web HTML" required>
+      <div class="clay-input-group">
+        <label for="edit-course-desc" class="clay-label">Mô tả chủ đề</label>
+        <textarea id="edit-course-desc" name="description" class="clay-textarea" rows="3">{{ course.description }}</textarea>
       </div>
 
-      <div class="clay-input-group" style="text-align: left;">
-        <label class="clay-label">Nội dung tóm tắt / Hướng dẫn</label>
-        <textarea name="content" class="clay-textarea" rows="4" placeholder="Nội dung lý thuyết trọng tâm của bài học..."></textarea>
+      <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4">
+        <span class="clay-label text-[#0B4FD8]">Ảnh Poster Chủ Đề</span>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+          <button type="button" onclick="document.getElementById('course-poster-input').value='img/posters/poster_a_os.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Hệ điều hành</button>
+          <button type="button" onclick="document.getElementById('course-poster-input').value='img/posters/poster_a_hardware.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Phần cứng</button>
+          <button type="button" onclick="document.getElementById('course-poster-input').value='img/posters/poster_c_cloud.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Đám mây</button>
+          <button type="button" onclick="document.getElementById('course-poster-input').value='img/posters/poster_f_database.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster CSDL &amp; SQL</button>
+          <button type="button" onclick="document.getElementById('course-poster-input').value='img/posters/poster_e_gimp.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster GIMP &amp; Video</button>
+          <button type="button" onclick="document.getElementById('course-poster-input').value='img/posters/poster_f_web.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Thiết kế Web</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="course-poster-input" class="text-xs font-semibold text-slate-700 block mb-1">Đường dẫn hoặc URL ảnh</label>
+            <input id="course-poster-input" type="text" name="poster_url" class="clay-input" value="{{ course.poster_url or '' }}" placeholder="Để trống = tự động">
+          </div>
+          <div>
+            <label for="course-poster-file" class="text-xs font-semibold text-slate-700 block mb-1">Hoặc tải ảnh lên (.jpg, .png, .webp)</label>
+            <input id="course-poster-file" type="file" name="poster_file" class="clay-input py-2" accept=".png,.jpg,.jpeg,.webp,.gif">
+          </div>
+        </div>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-        <button type="button" onclick="document.getElementById('create-lesson-modal').classList.remove('active')" class="clay-btn clay-btn-secondary">
+      <div class="flex justify-end gap-2.5 pt-2">
+        <button type="button" onclick="closeDsDialog('edit-course-modal')" class="clay-btn clay-btn-secondary">Hủy</button>
+        <button type="submit" class="clay-btn clay-btn-primary">Lưu Chủ Đề</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<!-- Native <dialog> Modal Add Lesson -->
+<dialog id="create-lesson-modal" class="ds-dialog" closedby="any" aria-labelledby="create-lesson-title">
+  <div class="p-6 sm:p-7">
+    <div class="flex items-start justify-between gap-3 pb-3 mb-4 border-b border-slate-200">
+      <div>
+        <h2 id="create-lesson-title" class="font-display text-xl font-extrabold text-slate-900">Thêm Bài Học Mới</h2>
+        <p class="text-slate-600 text-sm mt-0.5">Nhập tiêu đề, các đề mục lý thuyết, ảnh Poster và link YouTube / mã HTML video</p>
+      </div>
+      <button type="button" onclick="closeDsDialog('create-lesson-modal')" class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0" aria-label="Đóng hộp thoại">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <form method="POST" action="{{ url_for('main.create_lesson', course_id=course.id) }}" enctype="multipart/form-data">
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+        <div class="sm:col-span-3 clay-input-group">
+          <label for="new-lesson-order" class="clay-label">Thứ tự bài</label>
+          <input type="number" id="new-lesson-order" name="order_index" class="clay-input" value="{{ lessons|length + 1 }}" required>
+        </div>
+
+        <div class="sm:col-span-9 clay-input-group">
+          <label for="new-lesson-title" class="clay-label">Tiêu đề bài học <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="text" id="new-lesson-title" name="title" class="clay-input" placeholder="Ví dụ: Bài 1. Hệ quản trị cơ sở dữ liệu" required autofocus>
+        </div>
+      </div>
+
+      <div class="clay-input-group">
+        <label for="new-lesson-content" class="clay-label">Các đề mục &amp; Nội dung lý thuyết (Dùng # hoặc I. cho đề mục lớn)</label>
+        <textarea id="new-lesson-content" name="content" class="clay-textarea" rows="5" placeholder="# I. Khái niệm cơ bản&#10;1. Định nghĩa...&#10;# II. Nội dung thực hành"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+        <div class="clay-input-group">
+          <label for="new-lesson-poster-url" class="clay-label">Link ảnh Poster (Tùy chọn)</label>
+          <input type="text" id="new-lesson-poster-url" name="poster_url" class="clay-input" placeholder="Để trống = tự động theo chủ đề">
+        </div>
+        <div class="clay-input-group">
+          <label for="new-lesson-poster-file" class="clay-label">Hoặc tải ảnh Poster (.jpg, .png)</label>
+          <input type="file" id="new-lesson-poster-file" name="poster_file" class="clay-input py-2" accept=".png,.jpg,.jpeg,.webp,.gif">
+        </div>
+      </div>
+
+      <div class="clay-input-group">
+        <label for="new-lesson-video" class="clay-label">Video Bài Giảng: Link YouTube hoặc Mã HTML &lt;iframe&gt; (Tùy chọn)</label>
+        <input type="text" id="new-lesson-video" name="video_embed" class="clay-input" placeholder="Ví dụ: https://www.youtube.com/watch?v=... hoặc mã <iframe>">
+      </div>
+
+      <div class="flex gap-2.5 justify-end mt-5 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeDsDialog('create-lesson-modal')" class="clay-btn clay-btn-secondary">
           Hủy
         </button>
         <button type="submit" class="clay-btn clay-btn-primary">
@@ -92,5 +248,6 @@
       </div>
     </form>
   </div>
-</div>
+</dialog>
+{% endif %}
 {% endblock %}

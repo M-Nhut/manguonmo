@@ -1,197 +1,292 @@
-{% extends "base.html" %}
-
-{% block title %}Bàn làm việc Giáo viên - Tin học 11{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Không Gian Giáo Viên{% endblock %}
 
 {% block content %}
-<!-- Teacher Top Header -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
-  <div>
-    <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 4px 12px; border-radius: var(--radius-full); margin-bottom: 6px;">
-      👨‍🏫 KHÔNG GIAN GIẢNG DẠY
+<!-- Hero Banner -->
+<section class="ds-banner ds-banner-grid-bg p-6 sm:p-7">
+  <div class="flex flex-wrap justify-between items-center gap-4">
+    <div>
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] text-xs font-bold uppercase tracking-wide mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0B4FD8]" aria-hidden="true"></span>
+        Điều Hành Giảng Dạy &amp; Khảo Thí
+      </span>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        Bảng Điều Khiển Giáo Viên
+      </h1>
     </div>
-    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Bàn Làm Việc Giáo Viên</h1>
-    <p style="color: var(--text-muted); font-size: 0.95rem;">Quản lý lớp học, phân phối tài liệu PPT/Word/PDF và tổ chức kỳ thi chống gian lận</p>
-  </div>
-  <div>
-    <button onclick="document.getElementById('create-class-modal').classList.add('active')" class="clay-btn clay-btn-primary">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"/>
-        <line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-      Tạo Lớp Học Mới
-    </button>
-  </div>
-</div>
 
-<!-- Classrooms Section -->
-<div style="margin-bottom: 36px;">
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-title);">
-      🏫 Lớp Học Của Bạn ({{ classrooms|length }})
-    </h2>
-  </div>
-
-  {% if classrooms %}
-    <div class="grid-3">
-      {% for c in classrooms %}
-        <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.classroom_detail', class_id=c.id) }}'">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-title);">{{ c.name }}</h3>
-            <span class="clay-badge badge-teacher" style="font-family: monospace; font-size: 0.85rem;" title="Mã mời học sinh">
-              {{ c.code }}
-            </span>
-          </div>
-          <p style="color: var(--text-body); font-size: 0.88rem; margin-bottom: 20px; min-height: 40px; line-height: 1.5;">
-            {{ c.description or 'Chưa có mô tả cho lớp học này.' }}
-          </p>
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 12px;">
-            <span>👥 {{ c.students.count() }} học sinh</span>
-            <span>📚 {{ c.courses.count() }} khoá học</span>
-            <span style="color: var(--primary); font-weight: 700;">Vào lớp →</span>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="clay-card" style="text-align: center; padding: 40px;">
-      <div style="font-size: 2.2rem; margin-bottom: 8px;">🏫</div>
-      <p style="color: var(--text-muted); margin-bottom: 16px;">Bạn chưa tạo lớp học nào. Hãy bấm "Tạo Lớp Học Mới" để bắt đầu chia sẻ tài liệu!</p>
-      <button onclick="document.getElementById('create-class-modal').classList.add('active')" class="clay-btn clay-btn-primary">
-        Tạo Lớp Học Đầu Tiên
+    <div class="flex flex-wrap items-center gap-2.5">
+      <a href="{{ url_for('main.exams_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+        Quản lý phòng thi
+      </a>
+      <button type="button"
+              id="toggle-new-class-btn"
+              aria-expanded="false"
+              aria-controls="new-class-drawer"
+              onclick="toggleNewClassDrawer()"
+              class="clay-btn clay-btn-primary clay-btn-sm">
+        + Tạo Lớp Học Mới
       </button>
     </div>
-  {% endif %}
-</div>
+  </div>
+</section>
 
-<!-- Exams & Proctoring Overview -->
-<div style="margin-bottom: 36px;">
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-title);">
-      🛡️ Đề Kiểm Tra & Giám Sát Chống Gian Lận ({{ exams|length }})
-    </h2>
+<!-- Collapsible Inline Create Classroom Form Drawer -->
+<section id="new-class-drawer" hidden class="bg-white rounded-2xl border border-blue-200 p-6 mb-6 shadow-sm" aria-labelledby="new-class-title">
+  <div class="flex items-center justify-between mb-4">
+    <h2 id="new-class-title" class="font-display text-base font-extrabold text-slate-900">Khởi tạo Lớp học mới</h2>
+    <button type="button"
+            onclick="toggleNewClassDrawer(false)"
+            class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+            aria-label="Đóng biểu mẫu tạo lớp">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+  <form action="{{ url_for('main.create_classroom') }}" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+    <div class="md:col-span-4">
+      <label for="new-class-name" class="clay-label">Tên lớp học <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+      <input type="text" id="new-class-name" name="name" class="clay-input" placeholder="Ví dụ: Lớp 11A1 Tin học" required>
+    </div>
+    <div class="md:col-span-6">
+      <label for="new-class-desc" class="clay-label">Mô tả ngắn</label>
+      <input type="text" id="new-class-desc" name="description" class="clay-input" placeholder="Định hướng Tin học Ứng dụng • Học kỳ II">
+    </div>
+    <div class="md:col-span-2">
+      <button type="submit" class="clay-btn clay-btn-primary clay-btn-sm w-full">Tạo lớp</button>
+    </div>
+  </form>
+</section>
+
+<!-- 4 Essential KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6" data-reveal-group>
+  <div data-reveal class="clay-card p-5">
+    <div class="flex items-start justify-between gap-2 mb-1">
+      <span class="text-sm font-semibold text-slate-600">Lớp học phụ trách</span>
+      <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[#0B4FD8] text-xs font-bold">Lớp</span>
+    </div>
+    <div class="text-3xl font-extrabold text-slate-900 font-mono tabular-nums" data-countup="{{ teacher_stats.total_classes }}">{{ teacher_stats.total_classes }}</div>
+    <div class="text-xs text-slate-600 mt-1">Đang hoạt động</div>
   </div>
 
-  {% if exams %}
-    <div class="grid-2">
-      {% for e in exams %}
-        <div class="clay-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-title);">{{ e.title }}</h3>
-            <span class="clay-badge {% if e.submissions.count() > 0 %}badge-student{% else %}badge-teacher{% endif %}">
-              {{ e.submissions.count() }} Bài đã nộp
-            </span>
+  <div data-reveal class="clay-card p-5">
+    <div class="flex items-start justify-between gap-2 mb-1">
+      <span class="text-sm font-semibold text-slate-600">Phòng thi đang mở</span>
+      <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-bold">Tổng {{ teacher_stats.total_exams }} đề</span>
+    </div>
+    <div class="text-3xl font-extrabold text-[#0B4FD8] font-mono tabular-nums" data-countup="{{ teacher_stats.open_exams }}">{{ teacher_stats.open_exams }}</div>
+    <div class="text-xs text-slate-600 mt-1">Sẵn sàng nhận bài</div>
+  </div>
+
+  <div data-reveal class="clay-card p-5">
+    <div class="flex items-start justify-between gap-2 mb-1">
+      <span class="text-sm font-semibold text-slate-600">Lượt bài thi ghi nhận</span>
+      <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-[#047857] text-xs font-bold">Chấm tự động</span>
+    </div>
+    <div class="text-3xl font-extrabold text-[#047857] font-mono tabular-nums" data-countup="{{ teacher_stats.total_submissions }}">{{ teacher_stats.total_submissions }}</div>
+    <div class="text-xs text-slate-600 mt-1">Bài gần nhất</div>
+  </div>
+
+  <div data-reveal class="clay-card p-5">
+    <div class="flex items-start justify-between gap-2 mb-1">
+      <span class="text-sm font-semibold text-slate-600">Phát hiện vi phạm</span>
+      <span class="px-2 py-0.5 rounded-md bg-rose-50 text-[#BE123C] text-xs font-bold">Anti-Cheat v2.0</span>
+    </div>
+    <div class="text-3xl font-extrabold text-[#BE123C] font-mono tabular-nums" data-countup="{{ teacher_stats.violation_cases }}">{{ teacher_stats.violation_cases }}</div>
+    <div class="text-xs text-slate-600 mt-1">Lượt thi có cảnh báo</div>
+  </div>
+</div>
+
+<!-- 2-Column Operations Workspace -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  <!-- Left 7 Cols: Quick Exam Room Control + Classrooms -->
+  <div class="lg:col-span-7 space-y-6">
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+      <div class="flex items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="font-display text-lg font-extrabold text-slate-900">Điều Khiển Phòng Thi Nhanh</h2>
+          <p class="text-sm text-slate-600">Đóng/mở đề thi 1 chạm, xem mã PIN và xuất điểm Excel</p>
+        </div>
+        <a href="{{ url_for('main.exams_list') }}" class="text-sm font-bold text-[#0B4FD8] hover:underline">Tất cả ({{ exams|length }})</a>
+      </div>
+
+      {% if exams %}
+      <div class="space-y-3">
+        {% for exam in exams[:6] %}
+        <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-[#0B4FD8] transition flex flex-wrap items-center justify-between gap-3">
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono">{{ exam.classroom.code }}</span>
+              {% if exam.is_published %}
+                <span class="px-2 py-0.5 rounded bg-emerald-50 text-[#047857] border border-emerald-200">Đang mở</span>
+              {% else %}
+                <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">Đã khóa</span>
+              {% endif %}
+              {% if exam.access_code %}
+                <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-mono">PIN: {{ exam.access_code }}</span>
+              {% endif %}
+              {% if exam.shuffle_questions %}
+                <span class="px-2 py-0.5 rounded bg-blue-50 text-[#0B4FD8]">Đảo đề</span>
+              {% endif %}
+            </div>
+            <a href="{{ url_for('main.exam_detail', exam_id=exam.id) }}" class="text-base font-bold text-slate-900 hover:text-[#0B4FD8] block">
+              {{ exam.title }}
+            </a>
+            <div class="flex flex-wrap gap-4 text-xs text-slate-600 font-medium">
+              <span>{{ exam.duration_minutes }} phút</span>
+              <span>{{ exam.questions.count() }} câu</span>
+              <span>{{ exam.submissions.count() }} bài nộp</span>
+              <span>Tối đa {{ exam.max_violations }} lỗi</span>
+            </div>
           </div>
-          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
-            Lớp: <strong>{{ e.classroom.name }}</strong> • Thời lượng: <strong>{{ e.duration_minutes }} phút</strong> • Tối đa vi phạm: <strong>{{ e.max_violations }} lần</strong>
-          </p>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="{{ url_for('main.exam_detail', exam_id=e.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
-              ⚙️ Quản lý Đề & Câu hỏi
+
+          <div class="flex flex-wrap items-center gap-2">
+            <form action="{{ url_for('main.toggle_exam_status', exam_id=exam.id) }}" method="POST">
+              <input type="hidden" name="next" value="{{ url_for('main.teacher_dashboard') }}">
+              {% if exam.is_published %}
+              <button type="submit" class="min-h-[36px] px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-[#BE123C] text-xs font-bold cursor-pointer transition">
+                Khóa đề
+              </button>
+              {% else %}
+              <button type="submit" class="min-h-[36px] px-3 py-1.5 rounded-lg bg-[#047857] hover:bg-emerald-800 text-white text-xs font-bold cursor-pointer transition">
+                Mở đề
+              </button>
+              {% endif %}
+            </form>
+            <a href="{{ url_for('main.export_exam_excel', exam_id=exam.id) }}" class="min-h-[36px] inline-flex items-center px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-[#047857] text-xs font-bold transition">
+              Excel
+            </a>
+            <a href="{{ url_for('main.exam_detail', exam_id=exam.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+              Cấu hình
             </a>
           </div>
         </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="p-6 rounded-xl border border-slate-200 bg-slate-50 text-center">
+        <p class="text-sm text-slate-600">Chưa có đề kiểm tra nào. Hãy chọn lớp bên dưới để tạo đề thi mới.</p>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+      <div class="flex items-center justify-between gap-2 mb-4">
+        <h2 class="font-display text-lg font-extrabold text-slate-900">Lớp Học Phụ Trách</h2>
+        <a href="{{ url_for('main.lessons_list') }}" class="text-sm font-bold text-[#0B4FD8] hover:underline">Kho bài học →</a>
+      </div>
+
+      {% if classrooms %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for c in classrooms %}
+        <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-[#0B4FD8] transition flex flex-col justify-between gap-3">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-bold">{{ c.code }}</span>
+              <span class="text-xs text-slate-600 font-medium">{{ c.students.count() }} học sinh</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 mb-1">{{ c.name }}</h3>
+            <p class="text-xs text-slate-600">{{ c.courses.count() }} chủ đề • {{ c.exams.count() }} đề thi</p>
+          </div>
+          <div class="flex items-center gap-2 pt-2">
+            <a href="{{ url_for('main.classroom_detail', class_id=c.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm flex-1">
+              Vào lớp
+            </a>
+            <a href="{{ url_for('main.create_exam', class_id=c.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+              + Tạo đề
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="p-6 rounded-xl border border-slate-200 bg-slate-50 text-center">
+        <p class="text-sm text-slate-600 mb-3">Bạn chưa khởi tạo lớp học nào.</p>
+        <button type="button" onclick="toggleNewClassDrawer(true)" class="clay-btn clay-btn-primary clay-btn-sm">
+          Tạo lớp học đầu tiên
+        </button>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+
+  <!-- Right 5 Cols: Live Proctoring & Submission Monitor -->
+  <aside class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+    <div class="mb-4">
+      <h2 class="font-display text-lg font-extrabold text-slate-900">Giám Sát Bài Thi Thời Gian Thực</h2>
+      <p class="text-sm text-slate-600">Theo dõi điểm số, lỗi vi phạm và cấp quyền thi lại</p>
+    </div>
+
+    {% if submissions %}
+    <div class="space-y-3">
+      {% for s in submissions %}
+      <div class="p-4 rounded-xl border {% if s.status == 'auto_submitted_violation' %}border-rose-200 bg-rose-50/40{% else %}border-slate-200 bg-white{% endif %} space-y-2.5">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="text-sm font-bold text-slate-900">
+              {{ s.student.full_name }}
+              <span class="font-normal text-slate-600 font-mono text-xs">(@{{ s.student.username }})</span>
+            </div>
+            <div class="text-xs text-slate-600 mt-0.5">{{ s.exam.title }}</div>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-sm font-extrabold text-[#0B4FD8] font-mono tabular-nums">{{ s.score }}/{{ s.total_points }}đ</div>
+            {% if s.violations_count > 0 %}
+              <span class="inline-block px-2 py-0.5 rounded bg-rose-50 border border-rose-200 text-[#BE123C] text-xs font-bold">{{ s.violations_count }}/{{ s.exam.max_violations }} lỗi</span>
+            {% else %}
+              <span class="inline-block px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[#047857] text-xs font-bold">0 lỗi</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-slate-100 text-xs">
+          <div>
+            {% if s.status == 'auto_submitted_violation' %}
+              <span class="text-[#BE123C] font-bold">Đình chỉ tự động</span>
+            {% elif s.status == 'submitted' %}
+              <span class="text-[#047857] font-bold">Đã nộp hợp lệ</span>
+            {% else %}
+              <span class="text-amber-800 font-bold">Đang làm bài</span>
+            {% endif %}
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="{{ url_for('main.proctoring_report', submission_id=s.id) }}" class="min-h-[34px] inline-flex items-center px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-slate-800 font-semibold transition">
+              Nhật ký
+            </a>
+            <form action="{{ url_for('main.reset_submission', submission_id=s.id) }}" method="POST" onsubmit="return confirm('Xóa lượt thi này để cho phép học sinh {{ s.student.full_name }} làm lại bài?');">
+              <input type="hidden" name="next" value="{{ url_for('main.teacher_dashboard') }}">
+              <button type="submit" class="min-h-[34px] px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 hover:bg-[#0B4FD8] hover:text-white text-[#0B4FD8] font-bold cursor-pointer transition">
+                Cho thi lại
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
       {% endfor %}
     </div>
-  {% else %}
-    <div class="clay-card" style="text-align: center; padding: 24px;">
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Bạn có thể tạo bài kiểm tra trực tuyến ngay bên trong từng Lớp học.</p>
+    {% else %}
+    <div class="p-6 rounded-xl border border-slate-200 bg-slate-50 text-center">
+      <p class="text-sm text-slate-600">Chưa có bài làm nào được ghi nhận.</p>
     </div>
-  {% endif %}
+    {% endif %}
+  </aside>
 </div>
+{% endblock %}
 
-<!-- Recent Submissions & Proctoring Audits -->
-{% if submissions %}
-<div class="clay-card" style="margin-bottom: 36px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-    <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title);">
-      🚨 Lịch Sử Nộp Bài & Báo Cáo Chống Gian Lận Mới Nhất
-    </h2>
-    <span class="clay-badge badge-teacher">Giám sát tự động</span>
-  </div>
-
-  <div style="overflow-x: auto;">
-    <table class="clay-doc-table">
-      <thead>
-        <tr>
-          <th>Học Sinh</th>
-          <th>Đề Kiểm Tra</th>
-          <th>Điểm Số</th>
-          <th>Vi Phạm Phát Hiện</th>
-          <th>Trạng Thái</th>
-          <th>Hành Động</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for s in submissions %}
-          <tr>
-            <td>
-              <div style="font-weight: 700; color: var(--text-title);">{{ s.student.full_name }}</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">{{ s.student.username }}</div>
-            </td>
-            <td>{{ s.exam.title }}</td>
-            <td><strong style="color: var(--primary);">{{ s.score }}</strong> / {{ s.total_points }}</td>
-            <td>
-              {% if s.violations_count > 0 %}
-                <span class="clay-badge badge-pdf animate-shake">
-                  ⚠️ {{ s.violations_count }} lần vi phạm
-                </span>
-              {% else %}
-                <span class="clay-badge badge-student">
-                  ✅ 0 vi phạm (Trung thực)
-                </span>
-              {% endif %}
-            </td>
-            <td>
-              {% if s.status == 'auto_submitted_violation' %}
-                <span style="color: var(--danger); font-weight: 700;">Tự nộp do gian lận</span>
-              {% elif s.status == 'submitted' %}
-                <span style="color: var(--success); font-weight: 600;">Đã hoàn thành</span>
-              {% else %}
-                <span style="color: var(--warning); font-weight: 600;">Đang thi</span>
-              {% endif %}
-            </td>
-            <td>
-              <a href="{{ url_for('main.proctoring_report', submission_id=s.id) }}" class="clay-btn clay-btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">
-                📋 Xem Nhật Ký Vi Phạm
-              </a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
-
-<!-- Create Classroom Modal -->
-<div id="create-class-modal" class="clay-modal-backdrop">
-  <div class="clay-modal">
-    <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin: 0 auto 12px;">
-      🏫
-    </div>
-    <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; color: var(--text-title);">Tạo Lớp Học Mới</h3>
-    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Hệ thống sẽ tự động cấp một mã mời (Class Code) để học sinh tham gia</p>
-
-    <form method="POST" action="{{ url_for('main.create_classroom') }}">
-      <div class="clay-input-group" style="text-align: left;">
-        <label class="clay-label">Tên lớp học</label>
-        <input type="text" name="name" class="clay-input" placeholder="Ví dụ: 11A1 - Tin học ứng dụng" required>
-      </div>
-
-      <div class="clay-input-group" style="text-align: left;">
-        <label class="clay-label">Mô tả lớp học</label>
-        <textarea name="description" class="clay-textarea" rows="3" placeholder="Ví dụ: Lớp học Tin học ứng dụng HK1, học chuyên đề phần mềm và thiết kế web"></textarea>
-      </div>
-
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-        <button type="button" onclick="document.getElementById('create-class-modal').classList.remove('active')" class="clay-btn clay-btn-secondary">
-          Hủy
-        </button>
-        <button type="submit" class="clay-btn clay-btn-primary">
-          Xác Nhận Tạo Lớp
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+{% block extra_js %}
+<script>
+  function toggleNewClassDrawer(forceOpen) {
+    const drawer = document.getElementById('new-class-drawer');
+    const btn = document.getElementById('toggle-new-class-btn');
+    if (!drawer) return;
+    const willOpen = typeof forceOpen === 'boolean' ? forceOpen : drawer.hidden;
+    drawer.hidden = !willOpen;
+    if (btn) btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    if (willOpen) {
+      const inp = document.getElementById('new-class-name');
+      if (inp) inp.focus();
+    } else if (btn) {
+      btn.focus();
+    }
+  }
+</script>
 {% endblock %}

@@ -2,117 +2,428 @@
 
 {% block title %}{{ lesson.title }} - Tin học 11{% endblock %}
 
-{% block content %}
-<div style="margin-bottom: 20px;">
-  <a href="{{ url_for('main.course_detail', course_id=lesson.course_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 6px;">
-    ← Quay lại Khóa học: {{ lesson.course.title }}
-  </a>
+{% block reading_bar %}
+<div class="reading-progress-track" aria-hidden="true">
+  <div id="reading-progress-fill" class="reading-progress-fill"></div>
 </div>
+{% endblock %}
 
-<!-- Lesson Content Card -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
-    <div>
-      <span class="clay-badge badge-student" style="margin-bottom: 6px;">Bài học #{{ lesson.order_index }}</span>
-      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">{{ lesson.title }}</h1>
-    </div>
-  </div>
+{% block content %}
+<div class="mb-4 flex items-center justify-between flex-wrap gap-3">
+  <a href="{{ url_for('main.course_detail', course_id=lesson.course_id) }}" class="text-sm font-semibold text-slate-600 hover:text-[#0B4FD8] inline-flex items-center gap-1.5">
+    ← Quay lại chuyên đề: {{ lesson.course.title }}
+  </a>
 
-  {% if lesson.content %}
-    <div style="background: #F8FAFC; border: 1px solid var(--border-light); padding: 22px 26px; border-radius: var(--radius-md); margin-bottom: 20px; white-space: pre-line; line-height: 1.8; color: var(--text-body); font-size: 0.98rem;">
-      {{ lesson.content }}
+  {% if current_user.is_admin or current_user.is_teacher %}
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" onclick="openDsDialog('edit-lesson-modal')" class="clay-btn clay-btn-primary clay-btn-sm">
+        Chỉnh sửa Bài học • Poster • Video YouTube
+      </button>
+      <form method="POST" action="{{ url_for('main.delete_lesson', lesson_id=lesson.id) }}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài học này?');">
+        <button type="submit" class="clay-btn clay-btn-secondary clay-btn-sm text-[#BE123C] border-rose-200 hover:bg-rose-50">
+          Xóa bài
+        </button>
+      </form>
     </div>
   {% endif %}
 </div>
 
-<!-- Upload Material Box (For Teachers) -->
-{% if current_user.is_teacher or current_user.is_admin %}
-<div class="clay-card" style="margin-bottom: 28px; border-left: 5px solid var(--primary);">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-    <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title);">
-      📤 Tải Lên Tài Liệu Bài Học (PPT / DOCX / PDF)
-    </h2>
-    <div style="display: flex; gap: 6px;">
-      <span class="clay-badge badge-pptx">PPT / PPTX</span>
-      <span class="clay-badge badge-docx">DOCX</span>
-      <span class="clay-badge badge-pdf">PDF</span>
+<!-- =========================================================================
+     EDITORIAL LESSON BANNER
+     ========================================================================= -->
+<section class="typo-poster">
+  <div class="typo-poster-topbar">
+    <span>{{ lesson.course.title }}</span>
+    <span>{{ lesson.course.classroom.name }} • {{ lesson.course.classroom.code }}</span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 p-6 sm:p-7">
+    <div class="lg:col-span-7">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-extrabold mb-3">
+        BÀI {% if lesson.order_index < 10 %}0{{ lesson.order_index }}{% else %}{{ lesson.order_index }}{% endif %}
+      </div>
+      <h1 class="typo-poster-title">
+        {{ lesson.title }}
+      </h1>
+      <p class="typo-poster-subtitle">
+        {% if lesson.content %}
+          {{ lesson.content | truncate(170) }}
+        {% else %}
+          Nội dung lý thuyết trọng tâm và tài liệu học tập đính kèm.
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="lg:col-span-5">
+      <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-md">
+        <img src="{{ lesson|poster_src }}"
+             alt="Poster {{ lesson.title }}"
+             class="w-full h-full object-cover block">
+        {% if current_user.is_admin or current_user.is_teacher %}
+          <button type="button"
+                  onclick="openDsDialog('edit-lesson-modal')"
+                  class="absolute bottom-3 right-3 px-3 py-1.5 rounded-lg bg-white/95 text-[#0B4FD8] text-xs font-bold shadow border border-slate-200 hover:bg-white cursor-pointer">
+            Đổi ảnh Poster
+          </button>
+        {% endif %}
+      </div>
     </div>
   </div>
-  <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 18px;">
-    Tài liệu bạn tải lên sẽ được hệ thống tự động giải mã để học sinh xem trực tuyến ngay trên trình duyệt!
-  </p>
 
-  <form method="POST" action="{{ url_for('main.upload_material', lesson_id=lesson.id) }}" enctype="multipart/form-data">
-    <div class="grid-2">
-      <div class="clay-input-group">
-        <label class="clay-label">Tiêu đề tài liệu</label>
-        <input type="text" name="title" class="clay-input" placeholder="Ví dụ: Slide bài giảng PowerPoint - Bài 1" required>
-      </div>
-
-      <div class="clay-input-group">
-        <label class="clay-label">Chọn tệp (.pptx, .ppt, .docx, .pdf)</label>
-        <input type="file" name="file" class="clay-input" accept=".pdf,.docx,.pptx,.ppt" required style="padding: 10px; background: #FFFFFF;">
-      </div>
+  <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/90">
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Tài liệu đính kèm</span>
+      <span class="block font-display text-sm font-bold text-slate-900 mt-0.5">{{ materials|length }} tệp</span>
     </div>
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Ôn luyện</span>
+      <a href="{{ url_for('main.practice_hub') }}" class="inline-block font-display text-sm font-bold text-[#0B4FD8] hover:underline mt-0.5">Luyện tập bài này →</a>
+    </div>
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Lộ trình học</span>
+      <a href="{{ url_for('main.ai_advisor') }}" class="inline-block font-display text-sm font-bold text-[#0B4FD8] hover:underline mt-0.5">Tư vấn lộ trình →</a>
+    </div>
+  </div>
+</section>
 
-    <button type="submit" class="clay-btn clay-btn-primary">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="17 8 12 3 7 8"/>
-        <line x1="12" y1="3" x2="12" y2="15"/>
-      </svg>
-      Tải Lên & Xử Lý Tài Liệu
-    </button>
-  </form>
-</div>
-{% endif %}
+<!-- =========================================================================
+     MAIN 2-COLUMN LESSON WORKSPACE
+     ========================================================================= -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-<!-- Uploaded Materials List -->
-<div style="margin-bottom: 36px;">
-  <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--text-title);">
-    📁 Tài Liệu Học Tập Đi Kèm ({{ materials|length }})
-  </h2>
+  <div class="lg:col-span-8 flex flex-col gap-5">
 
-  {% if materials %}
-    <div class="grid-2">
-      {% for m in materials %}
-        <div class="clay-card">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              {% if m.file_type == 'pdf' %}
-                <span class="clay-badge badge-pdf" style="font-size: 0.82rem; font-weight: 800;">📄 PDF</span>
-              {% elif m.file_type == 'docx' %}
-                <span class="clay-badge badge-docx" style="font-size: 0.82rem; font-weight: 800;">📝 DOCX</span>
-              {% elif m.file_type in ['pptx', 'ppt'] %}
-                <span class="clay-badge badge-pptx" style="font-size: 0.82rem; font-weight: 800;">📊 PPTX</span>
-              {% endif %}
+    <!-- 1. Lesson Theory Content Card -->
+    <section class="clay-card">
+      <div class="mb-3 pb-3 border-b border-slate-200 flex items-center justify-between flex-wrap gap-2">
+        <h2 class="font-display text-lg font-extrabold text-slate-900">Đề Mục &amp; Nội Dung Lý Thuyết Trọng Tâm</h2>
+        {% if current_user.is_admin or current_user.is_teacher %}
+          <button type="button" onclick="openDsDialog('edit-lesson-modal')" class="text-sm font-bold text-[#0B4FD8] hover:underline cursor-pointer">
+            Sửa tiêu đề &amp; các đề mục →
+          </button>
+        {% endif %}
+      </div>
+
+      {% if lesson.content %}
+        <div class="text-base leading-relaxed max-w-[70ch]">
+          {{ lesson.content | lesson_sections }}
+        </div>
+      {% else %}
+        <p class="text-sm text-slate-600">Chưa có nội dung đề mục lý thuyết cho bài học này.</p>
+      {% endif %}
+    </section>
+
+    <!-- 2. Video Bài Giảng Section -->
+    {% set video_materials = [] %}
+    {% for m in materials %}
+      {% if m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}
+        {% set _ = video_materials.append(m) %}
+      {% endif %}
+    {% endfor %}
+
+    {% if lesson.video_embed or video_materials or current_user.is_admin or current_user.is_teacher %}
+    <section class="clay-card" id="video-lecture-section">
+      <div class="mb-3 pb-3 border-b border-slate-200 flex items-center justify-between flex-wrap gap-2">
+        <h2 class="font-display text-lg font-extrabold text-slate-900">Video Bài Giảng</h2>
+        {% if current_user.is_admin or current_user.is_teacher %}
+          <button type="button" onclick="openVideoEmbedEditor()" class="clay-btn clay-btn-secondary clay-btn-sm">
+            {% if lesson.video_embed %}Sửa Link YouTube / Mã HTML{% else %}+ Chèn Link YouTube / Mã HTML{% endif %}
+          </button>
+        {% endif %}
+      </div>
+
+      <div class="space-y-4">
+        {% if lesson.video_embed %}
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center justify-between mb-2.5 flex-wrap gap-2">
+              <span class="font-bold text-sm text-[#0B4FD8]">Video Bài Giảng Trực Tuyến (YouTube / HTML)</span>
+              <span class="text-sm font-semibold text-slate-600">{{ lesson.title }}</span>
             </div>
-            <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">
-              {{ m.file_size | filesize }}
-            </span>
+            {{ lesson.video_embed | video_embed_html }}
+          </div>
+        {% endif %}
+
+        {% for vm in video_materials %}
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center justify-between mb-2.5 flex-wrap gap-2">
+              <div class="font-bold text-base text-slate-900">{{ vm.title }}</div>
+              <span class="text-xs font-mono text-slate-600">{{ vm.file_type | upper }} • {{ vm.file_size | filesize }}</span>
+            </div>
+            <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 mb-3">
+              <video controls preload="metadata" class="w-full max-h-[420px] mx-auto block">
+                <source src="{{ url_for('main.serve_raw_material', material_id=vm.id) }}" type="video/{{ 'mp4' if vm.file_type == 'mov' else vm.file_type }}">
+                Trình duyệt không hỗ trợ phát video trực tiếp.
+              </video>
+            </div>
+            <div class="flex items-center justify-end gap-2">
+              <a href="{{ url_for('main.view_material', material_id=vm.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+                Mở chế độ Rạp chiếu (Cinema)
+              </a>
+              <a href="{{ url_for('main.download_material', material_id=vm.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+                Tải video
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+
+        {% if not lesson.video_embed and not video_materials %}
+          <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+            <p class="text-sm text-slate-600 mb-3">
+              Bài học này chưa có video. Quản trị viên / Giáo viên có thể dán link YouTube hoặc mã nhúng HTML để hiển thị video bài giảng tại đây.
+            </p>
+            <button type="button" onclick="openVideoEmbedEditor()" class="clay-btn clay-btn-primary clay-btn-sm">
+              + Chèn Link YouTube hoặc Mã HTML Video
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- 3. Uploaded Materials List -->
+    <section class="clay-card">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <h2 class="font-display text-lg font-extrabold text-slate-900">Kho Học Liệu Của Bài Học ({{ materials|length }})</h2>
+      </div>
+
+      {% if materials %}
+        <div class="grid-2">
+          {% for m in materials %}
+            <div class="soft-inset p-4 flex flex-col justify-between gap-4">
+              <div>
+                <div class="flex justify-between items-center mb-2.5">
+                  {% if m.file_type == 'pdf' %}
+                    <span class="clay-badge badge-pdf">FILE PDF</span>
+                  {% elif m.file_type == 'docx' %}
+                    <span class="clay-badge badge-docx">FILE DOCX</span>
+                  {% elif m.file_type in ['pptx', 'ppt'] %}
+                    <span class="clay-badge badge-pptx">SLIDE PPTX</span>
+                  {% elif m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}
+                    <span class="clay-badge badge-video">VIDEO {{ m.file_type | upper }}</span>
+                  {% else %}
+                    <span class="clay-badge badge-teacher">{{ m.file_type | upper }}</span>
+                  {% endif %}
+                  <span class="text-xs text-slate-600 font-mono">
+                    {{ m.file_size | filesize }}
+                  </span>
+                </div>
+
+                <h3 class="text-base font-bold text-slate-900 mb-1">{{ m.title }}</h3>
+                <p class="text-xs text-slate-600">
+                  {{ m.original_name }} • {{ m.uploaded_at.strftime('%d/%m/%Y') }}
+                </p>
+              </div>
+
+              <div class="flex gap-2 border-t border-slate-200 pt-3">
+                <a href="{{ url_for('main.view_material', material_id=m.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+                  {% if m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}Xem Video{% else %}Xem trực tuyến{% endif %}
+                </a>
+                <a href="{{ url_for('main.download_material', material_id=m.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+                  Tải về
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="soft-inset p-6 text-center">
+          <p class="text-slate-600 text-sm">
+            Chưa có tài liệu nào được đính kèm trong bài học này.
+          </p>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- 4. Upload Material Box -->
+    {% if current_user.is_teacher or current_user.is_admin %}
+    <section class="clay-card">
+      <h2 class="font-display text-lg font-extrabold text-slate-900 mb-4">Tải lên Học liệu (.docx, .pdf, .pptx, Video)</h2>
+
+      <form method="POST" action="{{ url_for('main.upload_material', lesson_id=lesson.id) }}" enctype="multipart/form-data">
+        <div class="grid-2">
+          <div class="clay-input-group">
+            <label for="upload-material-title" class="clay-label">Tiêu đề học liệu hoặc video <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+            <input type="text" id="upload-material-title" name="title" class="clay-input" placeholder="Ví dụ: Tài liệu đọc Bài {{ lesson.order_index }}" required>
           </div>
 
-          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: var(--text-title);">{{ m.title }}</h3>
-          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 18px;">
-            Tên gốc: {{ m.original_name }} • Cập nhật: {{ m.uploaded_at.strftime('%d/%m/%Y') }}
-          </p>
-
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="{{ url_for('main.view_material', material_id=m.id) }}" class="clay-btn clay-btn-primary" style="padding: 7px 16px; font-size: 0.85rem;">
-              👁️ Xem Trực Tuyến
-            </a>
-            <a href="{{ url_for('main.download_material', material_id=m.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
-              ⬇️ Tải Về Máy
-            </a>
+          <div class="clay-input-group">
+            <label for="upload-material-file" class="clay-label">Chọn tệp đính kèm <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+            <input type="file" id="upload-material-file" name="file" class="clay-input py-2" accept=".pdf,.docx,.pptx,.ppt,.mp4,.webm,.ogg,.mov" required>
           </div>
         </div>
-      {% endfor %}
+
+        <button type="submit" class="clay-btn clay-btn-primary clay-btn-sm">
+          Tải lên bài học này
+        </button>
+      </form>
+    </section>
+    {% endif %}
+
+    <!-- 5. Prev / Next Lesson Navigation -->
+    <nav aria-label="Điều hướng bài học" class="clay-card flex items-center justify-between gap-4 flex-wrap">
+      {% if prev_lesson %}
+        <a href="{{ url_for('main.lesson_detail', lesson_id=prev_lesson.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+          ← Bài {{ prev_lesson.order_index }}: {{ prev_lesson.title|truncate(32) }}
+        </a>
+      {% else %}
+        <span class="text-sm font-semibold text-slate-600">Đang ở bài đầu tiên của chủ đề</span>
+      {% endif %}
+
+      {% if next_lesson %}
+        <a href="{{ url_for('main.lesson_detail', lesson_id=next_lesson.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+          Bài {{ next_lesson.order_index }}: {{ next_lesson.title|truncate(32) }} →
+        </a>
+      {% else %}
+        <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+          Sang Góc Ôn Luyện →
+        </a>
+      {% endif %}
+    </nav>
+  </div>
+
+  <!-- Right 4 Cols: Course Syllabus Outline -->
+  <aside class="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-20">
+    <div class="clay-card">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-display text-base font-extrabold text-slate-900">Mục lục chủ đề</h2>
+        <span class="clay-badge badge-teacher">{{ course_lessons|length if course_lessons is defined else 1 }} bài</span>
+      </div>
+
+      {% if course_lessons is defined and course_lessons %}
+        <nav aria-label="Danh sách bài trong chủ đề" class="flex flex-col gap-2 mb-4">
+          {% for item in course_lessons %}
+            <a href="{{ url_for('main.lesson_detail', lesson_id=item.id) }}"
+               {% if item.id == lesson.id %}aria-current="page"{% endif %}
+               class="p-3 rounded-xl border text-sm font-semibold transition flex items-center justify-between gap-2 {% if item.id == lesson.id %}bg-blue-50 border-blue-200 text-[#0B4FD8]{% else %}bg-slate-50 border-slate-200 text-slate-700 hover:border-[#0B4FD8]{% endif %}">
+              <span class="truncate">Bài {{ item.order_index }}. {{ item.title }}</span>
+              {% if item.id == lesson.id %}
+                <span class="clay-badge badge-teacher shrink-0">Đang học</span>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </nav>
+      {% endif %}
+
+      <div class="pt-3 border-t border-slate-200 flex flex-col gap-2">
+        <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm w-full">
+          Ôn luyện bài học →
+        </a>
+        <a href="{{ url_for('main.ai_advisor') }}" class="clay-btn clay-btn-secondary clay-btn-sm w-full">
+          Tư vấn lộ trình học
+        </a>
+      </div>
     </div>
-  {% else %}
-    <div class="clay-card" style="text-align: center; padding: 36px;">
-      <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Chưa có tài liệu đính kèm nào trong bài học này.</p>
-    </div>
-  {% endif %}
+  </aside>
+
 </div>
+
+{% if current_user.is_admin or current_user.is_teacher %}
+<!-- Native <dialog> Modal Edit Lesson -->
+<dialog id="edit-lesson-modal" class="ds-dialog" closedby="any" aria-labelledby="edit-lesson-title">
+  <div class="p-6 sm:p-7">
+    <div class="flex items-start justify-between gap-3 pb-3 mb-4 border-b border-slate-200">
+      <div>
+        <h2 id="edit-lesson-title" class="font-display text-xl font-extrabold text-slate-900">Chỉnh Sửa Tự Do Bài Học</h2>
+        <p class="text-sm text-slate-600 mt-0.5">Cập nhật tiêu đề, các đề mục lý thuyết, ảnh Poster và link YouTube / mã HTML video</p>
+      </div>
+      <button type="button" onclick="closeDsDialog('edit-lesson-modal')" class="clay-btn clay-btn-secondary clay-btn-sm shrink-0">
+        Đóng
+      </button>
+    </div>
+
+    <form method="POST" action="{{ url_for('main.edit_lesson', lesson_id=lesson.id) }}" enctype="multipart/form-data">
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+        <div class="sm:col-span-3 clay-input-group">
+          <label for="edit-lesson-order" class="clay-label">Thứ tự bài</label>
+          <input type="number" id="edit-lesson-order" name="order_index" class="clay-input" value="{{ lesson.order_index }}" required>
+        </div>
+
+        <div class="sm:col-span-9 clay-input-group">
+          <label for="edit-lesson-name" class="clay-label">Tiêu đề bài học <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="text" id="edit-lesson-name" name="title" class="clay-input" value="{{ lesson.title }}" required autofocus>
+        </div>
+      </div>
+
+      <div class="clay-input-group">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-1.5">
+          <label for="lesson-content-editor" class="clay-label mb-0">Các đề mục &amp; Nội dung bài học</label>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="insertHeading('# Đề mục lớn: ')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-blue-50 text-slate-800 hover:text-[#0B4FD8] text-xs font-semibold border border-slate-300 cursor-pointer">+ Đề mục lớn (#)</button>
+            <button type="button" onclick="insertHeading('## Mục con: ')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-blue-50 text-slate-800 hover:text-[#0B4FD8] text-xs font-semibold border border-slate-300 cursor-pointer">+ Đề mục con (##)</button>
+            <button type="button" onclick="insertHeading('- Nội dung trọng tâm: ')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-blue-50 text-slate-800 hover:text-[#0B4FD8] text-xs font-semibold border border-slate-300 cursor-pointer">+ Ý chính (-)</button>
+          </div>
+        </div>
+        <textarea id="lesson-content-editor" name="content" class="clay-textarea" rows="7" placeholder="# I. Khái niệm cơ bản&#10;1. Định nghĩa...&#10;- Ý chính thứ nhất...&#10;# II. Ứng dụng thực tế">{{ lesson.content }}</textarea>
+        <span class="text-xs text-slate-600 mt-1 block">Mẹo: Dùng dấu <code># </code> hoặc <code>I. </code> ở đầu dòng để tạo Đề mục lớn; dùng <code>## </code> hoặc <code>1. </code> để tạo Đề mục con.</span>
+      </div>
+
+      <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4">
+        <span class="clay-label text-[#0B4FD8]">Ảnh Poster Bài Học (Chọn mẫu có sẵn, nhập Link hoặc Tải ảnh từ máy)</span>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+          <button type="button" onclick="document.getElementById('poster-url-input').value='img/posters/poster_a_os.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Hệ điều hành</button>
+          <button type="button" onclick="document.getElementById('poster-url-input').value='img/posters/poster_a_hardware.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Phần cứng</button>
+          <button type="button" onclick="document.getElementById('poster-url-input').value='img/posters/poster_c_cloud.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Đám mây</button>
+          <button type="button" onclick="document.getElementById('poster-url-input').value='img/posters/poster_f_database.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster CSDL &amp; SQL</button>
+          <button type="button" onclick="document.getElementById('poster-url-input').value='img/posters/poster_e_gimp.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster GIMP &amp; Video</button>
+          <button type="button" onclick="document.getElementById('poster-url-input').value='img/posters/poster_f_web.jpg'" class="p-2 rounded-lg border border-slate-300 bg-white hover:border-[#0B4FD8] text-xs font-semibold text-slate-800 text-left cursor-pointer">Poster Thiết kế Web</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="poster-url-input" class="text-xs font-semibold text-slate-700 block mb-1">Đường dẫn hoặc URL ảnh Poster</label>
+            <input id="poster-url-input" type="text" name="poster_url" class="clay-input" value="{{ lesson.poster_url or '' }}" placeholder="Để trống = tự động hoặc nhập URL">
+          </div>
+          <div>
+            <label for="poster-file-input" class="text-xs font-semibold text-slate-700 block mb-1">Hoặc tải ảnh Poster mới (.jpg, .png)</label>
+            <input id="poster-file-input" type="file" name="poster_file" class="clay-input py-2" accept=".png,.jpg,.jpeg,.webp,.gif">
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4">
+        <label for="video-embed-input" class="clay-label text-[#0B4FD8]">Video Bài Giảng (Dán Link YouTube hoặc Mã nhúng HTML &lt;iframe&gt;)</label>
+        <textarea id="video-embed-input" name="video_embed" class="clay-textarea font-mono text-sm" rows="3" placeholder="Ví dụ: https://www.youtube.com/watch?v=... hoặc <iframe src=&quot;https://www.youtube.com/embed/...&quot;></iframe>">{{ lesson.video_embed or '' }}</textarea>
+        <span class="text-xs text-slate-600 mt-1 block">Hỗ trợ mọi định dạng link YouTube (<code>youtube.com/watch?v=...</code>, <code>youtu.be/...</code>) hoặc mã HTML <code>&lt;iframe&gt;</code>, <code>&lt;video&gt;</code>.</span>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+        <button type="button" onclick="closeDsDialog('edit-lesson-modal')" class="clay-btn clay-btn-secondary">
+          Hủy
+        </button>
+        <button type="submit" class="clay-btn clay-btn-primary">
+          Lưu Thay Đổi Bài Học
+        </button>
+      </div>
+    </form>
+  </div>
+</dialog>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function insertHeading(prefix) {
+    const ta = document.getElementById('lesson-content-editor');
+    if (!ta) return;
+    const start = ta.selectionStart || ta.value.length;
+    const before = ta.value.substring(0, start);
+    const after = ta.value.substring(start);
+    const newline = (before.length > 0 && !before.endsWith('\n')) ? '\n' : '';
+    ta.value = before + newline + prefix + after;
+    ta.focus();
+  }
+
+  function openVideoEmbedEditor() {
+    openDsDialog('edit-lesson-modal');
+    const input = document.getElementById('video-embed-input');
+    if (input) setTimeout(() => input.focus(), 60);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.search.indexOf('edit=1') !== -1) {
+      openDsDialog('edit-lesson-modal');
+    }
+  });
+</script>
 {% endblock %}

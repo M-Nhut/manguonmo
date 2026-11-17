@@ -2,32 +2,34 @@
 
 {% block title %}Xem Word DOCX: {{ material.title }}{% endblock %}
 
+{% block reading_bar %}
+<div class="reading-progress-track" aria-hidden="true">
+  <div id="reading-progress-fill" class="reading-progress-fill"></div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
-    ← Quay lại Bài học
+<div class="mb-4">
+  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" class="text-sm font-semibold text-slate-600 hover:text-[#0B4FD8] inline-flex items-center gap-1.5">
+    ← Quay lại bài học
   </a>
-  <div style="display: flex; gap: 8px;">
-    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
-      ⬇️ Tải Tệp Về Máy
+</div>
+
+<section class="page-header-bar">
+  <div>
+    <h1>{{ material.title }}</h1>
+    <p>Tài liệu Word (.docx) • Dung lượng: {{ material.file_size | filesize }}</p>
+  </div>
+  <div class="flex items-center gap-2.5">
+    <span class="clay-badge badge-docx">DOCX</span>
+    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+      Tải về máy
     </a>
   </div>
-</div>
+</section>
 
-<div class="clay-card animate-spring-pop" style="margin-bottom: 24px; padding: 20px 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-    <div>
-      <span class="clay-badge badge-docx" style="margin-bottom: 6px;">📝 Tài liệu Word (.docx)</span>
-      <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">{{ material.title }}</h1>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
-        Trình đọc trực tiếp chuẩn cấu trúc • Dung lượng: <strong>{{ material.file_size | filesize }}</strong>
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- DOCX Content Document Reader -->
-<div class="clay-doc-reader" style="max-width: 900px; margin: 0 auto 40px;">
+<!-- Editorial DOCX Content Document Reader -->
+<article class="clay-doc-reader max-w-[880px] mx-auto mb-10">
   {{ html_content | safe }}
-</div>
+</article>
 {% endblock %}

@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}AI Tư Vấn Lộ Trình Học Tập - Tin học 11 Ứng dụng{% endblock %}
+
+{% block content %}
+<!-- EDITORIAL INDIGO AI ADVISOR BANNER -->
+<section class="typo-poster ds-banner-indigo">
+  <div class="typo-poster-topbar">
+    <span>AI TƯ VẤN LỘ TRÌNH HỌC TẬP • TIN HỌC 11</span>
+    <span>{{ current_user.full_name }}</span>
+  </div>
+
+  <div class="p-6 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div>
+      <span class="clay-badge badge-ai mb-2.5">Phân tích cá nhân hóa</span>
+      <h1 class="typo-poster-title">
+        Tư Vấn Lộ Trình Học Tập
+      </h1>
+      <p class="typo-poster-subtitle">
+        Phân tích kết quả kiểm tra để đề xuất lộ trình ôn tập 4 giai đoạn phù hợp mục tiêu.
+      </p>
+    </div>
+
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-center md:text-right shrink-0">
+      <div class="font-mono text-3xl font-extrabold text-indigo-700 leading-none tabular-nums">{{ avg_ratio }}/10</div>
+      <div class="text-xs font-bold text-slate-600 uppercase tracking-wide mt-1.5">Điểm TB Quy Đổi</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/90">
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600 mb-1">Phân hạng</span>
+      <span class="clay-badge badge-ai">{{ learner_tier }}</span>
+    </div>
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600 mb-1">Chủ đề ưu tiên</span>
+      <span class="font-display text-sm font-bold text-slate-900">Chủ đề {{ recommended_topic }}</span>
+    </div>
+    <div class="px-5 py-3.5">
+      <span class="block font-mono text-xs font-bold uppercase text-slate-600 mb-1">Số đề đã làm</span>
+      <span class="font-display text-sm font-bold text-slate-900">{{ total_exams_taken }} bài kiểm tra</span>
+    </div>
+  </div>
+</section>
+
+<!-- Main 2-Column AI Workspace -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+  <!-- Left 5 Cols: AI Learning Path Configurator -->
+  <section class="lg:col-span-5 clay-card">
+    <h2 class="font-display text-lg font-extrabold text-slate-900 mb-1.5">Thiết lập mục tiêu</h2>
+    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+      Chọn mục tiêu, chủ đề ưu tiên và thời gian tự học mỗi ngày.
+    </p>
+
+    <form id="ai-advisor-form" onsubmit="generateAILearningPath(event)">
+      <div class="clay-input-group">
+        <label for="ai-goal" class="clay-label">1. Mục tiêu học tập</label>
+        <select id="ai-goal" class="clay-select">
+          <option value="score_9">Mục tiêu 9.0+ môn Tin học 11</option>
+          <option value="exam_15m">Ôn kiểm tra 15 phút</option>
+          <option value="midterm">Ôn thi Giữa kỳ / Học kỳ</option>
+          <option value="practical">Thực hành SQL &amp; GIMP</option>
+        </select>
+      </div>
+
+      <div class="clay-input-group">
+        <label for="ai-topic" class="clay-label">2. Nhóm Chủ đề ưu tiên (SGK Tin học 11)</label>
+        <select id="ai-topic" class="clay-select">
+          <option value="F" {% if recommended_topic == 'F' %}selected{% endif %}>Chủ đề 4, 5 &amp; 6: Hệ Cơ sở dữ liệu &amp; Thực hành SQL (Bài 10–24)</option>
+          <option value="A" {% if recommended_topic == 'A' %}selected{% endif %}>Chủ đề 1: Máy tính và xã hội tri thức (Bài 1–5)</option>
+          <option value="C" {% if recommended_topic == 'C' %}selected{% endif %}>Chủ đề 2 &amp; 3: Lưu trữ, tìm kiếm &amp; Giao tiếp an toàn (Bài 6–9)</option>
+          <option value="E" {% if recommended_topic == 'E' %}selected{% endif %}>Chủ đề 7: Phần mềm chỉnh sửa ảnh và làm video (Bài 25–31)</option>
+        </select>
+      </div>
+
+      <div class="clay-input-group">
+        <label for="ai-minutes" class="clay-label">3. Thời gian học mỗi ngày</label>
+        <select id="ai-minutes" class="clay-select">
+          <option value="20">20 phút / ngày</option>
+          <option value="30" selected>30 phút / ngày</option>
+          <option value="45">45 phút / ngày</option>
+          <option value="60">60 phút / ngày</option>
+        </select>
+      </div>
+
+      <div class="clay-input-group">
+        <label for="ai-custom-note" class="clay-label">4. Ghi chú cụ thể (Tùy chọn)</label>
+        <textarea id="ai-custom-note" class="clay-textarea" rows="2" placeholder="Ví dụ: Em hay nhầm khóa chính và khóa ngoại..."></textarea>
+      </div>
+
+      <!-- Quick Prompt Chips -->
+      <div class="mb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-600 block mb-2">Gợi ý nhanh:</span>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="fillQuickPrompt('F', 'Em muốn nắm vững câu lệnh SELECT và WHERE trong SQL')" class="min-h-[36px] text-xs px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 text-slate-800 hover:text-indigo-700 font-semibold border border-slate-200 transition cursor-pointer">
+            Ôn nhanh truy vấn SQL
+          </button>
+          <button type="button" onclick="fillQuickPrompt('A', 'Làm sao phân biệt phần mềm nguồn mở và thương mại?')" class="min-h-[36px] text-xs px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 text-slate-800 hover:text-indigo-700 font-semibold border border-slate-200 transition cursor-pointer">
+            Hệ điều hành &amp; PMNM
+          </button>
+          <button type="button" onclick="fillQuickPrompt('E', 'Em cần lộ trình thực hành Layer và tách nền PNG trong GIMP')" class="min-h-[36px] text-xs px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 text-slate-800 hover:text-indigo-700 font-semibold border border-slate-200 transition cursor-pointer">
+            Thực hành GIMP
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" id="ai-submit-btn" class="clay-btn clay-btn-primary w-full">
+        Tạo Lộ Trình Học Tập
+      </button>
+    </form>
+  </section>
+
+  <!-- Right 7 Cols: Dynamic 4-Phase AI Learning Roadmap -->
+  <section class="lg:col-span-7 clay-card" aria-live="polite" id="roadmap-region">
+    <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-slate-200">
+      <div>
+        <span class="clay-badge badge-student mb-1.5" id="roadmap-topic-badge">CHỦ ĐỀ {{ recommended_topic }}</span>
+        <h2 class="font-display text-lg font-extrabold text-slate-900" id="roadmap-headline">
+          Lộ trình 4 giai đoạn đề xuất
+        </h2>
+      </div>
+      <span class="text-sm font-mono font-bold text-[#0B4FD8]" id="roadmap-goal-badge">
+        GDPT 2018
+      </span>
+    </div>
+
+    <div id="roadmap-coach-box" class="p-4 rounded-xl soft-inset text-sm text-slate-700 leading-relaxed mb-5">
+      {{ summary_advice }}
+    </div>
+
+    <ol id="roadmap-steps-container" class="relative space-y-4 pl-8 before:content-[''] before:absolute before:left-[13px] before:top-4 before:bottom-4 before:w-0.5 before:bg-gradient-to-b before:from-[#0B4FD8] before:via-[#4F46E5] before:to-[#0F766E]" data-reveal-group>
+      <li class="relative p-4 rounded-xl border border-slate-200 bg-white/95 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4" data-reveal>
+        <span class="absolute -left-8 top-4 w-7 h-7 rounded-full bg-[#0B4FD8] text-white font-mono text-xs font-extrabold inline-flex items-center justify-center ring-4 ring-white shadow-sm" aria-hidden="true">01</span>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="clay-badge badge-teacher font-mono">Giai đoạn 01</span>
+            <span class="text-xs font-mono font-bold text-slate-600">10 phút</span>
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900 mb-1">Đọc Lý thuyết Chủ đề {{ recommended_topic }}</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Mở bài học thuộc Chủ đề {{ recommended_topic }} để nắm khái niệm cốt lõi.
+          </p>
+        </div>
+        <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm shrink-0">
+          Mở Bài Học →
+        </a>
+      </li>
+
+      <li class="relative p-4 rounded-xl border border-slate-200 bg-white/95 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4" data-reveal>
+        <span class="absolute -left-8 top-4 w-7 h-7 rounded-full bg-[#0F766E] text-white font-mono text-xs font-extrabold inline-flex items-center justify-center ring-4 ring-white shadow-sm" aria-hidden="true">02</span>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="clay-badge badge-docx font-mono">Giai đoạn 02</span>
+            <span class="text-xs font-mono font-bold text-slate-600">10 phút</span>
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900 mb-1">Xem tài liệu DOCX, PDF &amp; Video</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Đọc giáo án Word, đề cương PDF, slide PPTX hoặc Video thực hành trong bài.
+          </p>
+        </div>
+        <a href="{{ url_for('main.materials_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm shrink-0">
+          Kho Tài Liệu →
+        </a>
+      </li>
+
+      <li class="relative p-4 rounded-xl border border-indigo-200 bg-indigo-50/40 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4" data-reveal>
+        <span class="absolute -left-8 top-4 w-7 h-7 rounded-full bg-[#4F46E5] text-white font-mono text-xs font-extrabold inline-flex items-center justify-center ring-4 ring-white shadow-sm" aria-hidden="true">03</span>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="clay-badge badge-student font-mono">Giai đoạn 03</span>
+            <span class="text-xs font-mono font-bold text-slate-600">10 phút</span>
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900 mb-1">Lật thẻ Flashcard &amp; Luyện trắc nghiệm</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Trả lời câu hỏi Chủ đề {{ recommended_topic }} tại Góc Ôn Luyện và xem giải thích.
+          </p>
+        </div>
+        <a href="{{ url_for('main.practice_hub', topic=recommended_topic) }}" class="clay-btn clay-btn-primary clay-btn-sm shrink-0">
+          Ôn luyện ngay →
+        </a>
+      </li>
+
+      <li class="relative p-4 rounded-xl border border-slate-200 bg-white/95 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4" data-reveal>
+        <span class="absolute -left-8 top-4 w-7 h-7 rounded-full bg-[#C2410C] text-white font-mono text-xs font-extrabold inline-flex items-center justify-center ring-4 ring-white shadow-sm" aria-hidden="true">04</span>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="clay-badge badge-pdf font-mono">Giai đoạn 04</span>
+            <span class="text-xs font-mono font-bold text-slate-600">15 phút</span>
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900 mb-1">Làm bài kiểm tra đánh giá</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Làm đề thi tính giờ để kiểm tra mức độ nắm vững kiến thức.
+          </p>
+        </div>
+        <a href="{{ url_for('main.exams_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm shrink-0">
+          Vào Phòng Thi →
+        </a>
+      </li>
+    </ol>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function fillQuickPrompt(topicCode, noteText) {
+    const topicSelect = document.getElementById('ai-topic');
+    const noteBox = document.getElementById('ai-custom-note');
+    if (topicSelect) topicSelect.value = topicCode;
+    if (noteBox) noteBox.value = noteText;
+    const form = document.getElementById('ai-advisor-form');
+    if (form) form.requestSubmit();
+  }
+
+  async function generateAILearningPath(event) {
+    event.preventDefault();
+    const goal = document.getElementById('ai-goal').value;
+    const topic = document.getElementById('ai-topic').value;
+    const dailyMinutes = document.getElementById('ai-minutes').value;
+    const customNote = document.getElementById('ai-custom-note').value;
+    const submitBtn = document.getElementById('ai-submit-btn');
+    const region = document.getElementById('roadmap-region');
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đang phân tích & thiết kế lộ trình...';
+    }
+    if (region) region.setAttribute('aria-busy', 'true');
+
+    try {
+      const resp = await fetch('{{ url_for("main.api_ai_learning_path") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          goal: goal,
+          topic: topic,
+          daily_minutes: dailyMinutes,
+          custom_note: customNote
+        })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        document.getElementById('roadmap-topic-badge').textContent = data.topic_code;
+        document.getElementById('roadmap-headline').textContent = data.topic_title;
+        document.getElementById('roadmap-goal-badge').textContent = data.goal_title;
+        document.getElementById('roadmap-coach-box').textContent = data.coach_reply;
+
+        const nodeColors = ['bg-[#0B4FD8]', 'bg-[#0F766E]', 'bg-[#4F46E5]', 'bg-[#C2410C]'];
+        const badgeClasses = ['badge-teacher', 'badge-docx', 'badge-student', 'badge-pdf'];
+        const container = document.getElementById('roadmap-steps-container');
+        container.innerHTML = '';
+        data.steps.forEach((st, idx) => {
+          const card = document.createElement('li');
+          card.className = `relative p-4 rounded-xl border ${idx === 2 ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-200 bg-white/95'} shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-spring-pop`;
+          card.style.animationDelay = `${idx * 65}ms`;
+
+          const stepDot = document.createElement('span');
+          stepDot.className = `absolute -left-8 top-4 w-7 h-7 rounded-full ${nodeColors[idx % nodeColors.length]} text-white font-mono text-xs font-extrabold inline-flex items-center justify-center ring-4 ring-white shadow-sm`;
+          stepDot.setAttribute('aria-hidden', 'true');
+          stepDot.textContent = `0${idx + 1}`;
+
+          const left = document.createElement('div');
+          const meta = document.createElement('div');
+          meta.className = 'flex items-center gap-2 mb-1';
+
+          const badge = document.createElement('span');
+          badge.className = `clay-badge ${badgeClasses[idx % badgeClasses.length]} font-mono`;
+          badge.textContent = st.step;
+
+          const dur = document.createElement('span');
+          dur.className = 'text-xs font-mono font-bold text-slate-600';
+          dur.textContent = st.duration;
+
+          meta.append(badge, dur);
+
+          const h3 = document.createElement('h3');
+          h3.className = 'text-base font-extrabold text-slate-900 mb-1';
+          h3.textContent = st.title;
+
+          const p = document.createElement('p');
+          p.className = 'text-sm text-slate-600 leading-relaxed';
+          p.textContent = st.detail;
+
+          left.append(meta, h3, p);
+
+          const cta = document.createElement('a');
+          cta.href = st.action_url;
+          cta.className = `clay-btn ${idx === 2 ? 'clay-btn-primary' : 'clay-btn-secondary'} clay-btn-sm shrink-0`;
+          cta.textContent = `${st.action_label} →`;
+
+          card.append(stepDot, left, cta);
+          container.appendChild(card);
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (region) region.setAttribute('aria-busy', 'false');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Cập Nhật Lại Lộ Trình Học Tập';
+      }
+    }
+  }
+</script>
+{% endblock %}

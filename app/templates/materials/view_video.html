@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Video bài giảng: {{ material.title }} - Tin học 11{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('main.lesson_detail', lesson_id=material.lesson_id) }}" class="text-sm font-semibold text-slate-600 hover:text-[#0B4FD8] inline-flex items-center gap-1.5">
+    ← Quay lại bài học: {{ material.lesson.title }}
+  </a>
+</div>
+
+<section class="page-header-bar">
+  <div>
+    <h1>{{ material.title }}</h1>
+    <p>Video bài giảng (.{{ material.file_type }}) • Dung lượng: {{ material.file_size | filesize }}</p>
+  </div>
+  <div class="flex items-center gap-2.5">
+    <span class="clay-badge badge-video">{{ material.file_type | upper }}</span>
+    <a href="{{ url_for('main.download_material', material_id=material.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+      Tải về máy
+    </a>
+  </div>
+</section>
+
+<!-- HTML5 Cinema Video Player Card -->
+<section class="clay-card p-5 mb-6" aria-label="Trình phát video bài giảng">
+  <div class="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-lg">
+    <video id="lesson-video-player" controls preload="metadata" class="w-full max-h-[640px] mx-auto block">
+      <source src="{{ url_for('main.serve_raw_material', material_id=material.id) }}" type="video/{{ 'mp4' if material.file_type == 'mov' else material.file_type }}">
+      Trình duyệt của bạn không hỗ trợ phát video trực tiếp. Vui lòng tải tệp về máy.
+    </video>
+  </div>
+
+  <!-- Playback Speed & Quick Study Controls -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mt-4 pt-4 border-t border-slate-100">
+    <div class="flex items-center gap-2 flex-wrap" role="group" aria-label="Tốc độ phát video">
+      <span class="text-xs font-bold text-slate-600 uppercase tracking-wider mr-1">Tốc độ phát:</span>
+      <button type="button" data-speed="0.75" aria-pressed="false" onclick="setVideoSpeed(0.75, this)" class="speed-btn clay-btn clay-btn-secondary clay-btn-sm">0.75x</button>
+      <button type="button" data-speed="1.0" aria-pressed="true" onclick="setVideoSpeed(1.0, this)" class="speed-btn clay-btn clay-btn-primary clay-btn-sm">1.0x (Chuẩn)</button>
+      <button type="button" data-speed="1.25" aria-pressed="false" onclick="setVideoSpeed(1.25, this)" class="speed-btn clay-btn clay-btn-secondary clay-btn-sm">1.25x</button>
+      <button type="button" data-speed="1.5" aria-pressed="false" onclick="setVideoSpeed(1.5, this)" class="speed-btn clay-btn clay-btn-secondary clay-btn-sm">1.5x</button>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+        Luyện trắc nghiệm sau khi xem →
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function setVideoSpeed(rate, btnEl) {
+    const v = document.getElementById('lesson-video-player');
+    if (v) v.playbackRate = rate;
+
+    document.querySelectorAll('.speed-btn').forEach((b) => {
+      const isActive = (b === btnEl);
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      b.className = isActive
+        ? 'speed-btn clay-btn clay-btn-primary clay-btn-sm'
+        : 'speed-btn clay-btn clay-btn-secondary clay-btn-sm';
+    });
+  }
+</script>
+{% endblock %}

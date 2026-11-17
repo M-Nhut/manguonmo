@@ -1,101 +1,119 @@
 {% extends "base.html" %}
-
-{% block title %}Mục Kiểm Tra - Tin học 11 Ứng dụng{% endblock %}
+{% block title %}Mục Kiểm Tra &amp; Phòng Thi - Tin học 11{% endblock %}
 
 {% block content %}
-<!-- Section Header Banner -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+<section class="ds-banner ds-banner-grid-bg p-6 sm:p-7">
+  <div class="flex flex-wrap justify-between items-center gap-4">
     <div>
-      <span class="clay-badge badge-pdf" style="margin-bottom: 8px;">🛡️ KHÔNG GIAN THI CỬ CHỐNG GIAN LẬN</span>
-      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Mục Kiểm Tra Trực Tuyến</h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
-        Đề thi trắc nghiệm khách quan được bảo vệ bởi công nghệ giám sát toàn màn hình, khóa tab và chống mở công cụ hỗ trợ
-      </p>
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] text-xs font-bold uppercase tracking-wide mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0B4FD8]" aria-hidden="true"></span>
+        Hệ Thống Khảo Thí &amp; Giám Sát Chống Gian Lận
+      </span>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Mục Kiểm Tra &amp; Phòng Thi</h1>
     </div>
 
-    <div>
-      {% if current_user.is_teacher or current_user.is_admin %}
-        {% if classrooms %}
-          <a href="{{ url_for('main.create_exam', class_id=classrooms[0].id) }}" class="clay-btn clay-btn-success">
-            ➕ Tạo Đề Thi Mới
-          </a>
-        {% endif %}
+    <div class="flex flex-wrap items-center gap-2.5">
+      <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+        Góc Ôn Luyện (Đề 30 câu)
+      </a>
+      {% if (current_user.is_teacher or current_user.is_admin) and classrooms %}
+      <a href="{{ url_for('main.create_exam', class_id=classrooms[0].id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+        + Tạo Đề Thi Mới
+      </a>
       {% endif %}
     </div>
   </div>
-</div>
+</section>
 
-<!-- Exams Grid -->
 {% if exams %}
-  <div class="grid-2" style="margin-bottom: 36px;">
-    {% for ex in exams %}
-      {% set sub = user_submissions.get(ex.id) if current_user.is_student else None %}
-      <div class="clay-card animate-spring-pop" style="border-left: 5px solid {% if sub %}var(--success){% else %}var(--primary){% endif %};">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-          <div>
-            <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
-              LỚP: {{ ex.classroom.name }}
-            </span>
-            <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-top: 2px;">
-              {{ ex.title }}
-            </h2>
-          </div>
-          <span class="clay-badge badge-pdf">
-            🛡️ Proctoring
-          </span>
-        </div>
-
-        <p style="color: var(--text-body); font-size: 0.88rem; line-height: 1.5; margin-bottom: 16px;">
-          {{ ex.description or 'Bài kiểm tra kiến thức Tin học 11 ứng dụng.' }}
-        </p>
-
-        <!-- Exam Security Specifications -->
-        <div style="background: #F8FAFC; border: 1px solid var(--border-light); padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 18px; font-size: 0.82rem; color: var(--text-muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-          <span>⏱️ Thời gian: <strong>{{ ex.duration_minutes }} phút</strong></span>
-          <span>📝 Số câu: <strong>{{ ex.questions.count() }} câu</strong></span>
-          <span>⚠️ Vi phạm tối đa: <strong>{{ ex.max_violations }} lần</strong></span>
-        </div>
-
-        <!-- Action / Status Bar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 14px;">
-          {% if current_user.is_student %}
-            {% if sub %}
-              <div>
-                <span class="clay-badge badge-student" style="font-size: 0.88rem;">
-                  ✓ Đã nộp: <strong>{{ sub.score }} / {{ sub.total_points }} điểm</strong>
-                </span>
-              </div>
-              <a href="{{ url_for('main.exam_result', submission_id=sub.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
-                Xem Chi Tiết Bài Làm
-              </a>
-            {% else %}
-              <div style="font-size: 0.82rem; color: var(--danger); font-weight: 600;">
-                ⚠️ Yêu cầu làm bài trung thực
-              </div>
-              <a href="{{ url_for('main.take_exam', exam_id=ex.id) }}" class="clay-btn clay-btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">
-                Bắt Đầu Làm Bài →
-              </a>
-            {% endif %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+  {% for ex in exams %}
+  {% set sub = user_submissions.get(ex.id) if current_user.is_student else None %}
+  <article class="bg-white rounded-2xl border border-slate-200 hover:border-[#0B4FD8] p-6 shadow-xs flex flex-col justify-between gap-4 transition">
+    <div>
+      <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+          <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200">{{ ex.classroom.name }}</span>
+          {% if ex.is_published %}
+            <span class="px-2.5 py-0.5 rounded-md bg-emerald-50 text-[#047857] border border-emerald-200">Đang mở</span>
           {% else %}
-            <div style="font-size: 0.85rem; color: var(--text-muted);">
-              👥 <strong>{{ ex.submissions.count() }}</strong> bài thi đã nộp
-            </div>
-            <a href="{{ url_for('main.exam_detail', exam_id=ex.id) }}" class="clay-btn clay-btn-secondary" style="padding: 7px 16px; font-size: 0.85rem;">
-              ⚙️ Quản Lý & Giám Sát
-            </a>
+            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">Đang khóa</span>
+          {% endif %}
+          {% if ex.access_code %}
+            <span class="px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-mono">
+              {% if current_user.is_teacher or current_user.is_admin %}PIN: {{ ex.access_code }}{% else %}Có mã PIN{% endif %}
+            </span>
+          {% endif %}
+          {% if ex.shuffle_questions %}
+            <span class="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0B4FD8] border border-blue-200">Đảo câu hỏi</span>
           {% endif %}
         </div>
+        <span class="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-bold shrink-0">{{ ex.duration_minutes }} phút</span>
       </div>
-    {% endfor %}
-  </div>
+
+      <h2 class="font-display text-lg font-extrabold text-slate-900 mb-1.5">{{ ex.title }}</h2>
+      {% if ex.description %}
+      <p class="text-sm text-slate-600 mb-3">{{ ex.description }}</p>
+      {% endif %}
+
+      <div class="flex flex-wrap gap-4 text-xs text-slate-600 font-medium">
+        <span><strong class="text-slate-900">{{ ex.questions.count() }}</strong> câu hỏi</span>
+        <span>Tối đa <strong class="text-slate-900">{{ ex.max_violations }}</strong> lỗi</span>
+        {% if ex.enable_fullscreen %}
+        <span>Khóa Fullscreen</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <footer class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+      {% if current_user.is_student %}
+        {% if sub and sub.status in ['submitted', 'auto_submitted_violation'] %}
+          <span class="px-2.5 py-1 rounded-lg text-xs font-bold border {% if sub.status == 'submitted' %}bg-emerald-50 text-[#047857] border-emerald-200{% else %}bg-rose-50 text-[#BE123C] border-rose-200{% endif %}">
+            Điểm: {{ sub.score }}/{{ sub.total_points }}đ ({{ sub.violations_count }} lỗi)
+          </span>
+          <a href="{{ url_for('main.exam_result', submission_id=sub.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+            Xem kết quả →
+          </a>
+        {% elif not ex.is_published %}
+          <span class="text-xs text-slate-600 font-medium">Phòng thi đang tạm khóa</span>
+          <span class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">Đã khóa</span>
+        {% else %}
+          <span class="text-xs font-semibold text-[#0B4FD8]">Giám sát 7 cảm biến</span>
+          <a href="{{ url_for('main.take_exam', exam_id=ex.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+            {% if sub %}Tiếp tục làm bài{% else %}Bắt đầu thi →{% endif %}
+          </a>
+        {% endif %}
+      {% else %}
+        <span class="text-xs text-slate-600 font-medium">
+          <strong class="text-slate-900">{{ ex.submissions.count() }}</strong> lượt nộp bài
+        </span>
+        <div class="flex items-center gap-2">
+          <form action="{{ url_for('main.toggle_exam_status', exam_id=ex.id) }}" method="POST">
+            <input type="hidden" name="next" value="{{ url_for('main.exams_list') }}">
+            {% if ex.is_published %}
+            <button type="submit" class="min-h-[36px] px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-[#BE123C] text-xs font-bold cursor-pointer transition">
+              Khóa đề
+            </button>
+            {% else %}
+            <button type="submit" class="min-h-[36px] px-3 py-1.5 rounded-lg bg-[#047857] hover:bg-emerald-800 text-white text-xs font-bold cursor-pointer transition">
+              Mở đề
+            </button>
+            {% endif %}
+          </form>
+          <a href="{{ url_for('main.exam_detail', exam_id=ex.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+            Quản lý đề
+          </a>
+        </div>
+      {% endif %}
+    </footer>
+  </article>
+  {% endfor %}
+</div>
 {% else %}
-  <div class="clay-card" style="text-align: center; padding: 48px;">
-    <div style="font-size: 2.5rem; margin-bottom: 12px;">🛡️</div>
-    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">Chưa Có Đề Kiểm Tra Nào</h3>
-    <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 480px; margin: 0 auto 20px;">
-      Hiện tại chưa có đề kiểm tra nào trong các lớp bạn tham gia.
-    </p>
-  </div>
+<div class="bg-white rounded-2xl border border-slate-200 p-10 text-center shadow-xs">
+  <h2 class="font-display text-lg font-extrabold text-slate-900 mb-2">Chưa có đề kiểm tra nào</h2>
+  <p class="text-sm text-slate-600 mb-4">Hiện tại chưa có đề kiểm tra nào trong các lớp bạn tham gia.</p>
+  <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm">Vào Góc Ôn Luyện Ngẫu Nhiên</a>
+</div>
 {% endif %}
 {% endblock %}

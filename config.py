@@ -10,5 +10,5 @@ class Config:
     
     # Upload configuration
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-    MAX_CONTENT_LENGTH = 64 * 1024 * 1024  # 64 MB max upload size
-    ALLOWED_EXTENSIONS = {'pdf', 'docx', 'pptx'}
+    MAX_CONTENT_LENGTH = 200 * 1024 * 1024  # 200 MB max upload size (supports video lectures)
+    ALLOWED_EXTENSIONS = {'pdf', 'docx', 'pptx', 'ppt', 'mp4', 'webm', 'ogg', 'mov'}

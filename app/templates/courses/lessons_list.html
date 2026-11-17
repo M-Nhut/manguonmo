@@ -1,90 +1,182 @@
 {% extends "base.html" %}
 
-{% block title %}Mục Bài Học - Tin học 11 Ứng dụng{% endblock %}
+{% block title %}Mục Bài Học • 7 Chủ Đề &amp; 31 Bài Học - Tin học 11 Ứng dụng{% endblock %}
 
 {% block content %}
-<!-- Section Header Banner -->
-<div class="clay-card animate-spring-pop" style="margin-bottom: 28px;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-    <div>
-      <span class="clay-badge badge-teacher" style="margin-bottom: 8px;">📖 CHUYÊN ĐỀ & BÀI HỌC</span>
-      <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Mục Bài Học Tin Học 11</h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
-        Hệ thống hóa toàn bộ bài giảng lý thuyết, giáo án và slide trình chiếu theo chương trình Tin học 11 Ứng dụng
-      </p>
-    </div>
+<!-- Top Header & Search / Filter Controls -->
+<section class="page-header-bar">
+  <div>
+    <h1>Chương Trình &amp; Bài Học Tin Học 11</h1>
+    <p>Cấu trúc chuẩn 7 Chủ đề • 31 Bài học SGK Kết nối tri thức với cuộc sống (Tin học ứng dụng)</p>
+  </div>
 
-    <!-- Filter by Classroom -->
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <form method="GET" action="{{ url_for('main.lessons_list') }}" style="display: flex; gap: 8px;">
-        <select name="class_id" class="clay-select" onchange="this.form.submit()" style="padding: 9px 14px; font-size: 0.88rem; min-width: 180px;">
-          <option value="">Tất cả lớp học</option>
+  <search class="w-full lg:w-auto">
+    <form method="GET" action="{{ url_for('main.lessons_list') }}" class="flex flex-wrap items-center gap-2.5">
+      {% if selected_course_id %}
+        <input type="hidden" name="course_id" value="{{ selected_course_id }}">
+      {% endif %}
+      <div class="w-full sm:w-60">
+        <label for="lesson-search-q" class="sr-only">Tìm kiếm bài học</label>
+        <input type="search"
+               id="lesson-search-q"
+               name="q"
+               value="{{ search_query or '' }}"
+               placeholder="Tìm bài học (Bài 14, SQL, GIMP...)"
+               class="clay-input min-h-[38px] py-1.5 text-sm">
+      </div>
+
+      <div class="w-full sm:w-52">
+        <label for="lesson-filter-class" class="sr-only">Lọc theo lớp học</label>
+        <select id="lesson-filter-class" name="class_id" class="clay-select min-h-[38px] py-1.5 text-sm" onchange="this.form.submit()">
+          <option value="">Tất cả lớp học &amp; Kho chung</option>
           {% for cl in classrooms %}
             <option value="{{ cl.id }}" {% if selected_class_id == cl.id %}selected{% endif %}>{{ cl.name }}</option>
           {% endfor %}
         </select>
-      </form>
-    </div>
+      </div>
+
+      <button type="submit" class="clay-btn clay-btn-primary clay-btn-sm">
+        Lọc bài học
+      </button>
+      {% if selected_class_id or selected_course_id or search_query %}
+        <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+          Đặt lại
+        </a>
+      {% endif %}
+    </form>
+  </search>
+</section>
+
+<!-- Quick Topic Filter Strip (7 Chủ đề SGK) -->
+{% if all_courses %}
+<div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-xs">
+  <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+    <span class="text-sm font-bold text-slate-900">Danh mục Chủ đề (Chọn để lọc nhanh):</span>
+    <span class="text-sm font-mono font-bold text-[#0B4FD8]">Hiển thị {{ lessons|length }} bài học</span>
   </div>
+  <nav aria-label="Lọc theo chủ đề" class="flex items-center gap-2 flex-wrap">
+    <a href="{{ url_for('main.lessons_list', class_id=selected_class_id) }}"
+       {% if not selected_course_id %}aria-current="page"{% endif %}
+       class="min-h-[36px] inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-bold border transition {% if not selected_course_id %}bg-[#0B4FD8] text-white border-[#0B4FD8]{% else %}bg-slate-50 text-slate-700 border-slate-200 hover:border-[#0B4FD8] hover:text-[#0B4FD8]{% endif %}">
+      Tất cả Chủ đề ({{ all_courses|length }})
+    </a>
+    {% for c in all_courses %}
+      <a href="{{ url_for('main.lessons_list', class_id=selected_class_id, course_id=c.id) }}"
+         {% if selected_course_id == c.id %}aria-current="page"{% endif %}
+         class="min-h-[36px] inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold border transition {% if selected_course_id == c.id %}bg-[#0B4FD8] text-white border-[#0B4FD8]{% else %}bg-slate-50 text-slate-700 border-slate-200 hover:border-[#0B4FD8] hover:text-[#0B4FD8]{% endif %}">
+        {{ c.title | truncate(34) }}
+      </a>
+    {% endfor %}
+  </nav>
 </div>
+{% endif %}
 
-<!-- Lessons Feed -->
 {% if lessons %}
-  <div style="display: flex; flex-direction: column; gap: 18px; margin-bottom: 36px;">
-    {% for l in lessons %}
-      <div class="clay-card clay-card-interactive" onclick="window.location.href='{{ url_for('main.lesson_detail', lesson_id=l.id) }}'">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
-          <div style="display: flex; align-items: flex-start; gap: 16px;">
-            <div style="width: 48px; height: 48px; border-radius: 14px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; border: 1px solid var(--primary-border); flex-shrink: 0;">
-              {{ l.order_index }}
-            </div>
-            <div>
-              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 2px;">
-                LỚP: {{ l.course.classroom.name }} • KHÓA: {{ l.course.title }}
-              </div>
-              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 8px;">
-                {{ l.title }}
-              </h2>
-              <p style="color: var(--text-body); font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px; max-width: 780px;">
-                {{ l.content[:160] if l.content else 'Chưa có nội dung lý thuyết tóm tắt.' }}...
-              </p>
+  {% set topic_themes = [
+    {'border': 'border-l-[#0B4FD8]', 'badge': 'bg-blue-50 border-blue-200 text-[#0B4FD8]', 'pill_text': 'text-[#0B4FD8]'},
+    {'border': 'border-l-[#0F766E]', 'badge': 'bg-teal-50 border-teal-200 text-[#0F766E]', 'pill_text': 'text-[#0F766E]'},
+    {'border': 'border-l-[#4F46E5]', 'badge': 'bg-indigo-50 border-indigo-200 text-[#4F46E5]', 'pill_text': 'text-[#4F46E5]'},
+    {'border': 'border-l-[#C2410C]', 'badge': 'bg-orange-50 border-orange-200 text-[#C2410C]', 'pill_text': 'text-[#C2410C]'}
+  ] %}
+  {% for course_id, course_lessons in lessons|groupby('course_id') %}
+    {% set course = course_lessons[0].course %}
+    {% set theme = topic_themes[loop.index0 % 4] %}
+    <section id="topic-{{ course.id }}" class="mb-10" aria-labelledby="topic-heading-{{ course.id }}">
 
-              <!-- Attached Materials Badges -->
-              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Tài liệu:</span>
-                {% if l.materials.count() > 0 %}
-                  {% for m in l.materials %}
-                    {% if m.file_type in ['pptx', 'ppt'] %}
-                      <span class="clay-badge badge-pptx" style="font-size: 0.75rem;">📊 {{ m.title[:20] }}... (PPTX)</span>
-                    {% elif m.file_type == 'docx' %}
-                      <span class="clay-badge badge-docx" style="font-size: 0.75rem;">📝 {{ m.title[:20] }}... (DOCX)</span>
-                    {% elif m.file_type == 'pdf' %}
-                      <span class="clay-badge badge-pdf" style="font-size: 0.75rem;">📄 {{ m.title[:20] }}... (PDF)</span>
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  <span style="font-size: 0.8rem; color: var(--text-light); font-style: italic;">Chưa có tài liệu đính kèm</span>
-                {% endif %}
-              </div>
+      <!-- 1. EDITORIAL TOPIC BANNER -->
+      <div class="ds-banner ds-banner-grid-bg border-l-4 {{ theme.border }} rounded-2xl p-5 mb-4" data-reveal>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+          <div class="lg:col-span-8">
+            <div class="flex items-center gap-2 flex-wrap mb-1.5">
+              <span class="px-2.5 py-0.5 rounded-md border font-mono text-xs font-extrabold {{ theme.badge }}">
+                {{ course_lessons|length }} BÀI HỌC
+              </span>
+              <span class="text-sm font-semibold text-slate-600">
+                {{ course.classroom.name }}
+              </span>
             </div>
+            <h2 id="topic-heading-{{ course.id }}" class="font-display text-xl font-extrabold text-slate-900 leading-snug">
+              <a href="{{ url_for('main.course_detail', course_id=course.id) }}" class="hover:text-[#0B4FD8] transition-colors">
+                {{ course.title }}
+              </a>
+            </h2>
+            {% if course.description %}
+              <p class="text-sm text-slate-600 mt-1 leading-relaxed max-w-3xl">
+                {{ course.description }}
+              </p>
+            {% endif %}
           </div>
 
-          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-            <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}" class="clay-btn clay-btn-primary" style="padding: 8px 18px; font-size: 0.88rem;">
-              Vào Học Bài →
+          <div class="lg:col-span-4 flex items-center lg:justify-end gap-3 flex-wrap">
+            <img src="{{ course|poster_src }}"
+                 alt="Poster {{ course.title }}"
+                 loading="lazy"
+                 class="w-28 h-16 rounded-lg object-cover border border-slate-200 shrink-0 hidden sm:block shadow-sm">
+            <a href="{{ url_for('main.course_detail', course_id=course.id) }}"
+               class="clay-btn clay-btn-secondary clay-btn-sm shrink-0">
+              Xem chủ đề →
             </a>
           </div>
         </div>
       </div>
-    {% endfor %}
-  </div>
+
+      <!-- 2. UNIFORM 4-COLUMN ACCESSIBLE LESSON GRID -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-stretch" data-reveal-group>
+        {% for l in course_lessons %}
+          <article class="clay-card p-0 card-interactive overflow-hidden flex flex-col justify-between group" data-reveal>
+            <div>
+              <div class="relative aspect-[16/9] bg-slate-900 overflow-hidden border-b border-slate-100">
+                <img src="{{ l|poster_src }}"
+                     alt="Poster {{ l.title }}"
+                     loading="lazy"
+                     class="w-full h-full object-cover block group-hover:scale-[1.03] transition duration-300 motion-reduce:transform-none">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" aria-hidden="true"></div>
+                <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md bg-white/95 {{ theme.pill_text }} font-mono text-xs font-extrabold shadow-sm">
+                  BÀI {% if l.order_index < 10 %}0{{ l.order_index }}{% else %}{{ l.order_index }}{% endif %}
+                </span>
+                {% if current_user.is_admin or current_user.is_teacher %}
+                  <a href="{{ url_for('main.lesson_detail', lesson_id=l.id, edit=1) }}"
+                     class="absolute top-2.5 right-2.5 z-20 inline-flex items-center min-h-[28px] px-2.5 py-0.5 rounded-md bg-white/95 text-[#0B4FD8] text-xs font-bold shadow-sm hover:bg-white border border-slate-200">
+                    Sửa bài
+                  </a>
+                {% endif %}
+              </div>
+
+              <div class="p-4">
+                <h3 class="text-base font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2.75rem]">
+                  {{ l.title }}
+                </h3>
+              </div>
+            </div>
+
+            <footer class="px-4 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
+              <span class="text-slate-600">
+                {% if l.materials.count() > 0 %}
+                  {{ l.materials.count() }} tài liệu
+                {% else %}
+                  Lý thuyết &amp; Đề mục
+                {% endif %}
+              </span>
+              <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}"
+                 class="card-link font-bold {{ theme.pill_text }} group-hover:underline after:absolute after:inset-0">
+                Học bài <span aria-hidden="true">→</span>
+              </a>
+            </footer>
+          </article>
+        {% endfor %}
+      </div>
+
+    </section>
+  {% endfor %}
 {% else %}
-  <div class="clay-card" style="text-align: center; padding: 48px;">
-    <div style="font-size: 2.5rem; margin-bottom: 12px;">📖</div>
-    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">Chưa Có Bài Học Nào</h3>
-    <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 480px; margin: 0 auto 20px;">
-      Hiện tại chưa có bài học nào trong danh sách. Nếu bạn là Giáo viên, hãy truy cập vào một Lớp học để tạo Khóa học và thêm bài học mới!
+  <div class="clay-card text-center py-10">
+    <h2 class="font-display text-lg font-extrabold text-slate-900 mb-1.5">Không tìm thấy bài học phù hợp</h2>
+    <p class="text-slate-600 text-sm mb-4">
+      Hãy thử từ khóa khác hoặc bấm xem toàn bộ 7 Chủ đề (31 Bài học) trong chương trình.
     </p>
+    <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+      Xem toàn bộ 31 bài học
+    </a>
   </div>
 {% endif %}
 {% endblock %}

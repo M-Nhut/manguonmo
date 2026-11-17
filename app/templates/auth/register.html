@@ -3,65 +3,92 @@
 {% block title %}Đăng ký tài khoản - Tin học 11{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 24px auto 50px;">
-  <div class="clay-card animate-spring-pop">
-    <div style="text-align: center; margin-bottom: 22px;">
-      <div class="clay-logo-icon" style="margin: 0 auto 12px; width: 48px; height: 48px; font-size: 1.4rem;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <line x1="19" x2="19" y1="8" y2="14"/>
-          <line x1="22" x2="16" y1="11" y2="11"/>
-        </svg>
-      </div>
-      <h2 style="font-size: 1.7rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">Tạo Tài Khoản Mới</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Tham gia học tập hoặc quản lý giảng dạy</p>
+<div class="max-w-xl mx-auto my-6 sm:my-10">
+  <div class="clay-card p-7 sm:p-10 shadow-xl" data-hero-stagger>
+    <div class="mb-6">
+      <span class="inline-block px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] text-xs font-bold uppercase tracking-wide mb-2">
+        Tạo tài khoản mới
+      </span>
+      <h1 class="font-display text-2xl font-extrabold text-slate-900">Đăng Ký Tài Khoản</h1>
+      <p class="text-slate-600 text-sm mt-1">Chọn vai trò Học sinh hoặc Giáo viên để bắt đầu học &amp; giảng dạy</p>
     </div>
 
-    <form method="POST" action="{{ url_for('auth.register') }}">
+    <form method="POST" action="{{ url_for('auth.register') }}" id="register-form">
       <div class="clay-input-group">
-        <label class="clay-label">Họ và tên người dùng</label>
-        <input type="text" name="full_name" class="clay-input" placeholder="Ví dụ: Nguyễn Văn Nam" required>
+        <label for="reg_full_name" class="clay-label">Họ và tên đầy đủ <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+        <input type="text" id="reg_full_name" name="full_name" class="clay-input" placeholder="Ví dụ: Nguyễn Văn Nam" required autocomplete="name">
       </div>
 
-      <div class="grid-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="clay-input-group">
-          <label class="clay-label">Tên tài khoản</label>
-          <input type="text" name="username" class="clay-input" placeholder="nam.nguyen" required>
+          <label for="reg_username" class="clay-label">Tên tài khoản <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="text" id="reg_username" name="username" class="clay-input" placeholder="nam.nguyen" required autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false">
         </div>
         <div class="clay-input-group">
-          <label class="clay-label">Địa chỉ Email</label>
-          <input type="email" name="email" class="clay-input" placeholder="nam@gmail.com" required>
+          <label for="reg_email" class="clay-label">Địa chỉ Email <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="email" id="reg_email" name="email" class="clay-input" placeholder="nam@gmail.com" required autocomplete="email" autocorrect="off" autocapitalize="none" spellcheck="false">
         </div>
       </div>
 
       <div class="clay-input-group">
-        <label class="clay-label">Vai trò trong hệ thống</label>
-        <select name="role" class="clay-select" style="cursor: pointer;">
-          <option value="student">🎓 Học sinh (Học bài, xem PPT/DOCX/PDF, làm bài thi)</option>
-          <option value="teacher">👨‍🏫 Giáo viên (Tạo lớp, đăng tài liệu, tạo đề thi & giám sát)</option>
+        <label for="reg_role" class="clay-label">Vai trò trong hệ thống <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+        <select id="reg_role" name="role" class="clay-select cursor-pointer">
+          <option value="student">Học sinh (Tham gia lớp học, đọc học liệu, làm bài thi)</option>
+          <option value="teacher">Giáo viên (Quản lý lớp học, đăng tài liệu, tạo đề thi)</option>
         </select>
       </div>
 
-      <div class="grid-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="clay-input-group">
-          <label class="clay-label">Mật khẩu</label>
-          <input type="password" name="password" class="clay-input" placeholder="••••••••" required>
+          <label for="reg_password" class="clay-label">Mật khẩu <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="password" id="reg_password" name="password" class="clay-input" placeholder="Nhập mật khẩu" required autocomplete="new-password" minlength="6">
         </div>
         <div class="clay-input-group">
-          <label class="clay-label">Xác nhận mật khẩu</label>
-          <input type="password" name="confirm_password" class="clay-input" placeholder="••••••••" required>
+          <label for="reg_confirm_password" class="clay-label">Xác nhận mật khẩu <span class="text-[#BE123C]" aria-hidden="true">*</span></label>
+          <input type="password" id="reg_confirm_password" name="confirm_password" class="clay-input" placeholder="Nhập lại mật khẩu" required autocomplete="new-password" aria-describedby="reg-pwd-error">
+          <p id="reg-pwd-error" class="hidden text-xs font-semibold text-[#BE123C] mt-1.5" role="alert">Mật khẩu xác nhận chưa trùng khớp.</p>
         </div>
       </div>
 
-      <button type="submit" class="clay-btn clay-btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; margin-top: 8px;">
+      <button type="submit" class="clay-btn clay-btn-primary w-full py-3 mt-2">
         Hoàn Tất Đăng Ký
       </button>
     </form>
 
-    <div style="text-align: center; margin-top: 18px; font-size: 0.88rem; color: var(--text-muted);">
-      Đã có tài khoản? <a href="{{ url_for('auth.login') }}" style="color: var(--primary); font-weight: 700; text-decoration: none;">Đăng nhập ngay</a>
+    <div class="text-center mt-5 text-sm text-slate-600">
+      Đã có tài khoản? <a href="{{ url_for('auth.login') }}" class="text-[#0B4FD8] font-bold hover:underline">Đăng nhập ngay</a>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const pwd = document.getElementById('reg_password');
+    const confirmPwd = document.getElementById('reg_confirm_password');
+    const errEl = document.getElementById('reg-pwd-error');
+    const form = document.getElementById('register-form');
+    if (!pwd || !confirmPwd || !errEl || !form) return;
+
+    const validateMatch = () => {
+      const mismatch = confirmPwd.value && pwd.value !== confirmPwd.value;
+      confirmPwd.setCustomValidity(mismatch ? 'Mật khẩu xác nhận không khớp.' : '');
+      confirmPwd.setAttribute('aria-invalid', mismatch ? 'true' : 'false');
+      errEl.classList.toggle('hidden', !mismatch);
+    };
+
+    confirmPwd.addEventListener('blur', validateMatch);
+    confirmPwd.addEventListener('input', () => {
+      if (pwd.value === confirmPwd.value) validateMatch();
+    });
+    form.addEventListener('submit', (e) => {
+      validateMatch();
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        confirmPwd.focus();
+      }
+    });
+  });
+</script>
 {% endblock %}
