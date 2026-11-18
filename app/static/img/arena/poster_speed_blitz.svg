@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" fill="none">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="600" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0B132B"/>
+      <stop offset="50%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#4338CA"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="320" rx="20" fill="url(#bg3)"/>
+  <circle cx="300" cy="160" r="115" stroke="#60A5FA" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="14 8"/>
+  <circle cx="300" cy="160" r="86" fill="#0F172A" stroke="#38BDF8" stroke-width="4"/>
+  <!-- Lightning Bolt -->
+  <polygon points="315,62 248,166 298,166 282,258 356,148 304,148" fill="#FACC15"/>
+  <!-- Combo Badge -->
+  <rect x="410" y="56" width="128" height="44" rx="12" fill="#F59E0B"/>
+  <text x="474" y="84" text-anchor="middle" fill="#0F172A" font-family="monospace" font-weight="800" font-size="20">COMBO x5</text>
+  <!-- 60s Badge -->
+  <rect x="64" y="214" width="116" height="44" rx="12" fill="#10B981"/>
+  <text x="122" y="242" text-anchor="middle" fill="#052E16" font-family="monospace" font-weight="800" font-size="20">⏱ 60 GIÂY</text>
+</svg>

@@ -465,12 +465,24 @@ def test_cyber_arena_and_weekly_leaderboard(client):
     assert 'Đấu Trường Tin Học 11' in arena_html
     assert 'Bảng Xếp Hạng Tuần' in arena_html
     assert 'BẮT ĐẦU THI ĐẤU NGAY' in arena_html
+    assert 'Hiệp Sĩ Diệt Boss' in arena_html
+    assert 'Bắn Quái Vũ Trụ' in arena_html
+    assert 'poster_boss_rpg.png' in arena_html
+    assert 'poster_space_shooter.png' in arena_html
+    assert 'map_platformer_world.png' in arena_html
+    assert 'map_air_battlefield.png' in arena_html
+    assert 'sprite_plat_mario.png' in arena_html
+    assert 'sprite_jet_falcon.png' in arena_html
+    assert 'sprite_wingman_plane.png' in arena_html
+    assert 'arena-shop-modal' in arena_html
+    assert 'arena-compact-quiz-dock' in arena_html
     assert 'id="arena-hud-bar" class="arena-hud-bar hidden"' in arena_html
-    assert 'id="stage-panel-blitz" role="tabpanel" aria-labelledby="tab-mode-blitz" hidden' in arena_html
+    assert 'id="stage-panel-boss_rpg" role="tabpanel" hidden' in arena_html
+    assert 'id="stage-panel-space_shooter" role="tabpanel" hidden' in arena_html
 
-    # 2. Submit a high-score fast-time game session -> verify Top 1 ranking by (Highest Score, Shortest Time)
+    # 2. Submit a high-score fast-time Boss RPG session -> verify Top 1 ranking by (Highest Score, Shortest Time)
     sub_resp = client.post('/api/arena/submit', json={
-        'game_mode': 'blitz',
+        'game_mode': 'boss_rpg',
         'topic_code': 'F',
         'score': 1350,
         'correct_count': 10,

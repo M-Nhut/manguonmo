@@ -1493,6 +1493,42 @@ ARENA_MEMORY_PAIRS = [
 ]
 
 
+WEEKLY_ARENA_CAMPAIGNS = [
+    {
+        'slot': 1,
+        'topic_code': 'A',
+        'title': 'Chủ đề 1: Hệ Điều Hành & Kiến Trúc Phần Cứng',
+        'short_title': 'Tuần Chủ đề 1 • HĐH & Phần cứng',
+        'boss_name': 'BOSS TROJAN HỆ ĐIỀU HÀNH',
+        'map_name': 'Pháo Đài Vi Mạch Trung Tâm'
+    },
+    {
+        'slot': 2,
+        'topic_code': 'C',
+        'title': 'Chủ đề 2 & 3: Lưu Trữ Đám Mây & An Toàn Không Gian Số',
+        'short_title': 'Tuần Chủ đề 2 & 3 • Đám mây & An toàn số',
+        'boss_name': 'TRÙM LỪA ĐẢO PHISHING MẠNG',
+        'map_name': 'Trạm Vệ Tinh Đám Mây Bảo Mật'
+    },
+    {
+        'slot': 3,
+        'topic_code': 'F',
+        'title': 'Chủ đề 4, 5 & 6: Hệ Cơ Sở Dữ Liệu & Truy Vấn SQL',
+        'short_title': 'Tuần Chủ đề 4, 5, 6 • CSDL & SQL',
+        'boss_name': 'GOLEM LỖI TRUY VẤN SQL',
+        'map_name': 'Lõi Máy Chủ Cơ Sở Dữ Liệu'
+    },
+    {
+        'slot': 4,
+        'topic_code': 'E',
+        'title': 'Chủ đề 7: Chỉnh Sửa Ảnh GIMP & Dựng Phim Hoạt Hình',
+        'short_title': 'Tuần Chủ đề 7 • Thiết kế GIMP & Video',
+        'boss_name': 'TRÙM GLITCH ĐA PHƯƠNG TIỆN',
+        'map_name': 'Studio Đồ Họa Không Gian 3D'
+    }
+]
+
+
 def current_iso_week_key():
     iso = datetime.utcnow().isocalendar()
     return f"{iso[0]}-W{int(iso[1]):02d}"
@@ -1501,6 +1537,15 @@ def current_iso_week_key():
 def current_week_label():
     iso = datetime.utcnow().isocalendar()
     return f"Tuần {int(iso[1]):02d} • Năm {iso[0]}"
+
+
+def get_weekly_topic_campaign():
+    iso = datetime.utcnow().isocalendar()
+    week_num = int(iso[1])
+    campaign = dict(WEEKLY_ARENA_CAMPAIGNS[(week_num - 1) % len(WEEKLY_ARENA_CAMPAIGNS)])
+    campaign['week_num'] = week_num
+    campaign['year'] = int(iso[0])
+    return campaign
 
 
 def ensure_arena_demo_leaderboard(pub_hub=None):
@@ -1613,7 +1658,7 @@ def _build_weekly_leaderboard(class_id=None, mode_filter='ALL', viewer_user=None
     q = GameScore.query.filter_by(week_key=wk)
     if class_id:
         q = q.filter_by(classroom_id=class_id)
-    if mode_filter in ('blitz', 'sql_puzzle', 'memory'):
+    if mode_filter in ('boss_rpg', 'space_shooter', 'blitz', 'sql_puzzle', 'memory'):
         q = q.filter_by(game_mode=mode_filter)
 
     rows = q.all()
@@ -1644,7 +1689,7 @@ def _build_weekly_leaderboard(class_id=None, mode_filter='ALL', viewer_user=None
                 'games_played': 0,
                 'correct_sum': 0,
                 'total_sum': 0,
-                'mode_counts': {'blitz': 0, 'sql_puzzle': 0, 'memory': 0}
+                'mode_counts': {'boss_rpg': 0, 'space_shooter': 0, 'blitz': 0, 'sql_puzzle': 0, 'memory': 0}
             }
         item = agg[uid]
         sc = r.score or 0
@@ -1673,6 +1718,12 @@ def _build_weekly_leaderboard(class_id=None, mode_filter='ALL', viewer_user=None
         if e['rank'] == 1:
             e['badge_title'] = 'Quán Quân Tuần'
             e['badge_style'] = 'badge-admin'
+        elif top_mode == 'boss_rpg' and e['mode_counts']['boss_rpg'] > 0:
+            e['badge_title'] = 'Dũng Sĩ Diệt Boss'
+            e['badge_style'] = 'badge-coral'
+        elif top_mode == 'space_shooter' and e['mode_counts']['space_shooter'] > 0:
+            e['badge_title'] = 'Xạ Thủ Ngân Hà'
+            e['badge_style'] = 'badge-teal'
         elif top_mode == 'sql_puzzle' and e['mode_counts']['sql_puzzle'] > 0:
             e['badge_title'] = 'Kiện Tướng SQL'
             e['badge_style'] = 'badge-ai'
@@ -1747,15 +1798,20 @@ def _build_weekly_leaderboard(class_id=None, mode_filter='ALL', viewer_user=None
 @main_bp.route('/arena')
 @login_required
 def arena_hub():
-    """Đấu Trường Tin Học 11 & Bảng Xếp Hạng Tuần (3 Mini-games + Live Leaderboard)"""
+    """Đấu Trường Tin Học 11 & Bảng Xếp Hạng Tuần (Mỗi tuần 1 Chủ đề + Màn hình chơi phóng to + PNG Sprites)"""
     pub_hub = ensure_public_hub()
     ensure_arena_demo_leaderboard(pub_hub)
 
-    raw_topic = request.args.get('topic', 'ALL').upper().strip()
-    topic_filter = TOPIC_FILTER_MAP.get(raw_topic, 'ALL') if raw_topic != 'ALL' else 'ALL'
+    weekly_campaign = get_weekly_topic_campaign()
+    raw_topic = request.args.get('topic', '').upper().strip()
+    if not raw_topic:
+        topic_filter = weekly_campaign['topic_code']
+    else:
+        topic_filter = TOPIC_FILTER_MAP.get(raw_topic, 'ALL') if raw_topic != 'ALL' else 'ALL'
+
     selected_class_id = request.args.get('class_id', type=int)
     selected_mode = request.args.get('mode', 'ALL').strip()
-    if selected_mode not in ('ALL', 'blitz', 'sql_puzzle', 'memory'):
+    if selected_mode not in ('ALL', 'boss_rpg', 'space_shooter', 'blitz', 'sql_puzzle', 'memory'):
         selected_mode = 'ALL'
 
     if current_user.is_admin:
@@ -1799,6 +1855,8 @@ def arena_hub():
         my_stats=lb_data['my_stats'],
         week_label=lb_data['week_label'],
         week_key=lb_data['week_key'],
+        weekly_campaign=weekly_campaign,
+        weekly_campaigns_list=WEEKLY_ARENA_CAMPAIGNS,
         classrooms=classrooms,
         selected_class_id=selected_class_id,
         selected_mode=selected_mode,
@@ -1814,9 +1872,11 @@ def api_arena_submit():
     ensure_arena_demo_leaderboard(pub_hub)
 
     data = request.get_json(silent=True) or {}
-    game_mode = str(data.get('game_mode') or 'blitz').strip()
-    if game_mode not in ('blitz', 'sql_puzzle', 'memory'):
-        game_mode = 'blitz'
+    game_mode = str(data.get('game_mode') or 'boss_rpg').strip()
+    if game_mode == 'platformer_2d':
+        game_mode = 'boss_rpg'
+    if game_mode not in ('boss_rpg', 'space_shooter', 'blitz', 'sql_puzzle', 'memory'):
+        game_mode = 'boss_rpg'
 
     raw_topic = str(data.get('topic_code') or 'ALL').upper().strip()
     topic_code = TOPIC_FILTER_MAP.get(raw_topic, 'ALL') if raw_topic != 'ALL' else 'ALL'

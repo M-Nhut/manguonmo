@@ -1239,7 +1239,16 @@ dialog.ds-dialog[open]:where(:not([data-closing]))::backdrop {
   color: #FFFFFF;
 }
 
-/* Game Stage Container */
+/* Game Stage Container & Expanded Full-Viewport Theater Mode */
+.arena-theater-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  background: rgba(4, 9, 24, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 .arena-stage-card {
   position: relative;
   overflow: hidden;
@@ -1247,6 +1256,21 @@ dialog.ds-dialog[open]:where(:not([data-closing]))::backdrop {
   background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
   border: 1.5px solid rgba(191, 219, 254, 0.95);
   box-shadow: 0 20px 44px -18px rgba(15, 23, 42, 0.12), inset 0 1px 0 #FFFFFF;
+  transition: transform 0.28s var(--ease-out-expo), box-shadow 0.28s ease;
+}
+
+.arena-stage-card.is-expanded {
+  position: fixed;
+  inset: 12px;
+  z-index: 90;
+  max-width: 1320px;
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid rgba(56, 189, 248, 0.55);
+  box-shadow: 0 28px 80px -12px rgba(0, 0, 0, 0.82);
+  overflow-y: auto;
 }
 
 /* Top HUD inside Arena Stage */
