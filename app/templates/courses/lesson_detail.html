@@ -31,31 +31,37 @@
 <!-- =========================================================================
      EDITORIAL LESSON BANNER
      ========================================================================= -->
-<section class="typo-poster">
-  <div class="typo-poster-topbar">
+<section class="pro-hero-banner p-6 sm:p-7" data-hero-stagger>
+  <div class="pro-mesh-orb w-60 h-60 bg-teal-300 -top-20 -right-12" data-parallax="-12" aria-hidden="true"></div>
+  <div class="relative z-10 flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-teal-200/60 text-xs font-bold text-[#0F766E]">
     <span>{{ lesson.course.title }}</span>
-    <span>{{ lesson.course.classroom.name }} • {{ lesson.course.classroom.code }}</span>
+    <span class="font-mono text-slate-600">{{ lesson.course.classroom.name }} • {{ lesson.course.classroom.code }}</span>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 p-6 sm:p-7">
+  <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 relative z-10">
     <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-extrabold mb-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] font-mono text-xs font-extrabold mb-3">
         BÀI {% if lesson.order_index < 10 %}0{{ lesson.order_index }}{% else %}{{ lesson.order_index }}{% endif %}
       </div>
-      <h1 class="typo-poster-title">
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
         {{ lesson.title }}
       </h1>
-      <p class="typo-poster-subtitle">
+      <p class="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">
         {% if lesson.content %}
-          {{ lesson.content | truncate(170) }}
+          {{ lesson.content | replace('#', '') | truncate(170) }}
         {% else %}
           Nội dung lý thuyết trọng tâm và tài liệu học tập đính kèm.
         {% endif %}
       </p>
+      <div class="flex flex-wrap items-center gap-3 mt-4 text-xs font-bold">
+        <span class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700">{{ materials|length }} tệp đính kèm</span>
+        <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-secondary clay-btn-sm">Luyện tập bài này →</a>
+        <a href="{{ url_for('main.ai_advisor') }}" class="text-[#0D9488] hover:underline">AI tư vấn lộ trình →</a>
+      </div>
     </div>
 
     <div class="lg:col-span-5">
-      <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-md">
+      <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-lg poster-shine">
         <img src="{{ lesson|poster_src }}"
              alt="Poster {{ lesson.title }}"
              class="w-full h-full object-cover block">
@@ -67,21 +73,6 @@
           </button>
         {% endif %}
       </div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/90">
-    <div class="px-5 py-3.5">
-      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Tài liệu đính kèm</span>
-      <span class="block font-display text-sm font-bold text-slate-900 mt-0.5">{{ materials|length }} tệp</span>
-    </div>
-    <div class="px-5 py-3.5">
-      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Ôn luyện</span>
-      <a href="{{ url_for('main.practice_hub') }}" class="inline-block font-display text-sm font-bold text-[#0B4FD8] hover:underline mt-0.5">Luyện tập bài này →</a>
-    </div>
-    <div class="px-5 py-3.5">
-      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Lộ trình học</span>
-      <a href="{{ url_for('main.ai_advisor') }}" class="inline-block font-display text-sm font-bold text-[#0B4FD8] hover:underline mt-0.5">Tư vấn lộ trình →</a>
     </div>
   </div>
 </section>

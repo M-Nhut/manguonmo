@@ -256,11 +256,13 @@ def student_dashboard():
     pending_exams_count = sum(1 for ex in available_exams if ex.id not in user_submissions)
     ensure_arena_demo_leaderboard(pub_hub)
     lb_data = _build_weekly_leaderboard(class_id=None, mode_filter='ALL', viewer_user=current_user)
-        
+    public_courses = Course.query.filter_by(classroom_id=pub_hub.id).order_by(Course.id.asc()).all() if pub_hub else []
+
     return render_template(
         'dashboard/student.html',
         classrooms=enrolled_classes,
         public_hub=pub_hub,
+        public_courses=public_courses,
         submissions=my_submissions[:6],
         user_submissions=user_submissions,
         available_exams=available_exams,

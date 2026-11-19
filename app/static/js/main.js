@@ -1,4 +1,4 @@
-// Main JavaScript for Tin Hoc 11 (Luminous EdTech Design System v2.1)
+// Main JavaScript for Tin Hoc 11 (UI/UX Pro Max v3.0 — Aero-Teal Studio + GSAP Scroll Motion)
 
 // Top-layer <dialog> helpers with clean exit animation fallback for Firefox/Safari
 let _supportsDisplayTransition;
@@ -140,58 +140,77 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Auto-dismiss only non-critical (success/info) alerts after 6s, pausing on hover/focus
+  // Auto-dismiss non-critical alerts after 6s, pausing on hover/focus
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const alerts = document.querySelectorAll('.clay-alert.alert-success, .clay-alert.alert-info');
   alerts.forEach((alert) => {
     let timerId = null;
     const scheduleHide = () => {
       timerId = setTimeout(() => {
-        if (prefersReduced) {
-          alert.remove();
-          return;
-        }
+        if (prefersReduced) { alert.remove(); return; }
         alert.style.opacity = '0';
         alert.style.transform = 'translateY(-6px)';
         alert.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
         setTimeout(() => alert.remove(), 350);
       }, 6000);
     };
-    const cancelHide = () => {
-      if (timerId) {
-        clearTimeout(timerId);
-        timerId = null;
-      }
-    };
+    const cancelHide = () => { if (timerId) { clearTimeout(timerId); timerId = null; } };
     scheduleHide();
     alert.addEventListener('mouseenter', cancelHide);
     alert.addEventListener('focusin', cancelHide);
   });
 
-  // Pointer radial spotlight on interactive cards (hover devices + reduced-motion safe)
-  if (!prefersReduced && window.matchMedia('(hover: hover)').matches) {
-    document.querySelectorAll('.card-interactive').forEach((card) => {
-      card.addEventListener('pointermove', (e) => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-        card.style.setProperty('--my', `${e.clientY - rect.top}px`);
-      }, { passive: true });
+  // 1. Global Scroll Progress Bar + Sticky Topbar Elevation + Floating Back-to-Top
+  const globalBar = document.getElementById('global-scroll-progress-fill');
+  const readingBar = document.getElementById('reading-progress-fill');
+  const topbar = document.querySelector('.app-topbar');
+  const backTopBtn = document.getElementById('back-to-top-btn');
+
+  const onScrollUpdate = () => {
+    const sy = window.scrollY || 0;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? Math.min(100, Math.max(0, (sy / docHeight) * 100)) : 0;
+    if (globalBar) globalBar.style.width = `${pct.toFixed(1)}%`;
+    if (readingBar) readingBar.style.width = `${pct.toFixed(1)}%`;
+    if (topbar) topbar.classList.toggle('is-scrolled', sy > 12);
+    if (backTopBtn) backTopBtn.classList.toggle('is-visible', sy > 320);
+  };
+  onScrollUpdate();
+  window.addEventListener('scroll', onScrollUpdate, { passive: true });
+  if (backTopBtn) {
+    backTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
     });
   }
 
-  // Reading progress indicator if present on page
-  const readingBar = document.getElementById('reading-progress-fill');
-  if (readingBar) {
-    const updateReadingBar = () => {
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = docHeight > 0 ? Math.min(100, Math.max(0, (window.scrollY / docHeight) * 100)) : 0;
-      readingBar.style.width = `${pct.toFixed(1)}%`;
+  // 2. Interactive 3D Micro-Tilt & Radial Pointer Spotlight on Cards (hover devices only)
+  if (!prefersReduced && window.matchMedia('(hover: hover)').matches) {
+    const bindInteractiveCard = (card, withTilt) => {
+      card.addEventListener('pointermove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mx', `${x}px`);
+        card.style.setProperty('--my', `${y}px`);
+        if (withTilt && rect.width > 0 && rect.height > 0) {
+          const rx = ((0.5 - y / rect.height) * 4.5).toFixed(2);
+          const ry = ((x / rect.width - 0.5) * 5.0).toFixed(2);
+          card.style.setProperty('--rx', `${rx}deg`);
+          card.style.setProperty('--ry', `${ry}deg`);
+        }
+      }, { passive: true });
+      if (withTilt) {
+        card.addEventListener('pointerleave', () => {
+          card.style.setProperty('--rx', '0deg');
+          card.style.setProperty('--ry', '0deg');
+        }, { passive: true });
+      }
     };
-    updateReadingBar();
-    window.addEventListener('scroll', updateReadingBar, { passive: true });
+    document.querySelectorAll('.card-interactive:not(.pro-card-tilt)').forEach((c) => bindInteractiveCard(c, false));
+    document.querySelectorAll('.pro-card-tilt').forEach((c) => bindInteractiveCard(c, true));
   }
 
-  // GSAP Motion Choreography (if GSAP loaded & user does not prefer reduced motion)
+  // 3. GSAP + ScrollTrigger Pro Motion Choreography (with IntersectionObserver Fallback!)
   if (!prefersReduced && typeof window.gsap !== 'undefined') {
     const gsap = window.gsap;
     if (typeof window.ScrollTrigger !== 'undefined') {
@@ -200,61 +219,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      // 1. Hero Entrance Stagger
+      // A. Hero Entrance Stagger
       const heroItems = document.querySelectorAll('[data-hero-stagger]');
       if (heroItems.length) {
         gsap.from(heroItems, {
           opacity: 0,
-          y: 18,
-          duration: 0.6,
+          y: 22,
+          duration: 0.65,
           stagger: 0.08,
           ease: 'power3.out',
           clearProps: 'transform,opacity'
         });
       }
 
-      // 2. Scroll-triggered stagger groups ([data-reveal-group])
+      // B. Decorative Parallax Layers on Scroll ([data-parallax])
+      if (typeof window.ScrollTrigger !== 'undefined') {
+        document.querySelectorAll('[data-parallax]').forEach((layer) => {
+          const speed = parseFloat(layer.getAttribute('data-parallax') || '-12');
+          gsap.to(layer, {
+            yPercent: speed,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: layer.parentElement || layer,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.6
+            }
+          });
+        });
+      }
+
+      // C. Scroll-Triggered Stagger Groups ([data-reveal-group])
       document.querySelectorAll('[data-reveal-group]').forEach((group) => {
+        if (group.closest('[hidden]')) return;
         const children = group.querySelectorAll('[data-reveal]');
         if (!children.length) return;
-        const animConfig = {
+        const cfg = {
           opacity: 0,
-          y: 16,
-          duration: 0.45,
-          stagger: 0.06,
-          ease: 'power2.out',
+          y: 24,
+          scale: 0.985,
+          duration: 0.52,
+          stagger: 0.065,
+          ease: 'power3.out',
           clearProps: 'transform,opacity'
         };
         if (typeof window.ScrollTrigger !== 'undefined') {
-          animConfig.scrollTrigger = {
-            trigger: group,
-            start: 'top 90%',
-            once: true
-          };
+          cfg.scrollTrigger = { trigger: group, start: 'top 90%', once: true };
         }
-        gsap.from(children, animConfig);
+        gsap.from(children, cfg);
       });
 
-      // 3. Single section reveals ([data-reveal] not inside a group)
+      // D. Standalone Section Reveals ([data-reveal] outside groups)
       document.querySelectorAll('[data-reveal]:not([data-reveal-group] [data-reveal])').forEach((el) => {
-        const animConfig = {
+        if (el.closest('[hidden]')) return;
+        const cfg = {
           opacity: 0,
-          y: 14,
-          duration: 0.42,
+          y: 18,
+          duration: 0.48,
           ease: 'power2.out',
           clearProps: 'transform,opacity'
         };
         if (typeof window.ScrollTrigger !== 'undefined') {
-          animConfig.scrollTrigger = {
-            trigger: el,
-            start: 'top 92%',
-            once: true
-          };
+          cfg.scrollTrigger = { trigger: el, start: 'top 92%', once: true };
         }
-        gsap.from(el, animConfig);
+        gsap.from(el, cfg);
       });
 
-      // 4. Smooth KPI Number Count-Up ([data-countup])
+      // E. Smooth KPI Count-Up on Scroll ([data-countup])
       document.querySelectorAll('[data-countup]').forEach((el) => {
         const raw = (el.getAttribute('data-countup') || '').trim();
         const target = parseFloat(raw);
@@ -262,15 +293,47 @@ document.addEventListener('DOMContentLoaded', () => {
         const decimals = raw.includes('.') ? (raw.split('.')[1] || '').length : 0;
         const suffix = el.getAttribute('data-countup-suffix') || '';
         const counter = { val: 0 };
-        gsap.to(counter, {
+        const cfg = {
           val: target,
-          duration: 0.85,
+          duration: 0.95,
           ease: 'power2.out',
-          onUpdate: () => {
-            el.textContent = counter.val.toFixed(decimals) + suffix;
-          }
-        });
+          onUpdate: () => { el.textContent = counter.val.toFixed(decimals) + suffix; }
+        };
+        if (typeof window.ScrollTrigger !== 'undefined') {
+          cfg.scrollTrigger = { trigger: el, start: 'top 92%', once: true };
+        }
+        gsap.to(counter, cfg);
       });
     });
+  } else if (!prefersReduced && 'IntersectionObserver' in window) {
+    // Zero-dependency IntersectionObserver fallback if GSAP CDN is unavailable
+    document.documentElement.classList.add('js-reveal-ready');
+    const items = document.querySelectorAll('[data-reveal]');
+    items.forEach((el) => { if (!el.closest('[hidden]')) el.classList.add('reveal-pending'); });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove('reveal-pending');
+          entry.target.classList.add('is-revealed');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    items.forEach((el) => io.observe(el));
   }
 });
+
+// Helper for dynamic view switches (e.g., opening a Topic Drawer with staggered poster cards!)
+window.animateStaggerReveal = function (container) {
+  if (!container) return;
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) return;
+  const items = container.querySelectorAll('[data-stagger-card]');
+  if (!items.length) return;
+  if (typeof window.gsap !== 'undefined') {
+    window.gsap.fromTo(items,
+      { opacity: 0, y: 20, scale: 0.975 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.44, stagger: 0.055, ease: 'power3.out', clearProps: 'transform,opacity' }
+    );
+  }
+};

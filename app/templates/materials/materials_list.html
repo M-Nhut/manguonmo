@@ -3,19 +3,26 @@
 {% block title %}Kho Tài Liệu Số - Tin học 11 Ứng dụng{% endblock %}
 
 {% block content %}
-<section class="page-header-bar">
-  <div>
-    <h1>Kho Tài Liệu</h1>
-    <p>Tài liệu Word, PDF, PowerPoint và Video bài giảng chuẩn chương trình Tin học 11</p>
-  </div>
-
-  {% if current_user.is_teacher or current_user.is_admin %}
+<section class="pro-hero-banner p-6 sm:p-7" data-hero-stagger>
+  <div class="pro-mesh-orb w-60 h-60 bg-teal-300 -top-20 -right-12" data-parallax="-12" aria-hidden="true"></div>
+  <div class="relative z-10 flex flex-wrap justify-between items-center gap-4">
     <div>
-      <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary clay-btn-sm">
-        + Tải lên trong bài học
-      </a>
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] text-xs font-extrabold uppercase tracking-wider mb-2">
+        <span class="w-2 h-2 rounded-full bg-[#0D9488] animate-live-dot" aria-hidden="true"></span>
+        Học Liệu Đa Phương Tiện
+      </span>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Kho Tài Liệu Số</h1>
+      <p class="text-sm text-slate-600 mt-1">Tài liệu Word, PDF, PowerPoint và Video bài giảng chuẩn chương trình Tin học 11</p>
     </div>
-  {% endif %}
+
+    {% if current_user.is_teacher or current_user.is_admin %}
+      <div>
+        <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+          + Tải lên trong bài học
+        </a>
+      </div>
+    {% endif %}
+  </div>
 </section>
 
 <!-- Segmented Format Filter Tabs -->
@@ -43,7 +50,7 @@
 {% if materials %}
   <div class="grid-3 mb-9" data-reveal-group>
     {% for m in materials %}
-      <article class="clay-card card-interactive flex flex-col justify-between gap-4 group" data-reveal>
+      <article class="clay-card pro-card-tilt flex flex-col justify-between gap-4 group" data-reveal>
         <div>
           <div class="flex justify-between items-center mb-3">
             {% if m.file_type in ['pptx', 'ppt'] %}

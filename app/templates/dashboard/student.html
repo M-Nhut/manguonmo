@@ -2,26 +2,29 @@
 {% block title %}Góc Học Tập - {{ current_user.full_name }}{% endblock %}
 
 {% block content %}
-<!-- Hero Welcome Banner -->
-<section class="ds-banner ds-banner-grid-bg p-6 sm:p-7" data-hero-stagger>
-  <div class="flex flex-wrap justify-between items-center gap-5">
+<!-- 1. PRO MAX WELCOME HERO WITH PARALLAX ORBS -->
+<section class="pro-hero-banner p-6 sm:p-7" data-hero-stagger>
+  <div class="pro-mesh-orb w-64 h-64 bg-teal-300 -top-20 -right-12" data-parallax="-14" aria-hidden="true"></div>
+  <div class="pro-mesh-orb pro-mesh-orb-2 w-52 h-52 bg-blue-300 -bottom-24 left-1/3" data-parallax="10" aria-hidden="true"></div>
+
+  <div class="relative z-10 flex flex-wrap justify-between items-center gap-5">
     <div>
-      <span
-        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] text-xs font-bold uppercase tracking-wide mb-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#0B4FD8] animate-live-dot" aria-hidden="true"></span>
-        Góc Học Tập Cá Nhân
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] text-xs font-extrabold uppercase tracking-wider mb-2">
+        <span class="w-2 h-2 rounded-full bg-[#0D9488] animate-live-dot" aria-hidden="true"></span>
+        Không Gian Học Tập Cá Nhân
       </span>
       <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
         Xin chào, <span class="text-gradient-brand">{{ current_user.full_name }}</span>
       </h1>
-      <p class="text-sm text-slate-600 mt-1">Theo dõi lớp học, bài kiểm tra trực tuyến và tiến độ luyện đề Tin học 11
+      <p class="text-sm text-slate-600 mt-1">
+        Tập trung vào nội dung trọng tâm: chọn nhanh <strong>Chủ đề Tin học 11</strong>, làm đề kiểm tra và theo dõi thứ hạng Đấu Trường.
       </p>
     </div>
 
     <form action="{{ url_for('main.join_classroom') }}" method="POST"
       class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full lg:w-auto">
       <label for="join-class-code" class="sr-only">Mã lớp học</label>
-      <input type="text" id="join-class-code" name="code" class="clay-input w-full sm:w-56 font-mono uppercase"
+      <input type="text" id="join-class-code" name="code" class="clay-input w-full sm:w-56 font-mono uppercase bg-white/95"
         placeholder="Nhập mã lớp (VD: TIN11-A1)" autocorrect="off" autocapitalize="characters" spellcheck="false"
         required>
       <button type="submit" class="clay-btn clay-btn-primary clay-btn-sm whitespace-nowrap shrink-0">
@@ -31,31 +34,30 @@
   </div>
 </section>
 
-<!-- 3 Visual KPI Summary Cards with SVG Score Ring & CountUp -->
+<!-- 2. 3 ESSENTIAL ANIMATED KPI SUMMARY CARDS -->
 {% set score_pct = [100, (avg_score_10 * 10)|int]|min %}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" data-reveal-group>
-  <div data-reveal class="clay-card p-5 flex flex-col justify-between">
-    <div class="flex items-start justify-between gap-3">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-7" data-reveal-group>
+  <div data-reveal class="clay-card pro-card-tilt p-5 flex flex-col justify-between">
+    <div class="flex items-start justify-between gap-3 relative z-10">
       <div>
         <div class="text-sm font-semibold text-slate-600 mb-1">Đề kiểm tra cần làm</div>
         <div class="text-3xl font-extrabold text-[#0B4FD8] font-mono tabular-nums" data-countup="{{ pending_exams_count }}">{{ pending_exams_count }}</div>
       </div>
       <div class="flex flex-col items-end gap-2">
-        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 text-[#0B4FD8] flex items-center justify-center" aria-hidden="true">
+        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-50 to-blue-100 border border-teal-200 text-[#0F766E] flex items-center justify-center" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </span>
-        <span class="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0B4FD8] text-xs font-bold">{{ available_exams|length }}
-          đề mở</span>
+        <span class="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0B4FD8] text-xs font-bold">{{ available_exams|length }} đề mở</span>
       </div>
     </div>
-    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
-      <span class="text-slate-600">Ôn luyện &amp; Kiểm tra</span>
-      <a href="{{ url_for('main.exams_list') }}" class="text-[#0B4FD8] hover:underline">Mở danh sách →</a>
+    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold relative z-10">
+      <span class="text-slate-600">Phòng thi &amp; Kiểm tra</span>
+      <a href="{{ url_for('main.exams_list') }}" class="text-[#0D9488] font-bold hover:underline">Mở danh sách →</a>
     </div>
   </div>
 
-  <div data-reveal class="clay-card p-5 flex flex-col justify-between">
-    <div class="flex items-center justify-between gap-4">
+  <div data-reveal class="clay-card pro-card-tilt p-5 flex flex-col justify-between">
+    <div class="flex items-center justify-between gap-4 relative z-10">
       <div>
         <div class="text-sm font-semibold text-slate-600 mb-1">Điểm trung bình (Hệ 10)</div>
         <div class="flex items-baseline gap-1.5 mt-1">
@@ -65,46 +67,92 @@
         <span class="inline-block mt-2 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[#047857] text-xs font-bold">{{ submissions|length }} bài nộp</span>
       </div>
 
-      <!-- Circular SVG Progress Ring -->
       <div class="relative w-16 h-16 shrink-0" aria-hidden="true">
         <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="15.5" fill="none" stroke="#E2E8F0" stroke-width="3"/>
-          <circle cx="18" cy="18" r="15.5" fill="none" stroke="#047857" stroke-width="3" stroke-linecap="round"
+          <circle cx="18" cy="18" r="15.5" fill="none" stroke="#0D9488" stroke-width="3" stroke-linecap="round"
                   stroke-dasharray="{{ (score_pct * 97.4 / 100)|round(1) }} 97.4"/>
         </svg>
-        <span class="absolute inset-0 flex items-center justify-center font-mono text-xs font-extrabold text-[#047857]">{{ score_pct }}%</span>
+        <span class="absolute inset-0 flex items-center justify-center font-mono text-xs font-extrabold text-[#0F766E]">{{ score_pct }}%</span>
       </div>
     </div>
-    <div class="mt-3">
+    <div class="mt-3 relative z-10">
       <div class="w-full h-2 rounded-full bg-slate-200 overflow-hidden" role="progressbar" aria-label="Điểm trung bình hệ 10" aria-valuenow="{{ avg_score_10 }}" aria-valuemin="0" aria-valuemax="10">
-        <div class="h-full bg-gradient-to-r from-emerald-600 to-teal-500 rounded-full transition-all duration-500" style="width: {{ score_pct }}%;"></div>
+        <div class="h-full bg-gradient-to-r from-[#0D9488] to-[#0B4FD8] rounded-full transition-all duration-500" style="width: {{ score_pct }}%;"></div>
       </div>
     </div>
   </div>
 
-  <div data-reveal class="clay-card p-5 flex flex-col justify-between">
-    <div class="flex items-start justify-between gap-3">
+  <div data-reveal class="clay-card pro-card-tilt p-5 flex flex-col justify-between">
+    <div class="flex items-start justify-between gap-3 relative z-10">
       <div>
         <div class="text-sm font-semibold text-slate-600 mb-1">Lớp học đang tham gia</div>
         <div class="text-3xl font-extrabold text-slate-900 font-mono tabular-nums" data-countup="{{ classrooms|length }}">{{ classrooms|length }}</div>
       </div>
       <div class="flex flex-col items-end gap-2">
-        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-50 to-violet-100 border border-indigo-200 text-indigo-700 flex items-center justify-center" aria-hidden="true">
+        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-orange-100 border border-amber-200 text-amber-700 flex items-center justify-center" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         </span>
-        <span class="px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-xs font-bold">7 Chủ đề • 31 Bài SGK</span>
+        <span class="px-2.5 py-0.5 rounded-md bg-teal-50 text-[#0F766E] text-xs font-bold">7 Chủ đề • 31 Bài SGK</span>
       </div>
     </div>
-    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
-      <span class="text-slate-600">Kho bài giảng tự do</span>
-      <a href="{{ url_for('main.lessons_list') }}" class="text-[#0B4FD8] hover:underline">Vào học ngay →</a>
+    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold relative z-10">
+      <span class="text-slate-600">Kho học liệu theo Chủ đề</span>
+      <a href="{{ url_for('main.lessons_list') }}" class="text-[#0D9488] font-bold hover:underline">Mở 7 Chủ đề →</a>
     </div>
   </div>
 </div>
 
-<!-- Main 2-Column Workspace -->
+<!-- 3. PROGRESSIVE DISCLOSURE: 7 CHỦ ĐỀ TRỌNG TÂM (BẤM VÀO CHỦ ĐỀ ĐỂ XEM ĐẦY ĐỦ BÀI HỌC CÓ POSTER!) -->
+{% if public_courses %}
+<section class="mb-7" aria-labelledby="dash-topics-heading">
+  <div class="flex flex-wrap items-end justify-between gap-3 mb-4" data-reveal>
+    <div>
+      <span class="text-xs font-extrabold uppercase tracking-wider text-[#0D9488] block mb-0.5">Nội Dung Cốt Lõi SGK</span>
+      <h2 id="dash-topics-heading" class="font-display text-xl font-extrabold text-slate-900">
+        Khám Phá Nhanh Theo Chủ Đề (Bấm để mở bài học &amp; Poster)
+      </h2>
+    </div>
+    <a href="{{ url_for('main.lessons_list') }}" class="text-sm font-bold text-[#0D9488] hover:underline">
+      Xem tất cả Chủ đề →
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-reveal-group>
+    {% for course in public_courses[:4] %}
+      <article data-reveal class="topic-poster-card pro-card-tilt group">
+        <div>
+          <div class="relative aspect-[16/9] bg-slate-900 poster-shine">
+            <img src="{{ course|poster_src }}"
+                 alt="Poster {{ course.title }}"
+                 loading="lazy"
+                 class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" aria-hidden="true"></div>
+            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-white/95 text-[#0F766E] font-mono text-[11px] font-extrabold shadow-sm">
+              {{ course.lessons.count() }} bài
+            </span>
+          </div>
+          <div class="p-4 relative z-10">
+            <h3 class="font-display text-sm font-extrabold text-slate-900 leading-snug line-clamp-2 group-hover:text-[#0D9488] transition-colors">
+              <a href="{{ url_for('main.course_detail', course_id=course.id) }}" class="card-link after:absolute after:inset-0">
+                {{ course.title }}
+              </a>
+            </h3>
+          </div>
+        </div>
+        <footer class="px-4 py-2.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0D9488] relative z-10">
+          <span>Mở các bài học</span>
+          <span aria-hidden="true">→</span>
+        </footer>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- 4. MAIN 2-COLUMN WORKSPACE: EXAMS + CLASSROOMS (LEFT) & ARENA + RESULTS (RIGHT) -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-  <!-- Left 8 Cols: Active Exams & Classrooms -->
+  <!-- Left 8 Cols -->
   <div class="lg:col-span-8 space-y-6">
     <section data-reveal class="clay-card">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -121,31 +169,25 @@
       <div class="space-y-3">
         {% for exam in available_exams %}
         {% set sub = user_submissions.get(exam.id) %}
-        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#0B4FD8] hover:shadow-sm transition flex flex-wrap items-center justify-between gap-4">
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#0D9488] hover:shadow-sm transition flex flex-wrap items-center justify-between gap-4">
           <div class="space-y-1.5">
             <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
-              <span class="px-2.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">{{
-                exam.classroom.name }}</span>
+              <span class="px-2.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">{{ exam.classroom.name }}</span>
               {% if not exam.is_published %}
               <span class="px-2.5 py-0.5 rounded-md bg-slate-200 text-slate-800">Đang khóa</span>
               {% elif exam.access_code %}
-              <span class="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800">Yêu cầu mã
-                PIN</span>
+              <span class="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800">Yêu cầu mã PIN</span>
               {% else %}
-              <span class="px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[#047857]">Đang
-                mở</span>
+              <span class="px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[#047857]">Đang mở</span>
               {% endif %}
 
               {% if sub %}
               {% if sub.status == 'submitted' %}
-              <span class="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8]">Đã nộp • {{
-                sub.score }}/{{ sub.total_points }}đ</span>
+              <span class="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8]">Đã nộp • {{ sub.score }}/{{ sub.total_points }}đ</span>
               {% elif sub.status == 'auto_submitted_violation' %}
-              <span class="px-2.5 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-[#BE123C]">Thu bài tự động
-                ({{ sub.violations_count }}/{{ exam.max_violations }} lỗi)</span>
+              <span class="px-2.5 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-[#BE123C]">Thu bài tự động ({{ sub.violations_count }}/{{ exam.max_violations }} lỗi)</span>
               {% else %}
-              <span class="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800">Đang làm
-                dở</span>
+              <span class="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800">Đang làm dở</span>
               {% endif %}
               {% endif %}
             </div>
@@ -159,13 +201,9 @@
 
           <div>
             {% if sub and sub.status in ['submitted', 'auto_submitted_violation'] %}
-            <a href="{{ url_for('main.exam_result', submission_id=sub.id) }}"
-              class="clay-btn clay-btn-secondary clay-btn-sm">
-              Xem điểm
-            </a>
+            <a href="{{ url_for('main.exam_result', submission_id=sub.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">Xem điểm</a>
             {% elif not exam.is_published %}
-            <span class="inline-block px-3 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">Tạm
-              khóa</span>
+            <span class="inline-block px-3 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">Tạm khóa</span>
             {% else %}
             <a href="{{ url_for('main.take_exam', exam_id=exam.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
               {% if sub %}Tiếp tục thi{% else %}Vào phòng thi →{% endif %}
@@ -178,8 +216,7 @@
       {% else %}
       <div class="p-6 rounded-xl border border-slate-200 bg-slate-50 text-center">
         <p class="text-sm text-slate-600 mb-3">Hiện chưa có đề kiểm tra nào trong lớp của bạn.</p>
-        <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm">Tạo đề ôn luyện ngẫu
-          nhiên</a>
+        <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm">Tạo đề ôn luyện ngẫu nhiên</a>
       </div>
       {% endif %}
     </section>
@@ -187,24 +224,21 @@
     <section data-reveal class="clay-card">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
-          <h2 class="font-display text-lg font-extrabold text-slate-900">Lớp Học &amp; Kho Học Liệu</h2>
-          <p class="text-sm text-slate-600">Truy cập 31 bài học SGK Tin học 11 hoặc không gian lớp học</p>
+          <h2 class="font-display text-lg font-extrabold text-slate-900">Lớp Học Của Tôi</h2>
+          <p class="text-sm text-slate-600">Truy cập không gian lớp học hoặc kho bài giảng chung</p>
         </div>
         <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary clay-btn-sm">
-          Xem 31 Bài SGK
+          Mở 7 Chủ Đề SGK
         </a>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% for c in classrooms %}
-        <div class="card-interactive p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between gap-3">
+        <div class="pro-card-tilt p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between gap-3">
           <div class="relative z-10">
             <div class="flex items-center justify-between gap-2 mb-2">
-              <span
-                class="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-bold">{{
-                c.code }}</span>
-              <span class="text-xs text-slate-600 font-medium">{{ c.courses.count() }} chủ đề • {{ c.exams.count() }}
-                đề</span>
+              <span class="px-2.5 py-0.5 rounded-md bg-teal-50 border border-teal-200 text-[#0F766E] font-mono text-xs font-bold">{{ c.code }}</span>
+              <span class="text-xs text-slate-600 font-medium">{{ c.courses.count() }} chủ đề • {{ c.exams.count() }} đề</span>
             </div>
             <h3 class="text-base font-bold text-slate-900 mb-1">{{ c.name }}</h3>
             <p class="text-xs text-slate-600">GV: {{ c.teacher.full_name }}</p>
@@ -214,8 +248,7 @@
           </a>
         </div>
         {% else %}
-        <div
-          class="md:col-span-2 p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
+        <div class="md:col-span-2 p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 class="font-bold text-slate-900 text-sm">Kho Học Liệu Chung Tin Học 11 (PUBLIC-TIN11)</h3>
             <p class="text-xs text-slate-600 mt-0.5">Mở tự do toàn bộ 7 Chủ đề và 31 Bài học SGK Kết nối tri thức.</p>
@@ -227,90 +260,82 @@
     </section>
   </div>
 
-  <!-- Right 4 Cols: Weekly Leaderboard Widget + Recent Results -->
+  <!-- Right 4 Cols -->
   <aside data-reveal class="lg:col-span-4 space-y-6">
-
-    <!-- Weekly Leaderboard & Arena Card -->
-    <div class="clay-card border-2 border-amber-300/80 bg-gradient-to-b from-amber-50/40 via-white to-white">
-      <div class="flex items-center justify-between gap-2 mb-3">
-        <div>
-          <span class="clay-badge badge-admin font-mono text-[11px] mb-1">{{ week_label | default('BXH Tuần') }}</span>
-          <h2 class="font-display text-lg font-extrabold text-slate-900">Đấu Trường &amp; BXH Tuần</h2>
-        </div>
-        {% if my_arena_stats and my_arena_stats.rank %}
-        <span class="px-2.5 py-1 rounded-xl bg-amber-100 border border-amber-300 text-amber-900 font-mono text-xs font-extrabold">
-          Hạng #{{ my_arena_stats.rank }} • {{ my_arena_stats.best_score }}đ
-        </span>
-        {% endif %}
-      </div>
-
-      {% if arena_top5 %}
-      <div class="space-y-2 mb-4">
-        {% for row in arena_top5 %}
-        <div class="p-2.5 rounded-xl border {% if row.user_id == current_user.id %}border-[#0B4FD8] bg-blue-50/70{% else %}border-slate-200 bg-white{% endif %} flex items-center justify-between gap-2 text-xs">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="w-6 h-6 rounded-lg font-mono font-extrabold flex items-center justify-center shrink-0 {% if row.rank == 1 %}bg-amber-100 text-amber-800 border border-amber-300{% elif row.rank == 2 %}bg-slate-200 text-slate-800{% elif row.rank == 3 %}bg-orange-100 text-orange-800{% else %}bg-slate-100 text-slate-700{% endif %}">
-              #{{ row.rank }}
-            </span>
-            <span class="font-bold text-slate-900 truncate">{{ row.full_name }}</span>
+    <div class="clay-card pro-card-tilt border-2 border-amber-300/80 bg-gradient-to-b from-amber-50/45 via-white to-white">
+      <div class="relative z-10">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div>
+            <span class="clay-badge badge-admin font-mono text-[11px] mb-1">{{ week_label | default('BXH Tuần') }}</span>
+            <h2 class="font-display text-lg font-extrabold text-slate-900">Đấu Trường &amp; BXH Tuần</h2>
           </div>
-          <span class="font-mono font-extrabold text-[#0B4FD8] shrink-0">{{ row.best_score }}đ • {{ row.best_duration_sec }}s</span>
+          {% if my_arena_stats and my_arena_stats.rank %}
+          <span class="px-2.5 py-1 rounded-xl bg-amber-100 border border-amber-300 text-amber-900 font-mono text-xs font-extrabold">
+            Hạng #{{ my_arena_stats.rank }} • {{ my_arena_stats.best_score }}đ
+          </span>
+          {% endif %}
         </div>
-        {% endfor %}
-      </div>
-      {% endif %}
 
-      <a href="{{ url_for('main.arena_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm w-full">
-        Vào Đấu Trường &amp; Đua Top Tuần →
-      </a>
+        {% if arena_top5 %}
+        <div class="space-y-2 mb-4">
+          {% for row in arena_top5 %}
+          <div class="p-2.5 rounded-xl border {% if row.user_id == current_user.id %}border-[#0D9488] bg-teal-50/70{% else %}border-slate-200 bg-white{% endif %} flex items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-6 h-6 rounded-lg font-mono font-extrabold flex items-center justify-center shrink-0 {% if row.rank == 1 %}bg-amber-100 text-amber-800 border border-amber-300{% elif row.rank == 2 %}bg-slate-200 text-slate-800{% elif row.rank == 3 %}bg-orange-100 text-orange-800{% else %}bg-slate-100 text-slate-700{% endif %}">
+                #{{ row.rank }}
+              </span>
+              <span class="font-bold text-slate-900 truncate">{{ row.full_name }}</span>
+            </div>
+            <span class="font-mono font-extrabold text-[#0F766E] shrink-0">{{ row.best_score }}đ • {{ row.best_duration_sec }}s</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <a href="{{ url_for('main.arena_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm w-full">
+          Vào Đấu Trường &amp; Đua Top Tuần →
+        </a>
+      </div>
     </div>
 
     <div class="clay-card">
       <div class="flex items-center justify-between gap-2 mb-4">
         <h2 class="font-display text-lg font-extrabold text-slate-900">Kết Quả Gần Đây</h2>
-        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">{{ submissions|length }}
-          lượt</span>
+        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">{{ submissions|length }} lượt</span>
       </div>
 
-    {% if submissions %}
-    <div class="space-y-3">
-      {% for s in submissions %}
-      {% set pct = ((s.score / s.total_points * 100)|int) if s.total_points > 0 else 0 %}
-      <div class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-[#0B4FD8] transition space-y-2">
-        <div class="flex items-start justify-between gap-2">
-          <a href="{{ url_for('main.exam_result', submission_id=s.id) }}"
-            class="text-sm font-bold text-slate-900 hover:text-[#0B4FD8]">
-            {{ s.exam.title }}
-          </a>
-          <span class="text-sm font-extrabold text-[#0B4FD8] font-mono tabular-nums shrink-0">{{ s.score }}/{{
-            s.total_points }}đ</span>
-        </div>
+      {% if submissions %}
+      <div class="space-y-3">
+        {% for s in submissions %}
+        {% set pct = ((s.score / s.total_points * 100)|int) if s.total_points > 0 else 0 %}
+        <div class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-[#0D9488] transition space-y-2">
+          <div class="flex items-start justify-between gap-2">
+            <a href="{{ url_for('main.exam_result', submission_id=s.id) }}" class="text-sm font-bold text-slate-900 hover:text-[#0D9488]">
+              {{ s.exam.title }}
+            </a>
+            <span class="text-sm font-extrabold text-[#0F766E] font-mono tabular-nums shrink-0">{{ s.score }}/{{ s.total_points }}đ</span>
+          </div>
 
-        <div class="w-full h-1.5 rounded-full bg-slate-200 overflow-hidden" aria-hidden="true">
-          <div class="h-full rounded-full {% if s.status == 'auto_submitted_violation' %}bg-[#BE123C]{% elif pct >= 50 %}bg-gradient-to-r from-[#0B4FD8] to-indigo-600{% else %}bg-amber-600{% endif %}" style="width: {{ pct }}%;"></div>
-        </div>
+          <div class="w-full h-1.5 rounded-full bg-slate-200 overflow-hidden" aria-hidden="true">
+            <div class="h-full rounded-full {% if s.status == 'auto_submitted_violation' %}bg-[#BE123C]{% elif pct >= 50 %}bg-gradient-to-r from-[#0D9488] to-[#0B4FD8]{% else %}bg-amber-600{% endif %}" style="width: {{ pct }}%;"></div>
+          </div>
 
-        <div class="flex items-center justify-between gap-2 text-xs pt-1">
-          {% if s.status == 'submitted' %}
-          <span class="px-2 py-0.5 rounded bg-emerald-50 text-[#047857] font-bold">Hợp lệ ({{ s.violations_count }}
-            lỗi)</span>
-          {% elif s.status == 'auto_submitted_violation' %}
-          <span class="px-2 py-0.5 rounded bg-rose-50 text-[#BE123C] font-bold">Bị thu bài ({{ s.violations_count }}
-            lỗi)</span>
-          {% else %}
-          <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-bold">Đang làm bài</span>
-          {% endif %}
-          <a href="{{ url_for('main.exam_result', submission_id=s.id) }}"
-            class="font-bold text-[#0B4FD8] hover:underline">Chi tiết →</a>
+          <div class="flex items-center justify-between gap-2 text-xs pt-1">
+            {% if s.status == 'submitted' %}
+            <span class="px-2 py-0.5 rounded bg-emerald-50 text-[#047857] font-bold">Hợp lệ ({{ s.violations_count }} lỗi)</span>
+            {% elif s.status == 'auto_submitted_violation' %}
+            <span class="px-2 py-0.5 rounded bg-rose-50 text-[#BE123C] font-bold">Bị thu bài ({{ s.violations_count }} lỗi)</span>
+            {% else %}
+            <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-bold">Đang làm dở</span>
+            {% endif %}
+            <a href="{{ url_for('main.exam_result', submission_id=s.id) }}" class="text-[#0B4FD8] font-bold hover:underline">Chi tiết</a>
+          </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="p-6 rounded-xl border border-slate-200 bg-slate-50 text-center">
-      <p class="text-sm text-slate-600">Bạn chưa có bài kiểm tra nào đã nộp.</p>
-    </div>
-    {% endif %}
+      {% else %}
+      <p class="text-sm text-slate-600 text-center py-6">Chưa có bài kiểm tra nào đã hoàn thành.</p>
+      {% endif %}
     </div>
   </aside>
 </div>

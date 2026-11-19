@@ -472,6 +472,21 @@ def test_cyber_arena_and_weekly_leaderboard(client):
     assert 'map_platformer_world.png' in arena_html
     assert 'map_air_battlefield.png' in arena_html
     assert 'sprite_plat_mario.png' in arena_html
+    assert 'sheet_hero_yasuo.png' in arena_html
+    assert 'sheet_hero_lauriel.png' in arena_html
+    assert 'part_head_yasuo.png' in arena_html
+    assert 'part_thigh_yasuo.png' in arena_html
+    assert 'part_shin_boot_yasuo.png' in arena_html
+    assert 'triggerPlatformerDash' in arena_html
+    assert 'prop_knowledge_gate.png' in arena_html
+    assert 'sprite_boss_dreadnought.png' in arena_html
+    assert 'Kaelen — Phong Kiếm Sư' in arena_html
+    assert 'Seraphina — Quang Minh Thiên Sứ' in arena_html
+    assert 'moba-skill-cd-overlay' in arena_html
+    assert 'vfx_tornado_cyclone.png' in arena_html
+    assert 'vfx_divine_sword_drop.png' in arena_html
+    assert 'weapon_yasuo_katana.png' in arena_html
+    assert 'sheet_boss_caesar.png' in arena_html
     assert 'sprite_jet_falcon.png' in arena_html
     assert 'sprite_wingman_plane.png' in arena_html
     assert 'arena-shop-modal' in arena_html

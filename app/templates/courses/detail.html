@@ -4,9 +4,15 @@
 
 {% block content %}
 <div class="mb-4 flex justify-between items-center flex-wrap gap-3">
-  <a href="{{ url_for('main.classroom_detail', class_id=course.classroom_id) }}" class="text-sm font-semibold text-slate-600 hover:text-[#0B4FD8] inline-flex items-center gap-1.5">
-    ← Quay lại lớp {{ course.classroom.name }}
-  </a>
+  <div class="flex items-center gap-3 flex-wrap">
+    <a href="{{ url_for('main.lessons_list') }}" class="text-sm font-bold text-[#0F766E] hover:text-[#0B4FD8] inline-flex items-center gap-1.5">
+      ← Tất cả Chủ đề
+    </a>
+    <span class="text-slate-300" aria-hidden="true">/</span>
+    <a href="{{ url_for('main.classroom_detail', class_id=course.classroom_id) }}" class="text-sm font-semibold text-slate-600 hover:text-[#0B4FD8]">
+      {{ course.classroom.name }}
+    </a>
+  </div>
   {% if current_user.is_teacher or current_user.is_admin %}
     <div class="flex items-center gap-2 flex-wrap">
       <button type="button" onclick="openDsDialog('edit-course-modal')" class="clay-btn clay-btn-secondary clay-btn-sm">
@@ -20,29 +26,42 @@
 </div>
 
 <!-- =========================================================================
-     EDITORIAL TOPIC BANNER
+     PRO MAX EDITORIAL TOPIC HERO BANNER
      ========================================================================= -->
-<section class="typo-poster">
-  <div class="typo-poster-topbar">
-    <span>{{ course.classroom.name }}</span>
-    <span>GV: {{ course.classroom.teacher.full_name }}</span>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 p-6 sm:p-7">
+<section class="pro-hero-banner p-6 sm:p-7" data-hero-stagger>
+  <div class="pro-mesh-orb w-64 h-64 bg-teal-300 -top-20 -right-12" data-parallax="-12" aria-hidden="true"></div>
+  <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 relative z-10">
     <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono text-xs font-extrabold mb-3">
-        {{ lessons|length }} BÀI HỌC
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] font-mono text-xs font-extrabold">
+          {{ lessons|length }} BÀI HỌC CÓ POSTER
+        </span>
+        <span class="text-xs font-bold text-slate-600">GV: {{ course.classroom.teacher.full_name }}</span>
       </div>
-      <h1 class="typo-poster-title">
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
         {{ course.title }}
       </h1>
-      <p class="typo-poster-subtitle">
-        {{ course.description or 'Chuyên đề học tập tích hợp lý thuyết SGK và học liệu đa phương tiện.' }}
+      <p class="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">
+        {{ course.description or 'Chuyên đề học tập tích hợp lý thuyết SGK, poster trực quan và học liệu đa phương tiện.' }}
       </p>
+
+      <div class="flex flex-wrap items-center gap-2.5 mt-4">
+        {% if lessons %}
+          <a href="{{ url_for('main.lesson_detail', lesson_id=lessons[0].id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+            Bắt đầu từ Bài {{ lessons[0].order_index }} →
+          </a>
+        {% endif %}
+        <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+          Ôn luyện chủ đề
+        </a>
+        <a href="{{ url_for('main.arena_hub') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+          Đấu Trường Game
+        </a>
+      </div>
     </div>
 
     <div class="lg:col-span-5">
-      <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-md">
+      <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-lg poster-shine">
         <img src="{{ course|poster_src }}"
              alt="Poster {{ course.title }}"
              class="w-full h-full object-cover block">
@@ -56,39 +75,106 @@
       </div>
     </div>
   </div>
-
-  <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/90">
-    <div class="px-5 py-3.5">
-      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Tổng số bài giảng</span>
-      <span class="block font-display text-sm font-bold text-slate-900 mt-0.5">{{ lessons|length }} bài học</span>
-    </div>
-    <div class="px-5 py-3.5">
-      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Định dạng hỗ trợ</span>
-      <span class="block font-display text-sm font-bold text-slate-900 mt-0.5">DOCX, PDF, PPTX, YouTube/Video</span>
-    </div>
-    <div class="px-5 py-3.5">
-      <span class="block font-mono text-xs font-bold uppercase text-slate-600">Củng cố kiến thức</span>
-      <a href="{{ url_for('main.practice_hub') }}" class="inline-block font-display text-sm font-bold text-[#0B4FD8] hover:underline mt-0.5">
-        Ôn luyện chủ đề →
-      </a>
-    </div>
-  </div>
 </section>
 
-<!-- Lessons Syllabus List -->
-<section class="mb-9">
-  <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-    <h2 class="font-display text-lg font-extrabold text-slate-900">
-      Danh Sách Bài Học Trong Chủ Đề ({{ lessons|length }})
-    </h2>
+<!-- =========================================================================
+     FULL LESSON POSTER GALLERY (WITH POSTER GRID / COMPACT LIST TOGGLE)
+     ========================================================================= -->
+<section class="mb-10">
+  <div class="flex items-center justify-between mb-5 flex-wrap gap-3" data-reveal>
+    <div>
+      <span class="text-xs font-extrabold uppercase tracking-wider text-[#0D9488] block">Nội Dung Bài Học</span>
+      <h2 class="font-display text-xl font-extrabold text-slate-900">
+        Danh Sách Bài Học Trong Chủ Đề ({{ lessons|length }})
+      </h2>
+    </div>
+    <div class="inline-flex items-center gap-1 p-1 rounded-xl bg-white border border-slate-200 shadow-xs" role="group" aria-label="Chế độ hiển thị bài học">
+      <button type="button" id="btn-view-poster" onclick="setCourseViewMode('poster')"
+              class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-[#0D9488] text-white cursor-pointer transition">
+        Lưới Poster
+      </button>
+      <button type="button" id="btn-view-list" onclick="setCourseViewMode('list')"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer transition">
+        Danh sách gọn
+      </button>
+    </div>
   </div>
 
   {% if lessons %}
-    <div class="syllabus-list" data-reveal-group>
+    <!-- VIEW 1: BIG VISUAL POSTER CARD GRID (DEFAULT) -->
+    <div id="course-poster-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch" data-reveal-group>
       {% for l in lessons %}
-        <article class="syllabus-row card-interactive" data-reveal>
+        <article class="lesson-poster-card pro-card-tilt group" data-reveal>
+          <div>
+            <div class="relative aspect-[16/9] bg-slate-900 poster-shine border-b border-slate-100">
+              <img src="{{ l|poster_src }}"
+                   alt="Poster {{ l.title }}"
+                   loading="lazy"
+                   class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent" aria-hidden="true"></div>
+
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-white/95 text-[#0F766E] font-mono text-xs font-extrabold shadow-sm">
+                BÀI {% if l.order_index < 10 %}0{{ l.order_index }}{% else %}{{ l.order_index }}{% endif %}
+              </span>
+
+              <div class="absolute top-3 right-3 flex items-center gap-1.5 z-20">
+                {% if l.video_embed %}
+                  <span class="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[11px] font-bold">VIDEO</span>
+                {% endif %}
+                {% if current_user.is_admin or current_user.is_teacher %}
+                  <a href="{{ url_for('main.lesson_detail', lesson_id=l.id, edit=1) }}"
+                     class="px-2.5 py-0.5 rounded-md bg-white/95 text-[#0B4FD8] text-xs font-bold shadow border border-slate-200 hover:bg-white">
+                    Sửa bài
+                  </a>
+                {% endif %}
+              </div>
+
+              <div class="absolute bottom-2.5 left-3 right-3 flex flex-wrap gap-1.5">
+                {% for m in l.materials %}
+                  {% if m.file_type == 'docx' %}
+                    <span class="px-2 py-0.5 rounded bg-blue-600/90 text-white text-[10px] font-mono font-bold">DOCX</span>
+                  {% elif m.file_type == 'pdf' %}
+                    <span class="px-2 py-0.5 rounded bg-rose-600/90 text-white text-[10px] font-mono font-bold">PDF</span>
+                  {% elif m.file_type in ['pptx', 'ppt'] %}
+                    <span class="px-2 py-0.5 rounded bg-amber-600/90 text-white text-[10px] font-mono font-bold">PPTX</span>
+                  {% elif m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}
+                    <span class="px-2 py-0.5 rounded bg-emerald-600/90 text-white text-[10px] font-mono font-bold">MP4</span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="p-5 relative z-10">
+              <h3 class="font-display text-base font-extrabold text-slate-900 leading-snug group-hover:text-[#0D9488] transition-colors">
+                {{ l.title }}
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-600 mt-1.5 line-clamp-2 leading-relaxed">
+                {% if l.content %}
+                  {{ l.content | replace('#', '') | truncate(120) }}
+                {% else %}
+                  Lý thuyết trọng tâm, hình ảnh minh họa và tài liệu thực hành bài học.
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+          <footer class="px-5 py-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-bold relative z-10">
+            <span class="text-slate-600">{{ l.materials.count() }} tệp học liệu</span>
+            <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}"
+               class="card-link font-extrabold text-[#0D9488] group-hover:underline after:absolute after:inset-0">
+              Mở bài học →
+            </a>
+          </footer>
+        </article>
+      {% endfor %}
+    </div>
+
+    <!-- VIEW 2: COMPACT SYLLABUS LIST (OPTIONAL TOGGLE) -->
+    <div id="course-compact-list" class="syllabus-list" hidden>
+      {% for l in lessons %}
+        <article class="syllabus-row card-interactive">
           <div class="syllabus-row-left">
-            <img src="{{ l|poster_src }}" alt="Poster {{ l.title }}" loading="lazy" class="w-20 h-12 rounded-lg object-cover border border-slate-200 shrink-0 hidden sm:block shadow-sm">
+            <img src="{{ l|poster_src }}" alt="Poster {{ l.title }}" loading="lazy" class="w-24 h-14 rounded-xl object-cover border border-slate-200 shrink-0 hidden sm:block shadow-sm">
             <span class="syllabus-index">BÀI {% if l.order_index < 10 %}0{{ l.order_index }}{% else %}{{ l.order_index }}{% endif %}</span>
             <div class="min-w-0">
               <h3 class="syllabus-title">
@@ -102,20 +188,6 @@
             </div>
           </div>
           <div class="syllabus-row-right">
-            {% if l.video_embed %}
-              <span class="clay-badge badge-video">YOUTUBE / VIDEO</span>
-            {% endif %}
-            {% for m in l.materials %}
-              {% if m.file_type == 'docx' %}
-                <span class="clay-badge badge-docx">DOCX</span>
-              {% elif m.file_type == 'pdf' %}
-                <span class="clay-badge badge-pdf">PDF</span>
-              {% elif m.file_type in ['pptx', 'ppt'] %}
-                <span class="clay-badge badge-pptx">PPTX</span>
-              {% elif m.file_type in ['mp4', 'webm', 'ogg', 'mov'] %}
-                <span class="clay-badge badge-video">VIDEO</span>
-              {% endif %}
-            {% endfor %}
             {% if current_user.is_admin or current_user.is_teacher %}
               <a href="{{ url_for('main.lesson_detail', lesson_id=l.id, edit=1) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
                 Sửa bài
@@ -250,4 +322,27 @@
   </div>
 </dialog>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function setCourseViewMode(mode) {
+    const grid = document.getElementById('course-poster-grid');
+    const list = document.getElementById('course-compact-list');
+    const bPoster = document.getElementById('btn-view-poster');
+    const bList = document.getElementById('btn-view-list');
+    if (!grid || !list) return;
+    const isPoster = mode === 'poster';
+    grid.hidden = !isPoster;
+    list.hidden = isPoster;
+    if (bPoster && bList) {
+      bPoster.className = isPoster
+        ? 'px-3 py-1.5 rounded-lg text-xs font-extrabold bg-[#0D9488] text-white cursor-pointer transition'
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer transition';
+      bList.className = !isPoster
+        ? 'px-3 py-1.5 rounded-lg text-xs font-extrabold bg-[#0D9488] text-white cursor-pointer transition'
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer transition';
+    }
+  }
+</script>
 {% endblock %}

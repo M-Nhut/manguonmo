@@ -4,63 +4,65 @@
 
 {% block content %}
 <!-- Classroom Banner Header -->
-<section class="page-header-bar">
-  <div>
-    <h1>{{ classroom.name }}</h1>
-    <p>
-      Giáo viên: <strong class="text-slate-900">{{ classroom.teacher.full_name }}</strong> • {{ students|length }} học
-      sinh
-      {% if classroom.description %} • {{ classroom.description }}{% endif %}
-    </p>
-  </div>
+<section class="pro-hero-banner p-6 sm:p-7" data-hero-stagger>
+  <div class="pro-mesh-orb w-60 h-60 bg-teal-300 -top-20 -right-12" data-parallax="-12" aria-hidden="true"></div>
+  <div class="relative z-10 flex flex-wrap justify-between items-center gap-4">
+    <div>
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] font-mono text-xs font-extrabold uppercase mb-2">
+        Mã lớp: {{ classroom.code }}
+      </span>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{{ classroom.name }}</h1>
+      <p class="text-sm text-slate-600 mt-1">
+        Giáo viên: <strong class="text-slate-900">{{ classroom.teacher.full_name }}</strong> • {{ students|length }} học sinh
+        {% if classroom.description %} • {{ classroom.description }}{% endif %}
+      </p>
+    </div>
 
-  <div class="flex items-center gap-2.5 flex-wrap">
-    <span class="clay-badge badge-teacher font-mono text-sm px-3 py-1.5" title="Mã mời lớp học">
-      Mã lớp: {{ classroom.code }}
-    </span>
-    {% if current_user.is_teacher or current_user.is_admin %}
-    <button type="button" onclick="openDsDialog('create-course-modal')" class="clay-btn clay-btn-primary clay-btn-sm">
-      + Tạo Chuyên Đề
-    </button>
-    <a href="{{ url_for('main.create_exam', class_id=classroom.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
-      + Tạo Đề Thi
-    </a>
-    {% endif %}
+    <div class="flex items-center gap-2.5 flex-wrap">
+      {% if current_user.is_teacher or current_user.is_admin %}
+      <button type="button" onclick="openDsDialog('create-course-modal')" class="clay-btn clay-btn-primary clay-btn-sm">
+        + Tạo Chuyên Đề
+      </button>
+      <a href="{{ url_for('main.create_exam', class_id=classroom.id) }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+        + Tạo Đề Thi
+      </a>
+      {% endif %}
+    </div>
   </div>
 </section>
 
 <!-- Courses Section -->
 <section class="mb-8">
-  <h2 class="font-display text-lg font-extrabold text-slate-900 mb-4">
-    Chuyên Đề &amp; Khóa Học ({{ courses|length }})
+  <h2 class="font-display text-lg font-extrabold text-slate-900 mb-4" data-reveal>
+    Chuyên Đề &amp; Chủ Đề Bài Học ({{ courses|length }})
   </h2>
 
   {% if courses %}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" data-reveal-group>
       {% for cr in courses %}
-        <article class="clay-card p-0 card-interactive overflow-hidden flex flex-col justify-between group" data-reveal>
+        <article class="topic-poster-card pro-card-tilt group" data-reveal>
           <div>
-            <div class="relative aspect-[16/9] bg-slate-900 overflow-hidden border-b border-slate-100">
+            <div class="relative aspect-[16/9] bg-slate-900 poster-shine border-b border-slate-100">
               <img src="{{ cr|poster_src }}"
                    alt="Poster {{ cr.title }}"
                    loading="lazy"
-                   class="w-full h-full object-cover block group-hover:scale-[1.03] transition duration-300 motion-reduce:transform-none">
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" aria-hidden="true"></div>
-              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 text-[#0B4FD8] font-mono text-xs font-extrabold shadow-sm">
+                   class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent" aria-hidden="true"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-white/95 text-[#0F766E] font-mono text-xs font-extrabold shadow-sm">
                 {{ cr.lessons.count() }} BÀI HỌC
               </span>
             </div>
-            <div class="p-4">
-              <h3 class="text-base font-bold text-slate-900 leading-snug mb-1.5">{{ cr.title }}</h3>
-              <p class="text-sm text-slate-600 leading-relaxed">
+            <div class="p-5 relative z-10">
+              <h3 class="font-display text-base font-extrabold text-slate-900 leading-snug mb-1.5 group-hover:text-[#0D9488] transition-colors">{{ cr.title }}</h3>
+              <p class="text-sm text-slate-600 leading-relaxed line-clamp-2">
                 {{ cr.description or 'Chuyên đề học tập và tài liệu đa phương tiện.' }}
               </p>
             </div>
           </div>
-          <footer class="px-4 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-sm">
+          <footer class="px-5 py-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-bold relative z-10">
             <span class="text-slate-600">GV: {{ classroom.teacher.full_name }}</span>
-            <a href="{{ url_for('main.course_detail', course_id=cr.id) }}" class="card-link font-bold text-[#0B4FD8] group-hover:underline after:absolute after:inset-0">
-              Xem chuyên đề <span aria-hidden="true">→</span>
+            <a href="{{ url_for('main.course_detail', course_id=cr.id) }}" class="card-link font-extrabold text-[#0D9488] group-hover:underline after:absolute after:inset-0">
+              Mở bài học &amp; Poster <span aria-hidden="true">→</span>
             </a>
           </footer>
         </article>

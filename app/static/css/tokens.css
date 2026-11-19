@@ -1,5 +1,6 @@
 /* ==========================================================================
-   TIN HỌC 11 (ỨNG DỤNG) - THREE-LAYER DESIGN TOKENS (v2.1 Luminous EdTech)
+   TIN HỌC 11 (ỨNG DỤNG) - THREE-LAYER DESIGN TOKENS
+   v3.0 UI/UX Pro Max — Aero-Teal Swiss Academic Studio
    Layer 1: Primitives -> Layer 2: Semantic -> Layer 3: Component
    ========================================================================== */
 
@@ -19,6 +20,16 @@
   --primitive-slate-900: #0F172A;
   --primitive-slate-950: #020617;
 
+  /* Education Teal (UI/UX Pro Max Primary Accent) */
+  --primitive-teal-50: #F0FDFA;
+  --primitive-teal-100: #CCFBF1;
+  --primitive-teal-200: #99F6E4;
+  --primitive-teal-400: #2DD4BF;
+  --primitive-teal-600: #0D9488;
+  --primitive-teal-700: #0F766E;
+  --primitive-teal-900: #134E4A;
+
+  /* Academic Cobalt */
   --primitive-cobalt-50: #EFF6FF;
   --primitive-cobalt-100: #DBEAFE;
   --primitive-cobalt-200: #BFDBFE;
@@ -38,10 +49,6 @@
   --primitive-violet-200: #DDD6FE;
   --primitive-violet-700: #6D28D9;
 
-  --primitive-teal-50: #F0FDFA;
-  --primitive-teal-200: #99F6E4;
-  --primitive-teal-700: #0F766E;
-
   --primitive-coral-50: #FFF7ED;
   --primitive-coral-200: #FED7AA;
   --primitive-coral-700: #C2410C;
@@ -55,8 +62,10 @@
   --primitive-emerald-600: #059669;
   --primitive-emerald-700: #047857;
 
+  /* Course Amber */
   --primitive-amber-50: #FFFBEB;
   --primitive-amber-200: #FDE68A;
+  --primitive-amber-600: #D97706;
   --primitive-amber-700: #B45309;
   --primitive-amber-800: #92400E;
 
@@ -67,21 +76,21 @@
 
   /* Fonts & Radii */
   --font-display: 'Be Vietnam Pro', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --radius-xs: 6px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-2xl: 26px;
   --radius-full: 9999px;
 
   /* ---------------- LAYER 2: SEMANTIC TOKENS ---------------- */
-  --color-bg-canvas: #F3F6FC;
+  --color-bg-canvas: #F3F8F9;
   --color-bg-surface: var(--primitive-white);
-  --color-bg-subtle: var(--primitive-slate-100);
+  --color-bg-subtle: #EDF4F6;
   --color-bg-inset: var(--primitive-slate-50);
   --color-bg-glass: rgba(255, 255, 255, 0.84);
   --color-bg-glass-strong: rgba(255, 255, 255, 0.94);
@@ -97,13 +106,18 @@
   --color-primary-soft: var(--primitive-cobalt-50);
   --color-primary-border: var(--primitive-cobalt-200);
 
+  --color-teal: var(--primitive-teal-600);
+  --color-teal-dark: var(--primitive-teal-700);
+  --color-teal-soft: var(--primitive-teal-50);
+  --color-teal-border: var(--primitive-teal-200);
+
   --color-secondary: var(--primitive-indigo-700);
   --color-secondary-soft: var(--primitive-indigo-50);
   --color-secondary-border: var(--primitive-indigo-200);
 
-  --color-accent: var(--primitive-sky-700);
-  --color-accent-soft: var(--primitive-sky-50);
-  --color-accent-border: var(--primitive-sky-200);
+  --color-accent: var(--primitive-amber-600);
+  --color-accent-soft: var(--primitive-amber-50);
+  --color-accent-border: var(--primitive-amber-200);
 
   --color-success: var(--primitive-emerald-700);
   --color-success-soft: var(--primitive-emerald-50);
@@ -121,7 +135,7 @@
   --color-border-subtle: var(--primitive-slate-200);
   --color-border-strong: var(--primitive-slate-300);
   --color-border-control: var(--primitive-slate-500);
-  --color-focus-ring: var(--primitive-cobalt-600);
+  --color-focus-ring: var(--primitive-teal-600);
 
   /* Document Format Tokens */
   --doc-pptx: var(--primitive-amber-800);
@@ -137,20 +151,22 @@
   --doc-pdf-border: var(--primitive-rose-200);
 
   /* ---------------- LAYER 3: COMPONENT TOKENS ---------------- */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-card: 0 4px 16px -4px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --shadow-hover: 0 16px 36px -10px rgba(11, 79, 216, 0.16), 0 6px 14px -6px rgba(15, 23, 42, 0.08);
-  --shadow-primary: 0 6px 18px -4px rgba(11, 79, 216, 0.42);
-  --shadow-modal: 0 28px 60px -14px rgba(15, 23, 42, 0.3), 0 6px 18px rgba(15, 23, 42, 0.08);
+  --shadow-xs: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 6px 20px -6px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 22px 44px -14px rgba(13, 148, 136, 0.22), 0 8px 18px -6px rgba(15, 23, 42, 0.08);
+  --shadow-primary: 0 8px 22px -6px rgba(11, 79, 216, 0.44);
+  --shadow-modal: 0 32px 68px -16px rgba(15, 23, 42, 0.34), 0 8px 20px rgba(15, 23, 42, 0.09);
 
-  --gradient-brand: linear-gradient(135deg, #0B4FD8 0%, #4F46E5 100%);
-  --gradient-brand-hover: linear-gradient(135deg, #093EB0 0%, #4338CA 100%);
-  --gradient-hero-text: linear-gradient(120deg, #0B4FD8 0%, #4F46E5 55%, #0369A1 100%);
+  /* Modern Aero-Teal + Cobalt Editorial Brand Gradients */
+  --gradient-brand: linear-gradient(135deg, #0D9488 0%, #0B4FD8 68%, #4338CA 100%);
+  --gradient-brand-hover: linear-gradient(135deg, #0F766E 0%, #093EB0 68%, #3730A3 100%);
+  --gradient-hero-text: linear-gradient(115deg, #0D9488 0%, #0B4FD8 52%, #4F46E5 100%);
+  --gradient-progress: linear-gradient(90deg, #0D9488 0%, #0B4FD8 55%, #F59E0B 100%);
 
   --sidebar-width: 268px;
   --topbar-height: 64px;
-  --duration-fast: 160ms;
-  --duration-normal: 260ms;
+  --duration-fast: 170ms;
+  --duration-normal: 280ms;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Legacy aliases */

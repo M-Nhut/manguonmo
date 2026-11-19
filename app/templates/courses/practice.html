@@ -118,23 +118,26 @@
 
 {% block content %}
 <!-- Header Banner -->
-<section class="page-header-bar">
-  <div>
-    <div class="flex flex-wrap items-center gap-2 mb-1.5">
-      <span class="clay-badge badge-student font-mono text-xs">CHẾ ĐỘ TỰ HỌC • KHÔNG GIÁM SÁT</span>
-      <span class="clay-badge badge-teacher font-mono text-xs">NGÂN HÀNG {{ bank_count }} CÂU</span>
+<section class="pro-hero-banner p-6 sm:p-7" data-hero-stagger>
+  <div class="pro-mesh-orb w-60 h-60 bg-teal-300 -top-20 -right-12" data-parallax="-12" aria-hidden="true"></div>
+  <div class="relative z-10 flex flex-wrap justify-between items-center gap-4">
+    <div class="max-w-2xl">
+      <div class="flex flex-wrap items-center gap-2 mb-2">
+        <span class="clay-badge badge-student font-mono text-xs">CHẾ ĐỘ TỰ HỌC • KHÔNG GIÁM SÁT</span>
+        <span class="clay-badge badge-teacher font-mono text-xs">NGÂN HÀNG {{ bank_count }} CÂU</span>
+      </div>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Góc Ôn Luyện &amp; Sinh Đề Tự Học</h1>
+      <p class="text-sm text-slate-600 mt-1">Chọn chủ đề và thời gian làm bài để hệ thống sinh đề ngẫu nhiên 30 câu (24 MCQ + 06 Đúng/Sai). Không khóa màn hình, thoải mái tra cứu bài học!</p>
     </div>
-    <h1>Góc Ôn Luyện &amp; Sinh Đề Tự Học</h1>
-    <p>Chọn chủ đề và thời gian làm bài để hệ thống sinh đề ngẫu nhiên 30 câu (24 MCQ + 06 Đúng/Sai). Không khóa màn hình, thoải mái tra cứu bài học!</p>
-  </div>
 
-  <div class="flex items-center gap-2.5 flex-wrap">
-    <a href="{{ url_for('main.arena_hub', topic=current_topic) }}" class="clay-btn clay-btn-primary clay-btn-sm">
-      Đấu Trường Game &amp; BXH Tuần →
-    </a>
-    <button type="button" onclick="openPracticeGenerator()" class="clay-btn clay-btn-secondary clay-btn-sm">
-      Chọn Chủ Đề &amp; Sinh Đề Mới
-    </button>
+    <div class="flex items-center gap-2.5 flex-wrap">
+      <a href="{{ url_for('main.arena_hub', topic=current_topic) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+        Đấu Trường Game &amp; BXH Tuần →
+      </a>
+      <button type="button" onclick="openPracticeGenerator()" class="clay-btn clay-btn-secondary clay-btn-sm">
+        Chọn Chủ Đề &amp; Sinh Đề Mới
+      </button>
+    </div>
   </div>
 </section>
 

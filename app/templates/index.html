@@ -6,8 +6,10 @@
 <!-- =========================================================================
      1. HERO SECTION — LUMINOUS EDTECH SPLIT + FLOATING GLASS BADGES
      ========================================================================= -->
-<section class="relative pt-10 pb-12 lg:pt-14 lg:pb-16">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+<section class="relative pt-10 pb-12 lg:pt-14 lg:pb-16 overflow-hidden">
+  <div class="pro-mesh-orb w-80 h-80 bg-teal-300/60 -top-24 -left-16" data-parallax="-14" aria-hidden="true"></div>
+  <div class="pro-mesh-orb pro-mesh-orb-2 w-72 h-72 bg-blue-300/60 top-12 -right-12" data-parallax="12" aria-hidden="true"></div>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center relative z-10">
 
     <!-- Left 6 Cols: High-Impact Copy, Primary CTAs & 1-Click Demo -->
     <div class="lg:col-span-6 space-y-6">
@@ -223,94 +225,94 @@
   </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-reveal-group>
-    <!-- Card 1: Cobalt -->
-    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+    <!-- Card 1: Teal-Cobalt -->
+    <article data-reveal class="topic-poster-card pro-card-tilt group">
       <!-- [VỊ TRÍ ẢNH 2 - CHỦ ĐỀ 1]: Thay ảnh tại thuộc tính src="..." bên dưới -->
-      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+      <div class="aspect-[16/10] bg-slate-900 poster-shine border-b border-slate-100 relative">
         <img src="{{ url_for('static', filename='img/posters/poster_a_hardware.jpg') }}"
              alt="Hệ điều hành và Phần cứng máy tính"
              loading="lazy"
              class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
-        <div class="h-1 w-full bg-gradient-to-r from-[#0B4FD8] to-sky-500 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
+        <div class="h-1 w-full bg-gradient-to-r from-[#0D9488] to-[#0B4FD8] absolute bottom-0 inset-x-0" aria-hidden="true"></div>
       </div>
-      <div class="p-5 flex-1">
+      <div class="p-5 flex-1 relative z-10">
         <span class="clay-badge badge-teacher font-mono text-xs mb-2.5">HỆ THỐNG</span>
         <h3 class="text-base font-bold text-slate-900 mb-1.5">Máy tính &amp; Hệ điều hành</h3>
         <p class="text-sm text-slate-600 leading-relaxed">Phần mềm nguồn mở, kiến trúc phần cứng và kết nối thiết bị số.</p>
       </div>
-      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
-        <span class="text-slate-600">Chủ đề 1</span>
-        <a href="{{ url_for('auth.login') }}" class="card-link text-[#0B4FD8] group-hover:underline after:absolute after:inset-0">
-          Khám phá <span aria-hidden="true">→</span>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold relative z-10">
+        <span class="text-slate-600">Chủ đề 1 (5 bài)</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-[#0D9488] font-bold group-hover:underline after:absolute after:inset-0">
+          Mở chủ đề <span aria-hidden="true">→</span>
         </a>
       </footer>
     </article>
 
     <!-- Card 2: Teal -->
-    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+    <article data-reveal class="topic-poster-card pro-card-tilt group">
       <!-- [VỊ TRÍ ẢNH 3 - CHỦ ĐỀ 2 & 3]: Thay ảnh tại thuộc tính src="..." bên dưới -->
-      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+      <div class="aspect-[16/10] bg-slate-900 poster-shine border-b border-slate-100 relative">
         <img src="{{ url_for('static', filename='img/posters/poster_c_cloud.jpg') }}"
              alt="Lưu trữ đám mây và An toàn thông tin"
              loading="lazy"
              class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
         <div class="h-1 w-full bg-gradient-to-r from-teal-600 to-emerald-500 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
       </div>
-      <div class="p-5 flex-1">
+      <div class="p-5 flex-1 relative z-10">
         <span class="clay-badge badge-teal font-mono text-xs mb-2.5">INTERNET</span>
         <h3 class="text-base font-bold text-slate-900 mb-1.5">Lưu trữ &amp; An toàn số</h3>
         <p class="text-sm text-slate-600 leading-relaxed">Đám mây, tìm kiếm thông tin nâng cao và giao tiếp mạng an toàn.</p>
       </div>
-      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
-        <span class="text-slate-600">Chủ đề 2 &amp; 3</span>
-        <a href="{{ url_for('auth.login') }}" class="card-link text-[#0F766E] group-hover:underline after:absolute after:inset-0">
-          Khám phá <span aria-hidden="true">→</span>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold relative z-10">
+        <span class="text-slate-600">Chủ đề 2 &amp; 3 (4 bài)</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-[#0F766E] font-bold group-hover:underline after:absolute after:inset-0">
+          Mở chủ đề <span aria-hidden="true">→</span>
         </a>
       </footer>
     </article>
 
     <!-- Card 3: Indigo/Violet -->
-    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+    <article data-reveal class="topic-poster-card pro-card-tilt group">
       <!-- [VỊ TRÍ ẢNH 4 - CHỦ ĐỀ 4, 5 & 6]: Thay ảnh tại thuộc tính src="..." bên dưới -->
-      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+      <div class="aspect-[16/10] bg-slate-900 poster-shine border-b border-slate-100 relative">
         <img src="{{ url_for('static', filename='img/posters/poster_f_database.jpg') }}"
              alt="Cơ sở dữ liệu quan hệ và SQL"
              loading="lazy"
              class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
         <div class="h-1 w-full bg-gradient-to-r from-indigo-600 to-violet-600 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
       </div>
-      <div class="p-5 flex-1">
+      <div class="p-5 flex-1 relative z-10">
         <span class="clay-badge badge-ai font-mono text-xs mb-2.5">DỮ LIỆU &amp; SQL</span>
         <h3 class="text-base font-bold text-slate-900 mb-1.5">Cơ sở dữ liệu &amp; SQL</h3>
         <p class="text-sm text-slate-600 leading-relaxed">Thiết kế bảng, khóa ngoại và thực hành truy vấn dữ liệu chuẩn.</p>
       </div>
-      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
-        <span class="text-slate-600">Chủ đề 4, 5 &amp; 6</span>
-        <a href="{{ url_for('auth.login') }}" class="card-link text-violet-700 group-hover:underline after:absolute after:inset-0">
-          Khám phá <span aria-hidden="true">→</span>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold relative z-10">
+        <span class="text-slate-600">Chủ đề 4, 5 &amp; 6 (15 bài)</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-violet-700 font-bold group-hover:underline after:absolute after:inset-0">
+          Mở chủ đề <span aria-hidden="true">→</span>
         </a>
       </footer>
     </article>
 
     <!-- Card 4: Coral/Amber -->
-    <article data-reveal class="card-interactive bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group">
+    <article data-reveal class="topic-poster-card pro-card-tilt group">
       <!-- [VỊ TRÍ ẢNH 5 - CHỦ ĐỀ 7]: Thay ảnh tại thuộc tính src="..." bên dưới -->
-      <div class="aspect-[16/10] bg-slate-900 overflow-hidden border-b border-slate-100 relative">
+      <div class="aspect-[16/10] bg-slate-900 poster-shine border-b border-slate-100 relative">
         <img src="{{ url_for('static', filename='img/posters/poster_e_gimp.jpg') }}"
              alt="Chỉnh sửa ảnh GIMP và Làm phim"
              loading="lazy"
              class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
         <div class="h-1 w-full bg-gradient-to-r from-orange-600 to-rose-500 absolute bottom-0 inset-x-0" aria-hidden="true"></div>
       </div>
-      <div class="p-5 flex-1">
+      <div class="p-5 flex-1 relative z-10">
         <span class="clay-badge badge-coral font-mono text-xs mb-2.5">ĐA PHƯƠNG TIỆN</span>
         <h3 class="text-base font-bold text-slate-900 mb-1.5">Thiết kế ảnh &amp; Dựng phim</h3>
         <p class="text-sm text-slate-600 leading-relaxed">Chỉnh sửa ảnh GIMP, ảnh động và biên tập video hoạt hình.</p>
       </div>
-      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
-        <span class="text-slate-600">Chủ đề 7</span>
-        <a href="{{ url_for('auth.login') }}" class="card-link text-[#C2410C] group-hover:underline after:absolute after:inset-0">
-          Khám phá <span aria-hidden="true">→</span>
+      <footer class="px-5 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold relative z-10">
+        <span class="text-slate-600">Chủ đề 7 (7 bài)</span>
+        <a href="{{ url_for('auth.login') }}" class="card-link text-[#C2410C] font-bold group-hover:underline after:absolute after:inset-0">
+          Mở chủ đề <span aria-hidden="true">→</span>
         </a>
       </footer>
     </article>

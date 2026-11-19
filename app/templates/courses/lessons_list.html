@@ -3,180 +3,366 @@
 {% block title %}Mục Bài Học • 7 Chủ Đề &amp; 31 Bài Học - Tin học 11 Ứng dụng{% endblock %}
 
 {% block content %}
-<!-- Top Header & Search / Filter Controls -->
-<section class="page-header-bar">
-  <div>
-    <h1>Chương Trình &amp; Bài Học Tin Học 11</h1>
-    <p>Cấu trúc chuẩn 7 Chủ đề • 31 Bài học SGK Kết nối tri thức với cuộc sống (Tin học ứng dụng)</p>
+<!-- =========================================================================
+     1. PRO MAX EDITORIAL HERO BANNER + COMPACT SEARCH BAR
+     ========================================================================= -->
+<section class="pro-hero-banner p-6 sm:p-7" data-hero-stagger>
+  <div class="pro-mesh-orb w-64 h-64 bg-teal-300 -top-20 -right-12" data-parallax="-14" aria-hidden="true"></div>
+  <div class="pro-mesh-orb pro-mesh-orb-2 w-52 h-52 bg-blue-300 -bottom-24 left-1/3" data-parallax="10" aria-hidden="true"></div>
+
+  <div class="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+    <div class="max-w-2xl">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] text-xs font-extrabold uppercase tracking-wider mb-2.5">
+        <span class="w-2 h-2 rounded-full bg-[#0D9488] animate-live-dot" aria-hidden="true"></span>
+        <span>SGK Kết Nối Tri Thức • Tin Học 11 Ứng Dụng</span>
+      </div>
+      <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        Chương Trình &amp; <span class="text-gradient-brand">Chủ Đề Bài Học</span>
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 mt-1.5 leading-relaxed">
+        Chọn một <strong>Chủ đề trọng tâm</strong> bên dưới để mở toàn bộ bài học có Poster minh họa, lý thuyết cô đọng và học liệu thực hành.
+      </p>
+    </div>
+
+    <search class="w-full lg:w-auto">
+      <form method="GET" action="{{ url_for('main.lessons_list') }}" class="flex flex-wrap items-center gap-2">
+        {% if selected_course_id %}
+          <input type="hidden" name="course_id" value="{{ selected_course_id }}">
+        {% endif %}
+        <div class="w-full sm:w-64">
+          <label for="lesson-search-q" class="sr-only">Tìm kiếm bài học</label>
+          <input type="search"
+                 id="lesson-search-q"
+                 name="q"
+                 value="{{ search_query or '' }}"
+                 placeholder="Tìm bài học (SQL, GIMP, Bài 14...)"
+                 class="clay-input min-h-[42px] py-2 text-sm bg-white/95">
+        </div>
+
+        <div class="w-full sm:w-48">
+          <label for="lesson-filter-class" class="sr-only">Lọc theo lớp học</label>
+          <select id="lesson-filter-class" name="class_id" class="clay-select min-h-[42px] py-2 text-sm bg-white/95" onchange="this.form.submit()">
+            <option value="">Tất cả lớp &amp; Kho chung</option>
+            {% for cl in classrooms %}
+              <option value="{{ cl.id }}" {% if selected_class_id == cl.id %}selected{% endif %}>{{ cl.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="clay-btn clay-btn-primary clay-btn-sm min-h-[42px]">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Tìm</span>
+        </button>
+        {% if selected_class_id or selected_course_id or search_query %}
+          <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm min-h-[42px]">
+            Đặt lại
+          </a>
+        {% endif %}
+      </form>
+    </search>
   </div>
-
-  <search class="w-full lg:w-auto">
-    <form method="GET" action="{{ url_for('main.lessons_list') }}" class="flex flex-wrap items-center gap-2.5">
-      {% if selected_course_id %}
-        <input type="hidden" name="course_id" value="{{ selected_course_id }}">
-      {% endif %}
-      <div class="w-full sm:w-60">
-        <label for="lesson-search-q" class="sr-only">Tìm kiếm bài học</label>
-        <input type="search"
-               id="lesson-search-q"
-               name="q"
-               value="{{ search_query or '' }}"
-               placeholder="Tìm bài học (Bài 14, SQL, GIMP...)"
-               class="clay-input min-h-[38px] py-1.5 text-sm">
-      </div>
-
-      <div class="w-full sm:w-52">
-        <label for="lesson-filter-class" class="sr-only">Lọc theo lớp học</label>
-        <select id="lesson-filter-class" name="class_id" class="clay-select min-h-[38px] py-1.5 text-sm" onchange="this.form.submit()">
-          <option value="">Tất cả lớp học &amp; Kho chung</option>
-          {% for cl in classrooms %}
-            <option value="{{ cl.id }}" {% if selected_class_id == cl.id %}selected{% endif %}>{{ cl.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <button type="submit" class="clay-btn clay-btn-primary clay-btn-sm">
-        Lọc bài học
-      </button>
-      {% if selected_class_id or selected_course_id or search_query %}
-        <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
-          Đặt lại
-        </a>
-      {% endif %}
-    </form>
-  </search>
 </section>
 
-<!-- Quick Topic Filter Strip (7 Chủ đề SGK) -->
-{% if all_courses %}
-<div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-xs">
-  <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
-    <span class="text-sm font-bold text-slate-900">Danh mục Chủ đề (Chọn để lọc nhanh):</span>
-    <span class="text-sm font-mono font-bold text-[#0B4FD8]">Hiển thị {{ lessons|length }} bài học</span>
-  </div>
-  <nav aria-label="Lọc theo chủ đề" class="flex items-center gap-2 flex-wrap">
-    <a href="{{ url_for('main.lessons_list', class_id=selected_class_id) }}"
-       {% if not selected_course_id %}aria-current="page"{% endif %}
-       class="min-h-[36px] inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-bold border transition {% if not selected_course_id %}bg-[#0B4FD8] text-white border-[#0B4FD8]{% else %}bg-slate-50 text-slate-700 border-slate-200 hover:border-[#0B4FD8] hover:text-[#0B4FD8]{% endif %}">
-      Tất cả Chủ đề ({{ all_courses|length }})
-    </a>
-    {% for c in all_courses %}
-      <a href="{{ url_for('main.lessons_list', class_id=selected_class_id, course_id=c.id) }}"
-         {% if selected_course_id == c.id %}aria-current="page"{% endif %}
-         class="min-h-[36px] inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold border transition {% if selected_course_id == c.id %}bg-[#0B4FD8] text-white border-[#0B4FD8]{% else %}bg-slate-50 text-slate-700 border-slate-200 hover:border-[#0B4FD8] hover:text-[#0B4FD8]{% endif %}">
-        {{ c.title | truncate(34) }}
-      </a>
-    {% endfor %}
-  </nav>
-</div>
-{% endif %}
+{% set grouped_courses = lessons|groupby('course_id')|list %}
+{% set is_search_or_filtered = (search_query or selected_course_id) %}
+{% set topic_palettes = [
+  {'accent': 'from-[#0D9488] to-[#0B4FD8]', 'badge': 'bg-teal-50 text-[#0F766E] border-teal-200', 'text': 'text-[#0F766E]', 'tag': 'HỆ THỐNG'},
+  {'accent': 'from-[#0B4FD8] to-[#4F46E5]', 'badge': 'bg-blue-50 text-[#0B4FD8] border-blue-200', 'text': 'text-[#0B4FD8]', 'tag': 'ĐÁM MÂY'},
+  {'accent': 'from-[#059669] to-[#0D9488]', 'badge': 'bg-emerald-50 text-[#047857] border-emerald-200', 'text': 'text-[#047857]', 'tag': 'AN TOÀN SỐ'},
+  {'accent': 'from-[#4F46E5] to-[#7C3AED]', 'badge': 'bg-indigo-50 text-[#4338CA] border-indigo-200', 'text': 'text-[#4338CA]', 'tag': 'CƠ SỞ DỮ LIỆU'},
+  {'accent': 'from-[#D97706] to-[#EA580C]', 'badge': 'bg-amber-50 text-[#B45309] border-amber-200', 'text': 'text-[#B45309]', 'tag': 'HƯỚNG NGHIỆP'},
+  {'accent': 'from-[#0369A1] to-[#0B4FD8]', 'badge': 'bg-sky-50 text-[#0369A1] border-sky-200', 'text': 'text-[#0369A1]', 'tag': 'THỰC HÀNH SQL'},
+  {'accent': 'from-[#E11D48] to-[#D97706]', 'badge': 'bg-rose-50 text-[#BE123C] border-rose-200', 'text': 'text-[#BE123C]', 'tag': 'GIMP & VIDEO'}
+] %}
 
-{% if lessons %}
-  {% set topic_themes = [
-    {'border': 'border-l-[#0B4FD8]', 'badge': 'bg-blue-50 border-blue-200 text-[#0B4FD8]', 'pill_text': 'text-[#0B4FD8]'},
-    {'border': 'border-l-[#0F766E]', 'badge': 'bg-teal-50 border-teal-200 text-[#0F766E]', 'pill_text': 'text-[#0F766E]'},
-    {'border': 'border-l-[#4F46E5]', 'badge': 'bg-indigo-50 border-indigo-200 text-[#4F46E5]', 'pill_text': 'text-[#4F46E5]'},
-    {'border': 'border-l-[#C2410C]', 'badge': 'bg-orange-50 border-orange-200 text-[#C2410C]', 'pill_text': 'text-[#C2410C]'}
-  ] %}
-  {% for course_id, course_lessons in lessons|groupby('course_id') %}
-    {% set course = course_lessons[0].course %}
-    {% set theme = topic_themes[loop.index0 % 4] %}
-    <section id="topic-{{ course.id }}" class="mb-10" aria-labelledby="topic-heading-{{ course.id }}">
+{% if grouped_courses %}
 
-      <!-- 1. EDITORIAL TOPIC BANNER -->
-      <div class="ds-banner ds-banner-grid-bg border-l-4 {{ theme.border }} rounded-2xl p-5 mb-4" data-reveal>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-          <div class="lg:col-span-8">
-            <div class="flex items-center gap-2 flex-wrap mb-1.5">
-              <span class="px-2.5 py-0.5 rounded-md border font-mono text-xs font-extrabold {{ theme.badge }}">
-                {{ course_lessons|length }} BÀI HỌC
-              </span>
-              <span class="text-sm font-semibold text-slate-600">
-                {{ course.classroom.name }}
-              </span>
+  <!-- =========================================================================
+       2. OUTER CLEAN VIEW: VISUAL TOPIC POSTER CARDS (CLICK TOPIC TO OPEN LESSONS!)
+       ========================================================================= -->
+  <section id="topics-overview-section" class="mb-10" {% if is_search_or_filtered %}hidden{% endif %} aria-labelledby="topics-overview-heading">
+    <div class="flex flex-wrap items-end justify-between gap-3 mb-5" data-reveal>
+      <div>
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#0D9488] block mb-0.5">Lộ Trình Theo Chủ Đề</span>
+        <h2 id="topics-overview-heading" class="font-display text-xl sm:text-2xl font-extrabold text-slate-900">
+          Chọn Chủ Đề Để Xem Các Bài Học ({{ grouped_courses|length }} Chủ Đề • {{ lessons|length }} Bài)
+        </h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+          Ôn luyện đề 30 câu
+        </a>
+        <a href="{{ url_for('main.arena_hub') }}" class="clay-btn clay-btn-primary clay-btn-sm">
+          Đấu Trường Game →
+        </a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-reveal-group>
+      {% for course_id, course_lessons in grouped_courses %}
+        {% set course = course_lessons[0].course %}
+        {% set pal = topic_palettes[loop.index0 % topic_palettes|length] %}
+        <article data-reveal
+                 role="button"
+                 tabindex="0"
+                 onclick="openTopicStudio('{{ course.id }}')"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTopicStudio('{{ course.id }}');}"
+                 class="topic-poster-card pro-card-tilt group">
+          <div>
+            <!-- High-Res 16:9 Topic Poster Artwork -->
+            <div class="relative aspect-[16/9] bg-slate-900 poster-shine">
+              <img src="{{ course|poster_src }}"
+                   alt="Poster {{ course.title }}"
+                   loading="lazy"
+                   class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent" aria-hidden="true"></div>
+
+              <!-- Top Badges -->
+              <div class="absolute top-3 inset-x-3 flex items-center justify-between gap-2">
+                <span class="px-2.5 py-1 rounded-lg bg-white/95 backdrop-blur-sm {{ pal.text }} font-mono text-xs font-extrabold shadow-sm">
+                  {{ pal.tag }}
+                </span>
+                <span class="px-2.5 py-1 rounded-lg bg-slate-950/75 backdrop-blur-sm text-white border border-white/15 font-mono text-xs font-bold">
+                  {{ course_lessons|length }} bài học
+                </span>
+              </div>
+
+              <!-- Bottom Accent Strip & Classroom -->
+              <div class="absolute bottom-3 inset-x-3 flex items-end justify-between gap-2 text-white">
+                <span class="text-xs font-semibold text-slate-200 truncate">{{ course.classroom.name }}</span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/20 backdrop-blur-md text-xs font-bold text-white border border-white/25 shrink-0 group-hover:bg-[#0D9488] group-hover:border-[#0D9488] transition">
+                  <span>Mở chủ đề</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </span>
+              </div>
+              <div class="h-1 w-full bg-gradient-to-r {{ pal.accent }} absolute bottom-0 inset-x-0" aria-hidden="true"></div>
             </div>
-            <h2 id="topic-heading-{{ course.id }}" class="font-display text-xl font-extrabold text-slate-900 leading-snug">
-              <a href="{{ url_for('main.course_detail', course_id=course.id) }}" class="hover:text-[#0B4FD8] transition-colors">
+
+            <!-- Concise Topic Info -->
+            <div class="p-5 relative z-10">
+              <h3 class="font-display text-lg font-extrabold text-slate-900 leading-snug group-hover:text-[#0D9488] transition-colors">
                 {{ course.title }}
-              </a>
-            </h2>
-            {% if course.description %}
-              <p class="text-sm text-slate-600 mt-1 leading-relaxed max-w-3xl">
-                {{ course.description }}
+              </h3>
+              <p class="text-sm text-slate-600 mt-1.5 line-clamp-2 leading-relaxed">
+                {{ course.description or 'Gồm các bài giảng lý thuyết trọng tâm, hình ảnh minh họa và tài liệu thực hành chuẩn Tin học 11.' }}
               </p>
-            {% endif %}
+            </div>
           </div>
 
-          <div class="lg:col-span-4 flex items-center lg:justify-end gap-3 flex-wrap">
-            <img src="{{ course|poster_src }}"
-                 alt="Poster {{ course.title }}"
-                 loading="lazy"
-                 class="w-28 h-16 rounded-lg object-cover border border-slate-200 shrink-0 hidden sm:block shadow-sm">
+          <footer class="px-5 py-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between gap-2 relative z-10">
+            <span class="text-xs font-bold text-slate-600">
+              Bấm để xem {{ course_lessons|length }} bài có Poster
+            </span>
             <a href="{{ url_for('main.course_detail', course_id=course.id) }}"
-               class="clay-btn clay-btn-secondary clay-btn-sm shrink-0">
-              Xem chủ đề →
+               onclick="event.stopPropagation()"
+               class="text-xs font-extrabold {{ pal.text }} hover:underline">
+              Trang riêng →
             </a>
+          </footer>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       3. INNER VIEW: FULL LESSON POSTER GALLERY FOR SELECTED TOPIC (OR SEARCH)
+       ========================================================================= -->
+  <section id="topic-lessons-studio" {% if not is_search_or_filtered %}hidden{% endif %} aria-live="polite">
+    <!-- Sticky Topic Navigation & Back Button -->
+    <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 p-4 mb-6 shadow-sm flex flex-col gap-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        {% if not search_query and not selected_course_id %}
+          <button type="button" onclick="closeTopicStudio()" class="clay-btn clay-btn-secondary clay-btn-sm">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Quay lại tất cả Chủ đề</span>
+          </button>
+        {% else %}
+          <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Quay lại tất cả Chủ đề</span>
+          </a>
+        {% endif %}
+        <span class="text-xs font-mono font-extrabold text-[#0D9488] bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">
+          {% if search_query %}Kết quả tìm kiếm "{{ search_query }}": {{ lessons|length }} bài{% else %}Chế độ xem bài học theo Chủ đề{% endif %}
+        </span>
+      </div>
+
+      {% if not search_query %}
+      <nav aria-label="Chuyển nhanh giữa các Chủ đề" class="flex items-center gap-2 flex-wrap pt-2 border-t border-slate-100">
+        {% for course_id, course_lessons in grouped_courses %}
+          {% set c = course_lessons[0].course %}
+          <button type="button"
+                  data-topic-pill="{{ c.id }}"
+                  onclick="openTopicStudio('{{ c.id }}')"
+                  class="topic-pill-switcher {% if selected_course_id == c.id %}is-active{% endif %}">
+            <span>{{ c.title | truncate(30) }}</span>
+            <span class="text-[11px] opacity-80 font-mono">({{ course_lessons|length }})</span>
+          </button>
+        {% endfor %}
+      </nav>
+      {% endif %}
+    </div>
+
+    <!-- Per-Topic Lesson Poster Panels (Hidden until that Topic is clicked, or all shown when searching) -->
+    {% for course_id, course_lessons in grouped_courses %}
+      {% set course = course_lessons[0].course %}
+      {% set pal = topic_palettes[loop.index0 % topic_palettes|length] %}
+      <div id="topic-panel-{{ course.id }}"
+           data-topic-panel="{{ course.id }}"
+           class="mb-10 topic-drawer-enter"
+           {% if not is_search_or_filtered %}hidden{% endif %}>
+
+        <!-- Topic Header Showcase Banner -->
+        <div class="pro-hero-banner p-5 sm:p-6 mb-5">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center relative z-10">
+            <div class="lg:col-span-8">
+              <div class="flex items-center gap-2 flex-wrap mb-2">
+                <span class="px-2.5 py-0.5 rounded-md border font-mono text-xs font-extrabold {{ pal.badge }}">
+                  {{ pal.tag }} • {{ course_lessons|length }} BÀI HỌC
+                </span>
+                <span class="text-xs font-semibold text-slate-600">{{ course.classroom.name }}</span>
+              </div>
+              <h2 class="font-display text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+                {{ course.title }}
+              </h2>
+              {% if course.description %}
+                <p class="text-sm text-slate-600 mt-1.5 leading-relaxed max-w-2xl">{{ course.description }}</p>
+              {% endif %}
+              <div class="flex flex-wrap items-center gap-2.5 mt-4">
+                <a href="{{ url_for('main.course_detail', course_id=course.id) }}" class="clay-btn clay-btn-primary clay-btn-sm">
+                  Mở trang Chủ đề đầy đủ →
+                </a>
+                <a href="{{ url_for('main.practice_hub') }}" class="clay-btn clay-btn-secondary clay-btn-sm">
+                  Ôn luyện trắc nghiệm
+                </a>
+              </div>
+            </div>
+            <div class="lg:col-span-4">
+              <div class="aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-slate-900">
+                <img src="{{ course|poster_src }}" alt="Poster {{ course.title }}" loading="lazy" class="w-full h-full object-cover block">
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- 2. UNIFORM 4-COLUMN ACCESSIBLE LESSON GRID -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-stretch" data-reveal-group>
-        {% for l in course_lessons %}
-          <article class="clay-card p-0 card-interactive overflow-hidden flex flex-col justify-between group" data-reveal>
-            <div>
-              <div class="relative aspect-[16/9] bg-slate-900 overflow-hidden border-b border-slate-100">
-                <img src="{{ l|poster_src }}"
-                     alt="Poster {{ l.title }}"
-                     loading="lazy"
-                     class="w-full h-full object-cover block group-hover:scale-[1.03] transition duration-300 motion-reduce:transform-none">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" aria-hidden="true"></div>
-                <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md bg-white/95 {{ theme.pill_text }} font-mono text-xs font-extrabold shadow-sm">
-                  BÀI {% if l.order_index < 10 %}0{{ l.order_index }}{% else %}{{ l.order_index }}{% endif %}
+        <!-- FULL LESSON POSTER GRID (Every Lesson Has Its Own Big Poster Card!) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+          {% for l in course_lessons %}
+            <article data-stagger-card class="lesson-poster-card pro-card-tilt group">
+              <div>
+                <!-- Large 16:9 Lesson Poster -->
+                <div class="relative aspect-[16/9] bg-slate-900 poster-shine border-b border-slate-100">
+                  <img src="{{ l|poster_src }}"
+                       alt="Poster {{ l.title }}"
+                       loading="lazy"
+                       class="w-full h-full object-cover block group-hover:scale-105 transition duration-500 motion-reduce:transform-none">
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-900/15 to-transparent" aria-hidden="true"></div>
+
+                  <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-white/95 backdrop-blur-sm {{ pal.text }} font-mono text-xs font-extrabold shadow-sm">
+                    BÀI {% if l.order_index < 10 %}0{{ l.order_index }}{% else %}{{ l.order_index }}{% endif %}
+                  </span>
+
+                  <div class="absolute top-3 right-3 flex items-center gap-1.5 z-20">
+                    {% if l.video_embed %}
+                      <span class="px-2 py-0.5 rounded-md bg-rose-600/95 text-white text-[11px] font-bold shadow-sm">VIDEO</span>
+                    {% endif %}
+                    {% if current_user.is_admin or current_user.is_teacher %}
+                      <a href="{{ url_for('main.lesson_detail', lesson_id=l.id, edit=1) }}"
+                         class="inline-flex items-center min-h-[26px] px-2.5 py-0.5 rounded-md bg-white/95 text-[#0B4FD8] text-xs font-bold shadow-sm hover:bg-white border border-slate-200">
+                        Sửa bài
+                      </a>
+                    {% endif %}
+                  </div>
+
+                  <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white text-xs font-semibold">
+                    <span class="px-2 py-0.5 rounded bg-slate-950/65 backdrop-blur-sm border border-white/15">
+                      {% if l.materials.count() > 0 %}{{ l.materials.count() }} tài liệu đính kèm{% else %}Lý thuyết SGK{% endif %}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Lesson Title & Key Theory Preview -->
+                <div class="p-4 sm:p-5 relative z-10">
+                  <h3 class="font-display text-base font-extrabold text-slate-900 leading-snug group-hover:text-[#0B4FD8] transition-colors">
+                    {{ l.title }}
+                  </h3>
+                  <p class="text-xs sm:text-sm text-slate-600 mt-1.5 line-clamp-2 leading-relaxed">
+                    {% if l.content %}
+                      {{ l.content | replace('#', '') | truncate(110) }}
+                    {% else %}
+                      Khám phá kiến thức trọng tâm, ví dụ minh họa và bài tập củng cố chuẩn SGK Tin học 11.
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+
+              <footer class="px-4 sm:px-5 py-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-bold relative z-10">
+                <span class="text-slate-600 inline-flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  <span>Bài giảng số</span>
                 </span>
-                {% if current_user.is_admin or current_user.is_teacher %}
-                  <a href="{{ url_for('main.lesson_detail', lesson_id=l.id, edit=1) }}"
-                     class="absolute top-2.5 right-2.5 z-20 inline-flex items-center min-h-[28px] px-2.5 py-0.5 rounded-md bg-white/95 text-[#0B4FD8] text-xs font-bold shadow-sm hover:bg-white border border-slate-200">
-                    Sửa bài
-                  </a>
-                {% endif %}
-              </div>
-
-              <div class="p-4">
-                <h3 class="text-base font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2.75rem]">
-                  {{ l.title }}
-                </h3>
-              </div>
-            </div>
-
-            <footer class="px-4 py-3 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
-              <span class="text-slate-600">
-                {% if l.materials.count() > 0 %}
-                  {{ l.materials.count() }} tài liệu
-                {% else %}
-                  Lý thuyết &amp; Đề mục
-                {% endif %}
-              </span>
-              <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}"
-                 class="card-link font-bold {{ theme.pill_text }} group-hover:underline after:absolute after:inset-0">
-                Học bài <span aria-hidden="true">→</span>
-              </a>
-            </footer>
-          </article>
-        {% endfor %}
+                <a href="{{ url_for('main.lesson_detail', lesson_id=l.id) }}"
+                   class="card-link font-extrabold {{ pal.text }} group-hover:underline after:absolute after:inset-0 inline-flex items-center gap-1">
+                  <span>Học bài ngay</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </footer>
+            </article>
+          {% endfor %}
+        </div>
       </div>
+    {% endfor %}
+  </section>
 
-    </section>
-  {% endfor %}
 {% else %}
-  <div class="clay-card text-center py-10">
+  <div class="clay-card text-center py-12" data-reveal>
     <h2 class="font-display text-lg font-extrabold text-slate-900 mb-1.5">Không tìm thấy bài học phù hợp</h2>
     <p class="text-slate-600 text-sm mb-4">
       Hãy thử từ khóa khác hoặc bấm xem toàn bộ 7 Chủ đề (31 Bài học) trong chương trình.
     </p>
     <a href="{{ url_for('main.lessons_list') }}" class="clay-btn clay-btn-primary clay-btn-sm">
-      Xem toàn bộ 31 bài học
+      Xem toàn bộ 7 Chủ đề
     </a>
   </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function openTopicStudio(courseId) {
+    const overview = document.getElementById('topics-overview-section');
+    const studio = document.getElementById('topic-lessons-studio');
+    if (!studio) return;
+
+    if (overview) overview.hidden = true;
+    studio.hidden = false;
+
+    let activePanel = null;
+    document.querySelectorAll('[data-topic-panel]').forEach(panel => {
+      const match = panel.getAttribute('data-topic-panel') === String(courseId);
+      panel.hidden = !match;
+      if (match) activePanel = panel;
+    });
+
+    document.querySelectorAll('[data-topic-pill]').forEach(pill => {
+      const match = pill.getAttribute('data-topic-pill') === String(courseId);
+      pill.classList.toggle('is-active', match);
+    });
+
+    if (activePanel && typeof window.animateStaggerReveal === 'function') {
+      window.animateStaggerReveal(activePanel);
+    }
+    studio.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  function closeTopicStudio() {
+    const overview = document.getElementById('topics-overview-section');
+    const studio = document.getElementById('topic-lessons-studio');
+    if (studio) studio.hidden = true;
+    if (overview) {
+      overview.hidden = false;
+      overview.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    }
+  }
+</script>
 {% endblock %}

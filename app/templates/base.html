@@ -41,13 +41,18 @@
     }
   </script>
 
-  <!-- 3-Layer Tokens, Aero-Academic Stylesheet & Motion System -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}?v=2.4">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/glassmorphism-flat.css') }}?v=2.4">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/motion.css') }}?v=2.4">
+  <!-- 3-Layer Tokens, UI/UX Pro Max v3.0 Aero-Teal Stylesheet & Scroll Motion System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}?v=3.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/glassmorphism-flat.css') }}?v=3.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/motion.css') }}?v=3.0">
   {% block extra_css %}{% endblock %}
 </head>
-<body class="text-slate-700 antialiased selection:bg-[#0B4FD8] selection:text-white {% block body_class %}{% endblock %}">
+<body class="text-slate-700 antialiased selection:bg-[#0D9488] selection:text-white {% block body_class %}{% endblock %}">
+
+  <!-- Global Top Scroll Progress Hairline -->
+  <div class="global-scroll-progress" aria-hidden="true">
+    <div id="global-scroll-progress-fill" class="global-scroll-progress-fill"></div>
+  </div>
 
   <a href="#main-content" class="skip-link">Chuyển đến nội dung chính</a>
 
@@ -392,9 +397,15 @@
     </div>
   {% endif %}
 
+  <!-- Floating Back-to-Top Pill -->
+  <button type="button" id="back-to-top-btn" class="back-to-top-pill" aria-label="Cuộn lên đầu trang">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+    <span>Đầu trang</span>
+  </button>
+
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js" defer></script>
-  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}?v=3.0" defer></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>
