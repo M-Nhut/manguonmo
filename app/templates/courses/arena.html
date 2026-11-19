@@ -1,46 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Đấu Trường Tin Học 11 — {{ weekly_campaign.short_title }}{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
   /* =========================================================================
-     ESPORTS ARENA V4 — PRO FIT-TO-VIEWPORT CONSOLE + 60FPS SKELETAL ENGINE
+     AERO-TEAL v3.0 OUTER SHELL + HYBRID DARK ESPORTS ACTIVE CONSOLE
      ========================================================================= */
+  .arena-shell,
   .esports-arena-wrap {
-    color: #F8FAFC;
-  }
-  .esports-hero {
-    position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    background: #090E1A;
-    border: 1.5px solid rgba(56, 189, 248, 0.35);
-    box-shadow: 0 20px 50px rgba(2, 6, 23, 0.45);
-    padding: 20px 24px;
-    margin-bottom: 18px;
-  }
-  .esports-hero-bg {
-    position: absolute;
-    inset: 0;
-    background-image: url("{{ url_for('static', filename='img/arena/banner_arena_main.png') }}?v=9");
-    background-size: cover;
-    background-position: center;
-    opacity: 0.38;
-    pointer-events: none;
-  }
-  .esports-hero-scrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(95deg, rgba(9, 14, 26, 0.95) 0%, rgba(9, 14, 26, 0.80) 56%, rgba(15, 23, 42, 0.56) 100%);
-    pointer-events: none;
+    width: 100%;
+    min-width: 0;
+    color: var(--color-text-body);
   }
 
-  /* 4 Game Mode Selector Cards */
+  /* Main 2-Column Workspace (Stage Left + Leaderboard Right) */
+  .arena-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+  }
+  @media (min-width: 1024px) {
+    .arena-main-grid {
+      grid-template-columns: minmax(0, 1.56fr) minmax(308px, 1fr);
+      gap: 22px;
+    }
+  }
+  .arena-main-grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* 4 Game Mode Selector Cards (Aero-Teal Light v3.0) */
   .esports-mode-grid {
     display: grid;
     grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 14px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
+    width: 100%;
+    min-width: 0;
   }
   @media (min-width: 640px) {
     .esports-mode-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -51,54 +51,89 @@
   .esports-mode-card {
     position: relative;
     text-align: left;
-    border-radius: 18px;
+    border-radius: 20px;
     overflow: hidden;
-    background: #0F172A;
-    border: 2px solid #1E293B;
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.24s var(--ease-out-expo), border-color 0.2s ease, box-shadow 0.24s ease;
     cursor: pointer;
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
   .esports-mode-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(56, 189, 248, 0.78);
-    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.35);
+    border-color: rgba(13, 148, 136, 0.72);
+    box-shadow: var(--shadow-hover);
   }
   .esports-mode-card.active {
-    border-color: #38BDF8;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25), 0 16px 32px rgba(2, 6, 23, 0.45);
+    border: 2px solid #0D9488;
+    background-color: #FFFFFF;
+    background-image: linear-gradient(180deg, #FFFFFF 0%, #F0FDFA 100%);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18), var(--shadow-card);
   }
   .esports-mode-thumb {
     position: relative;
     aspect-ratio: 16 / 9;
-    max-height: 120px;
+    max-height: 124px;
     overflow: hidden;
-    background: #020617;
+    background: #0F172A;
+    flex-shrink: 0;
   }
   .esports-mode-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.35s ease;
+    display: block;
+    transition: transform 0.42s var(--ease-out-expo);
   }
   .esports-mode-card:hover .esports-mode-thumb img {
-    transform: scale(1.06);
+    transform: scale(1.05);
   }
   .esports-mode-body {
-    padding: 11px 13px;
-    background: linear-gradient(180deg, #0F172A 0%, #111827 100%);
+    padding: 12px 14px;
     flex: 1;
+    position: relative;
+    z-index: 2;
   }
 
-  /* Dark Esports Stage Card & Zero-Scroll Fit-To-Viewport Theater Mode */
+  /* Hybrid Stage Card: Aero-Teal Light in Pre-Match, Dark Arcade Console in Match / Theater */
   .esports-stage-card {
-    background: #0B1120 !important;
-    border: 1.5px solid #1E293B !important;
-    color: #F8FAFC !important;
+    width: 100%;
+    min-width: 0;
+    background-color: #FFFFFF;
+    background-image: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 1.5px solid rgba(13, 148, 136, 0.24);
+    color: var(--color-text-title);
     border-radius: 22px;
+    box-shadow: var(--shadow-card);
     overflow: hidden;
     container-type: inline-size;
+  }
+  .arena-lobby-info-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .arena-result-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  @container (min-width: 500px) {
+    .arena-lobby-info-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .arena-result-metrics-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  #arena-stage-root.is-in-match,
+  #arena-stage-root.is-expanded {
+    background: #0B1120 !important;
+    border-color: #1E293B !important;
+    color: #F8FAFC !important;
+    box-shadow: 0 24px 54px -18px rgba(2, 6, 23, 0.55);
   }
   .esports-stage-card.is-expanded {
     position: fixed !important;
@@ -119,9 +154,15 @@
     overflow: hidden;
     overscroll-behavior: contain;
   }
+  #arena-hud-bar.hidden,
+  #arena-hud-bar.arena-hud-bar.hidden,
+  #arena-result-screen.hidden,
+  #arena-theater-backdrop.hidden {
+    display: none !important;
+  }
 
-  /* Compact Fit-To-Screen HUD inside Stage */
-  #arena-hud-bar.arena-hud-bar {
+  /* Compact Fit-To-Screen HUD inside Active Match Stage */
+  #arena-hud-bar.arena-hud-bar:not(.hidden) {
     padding: 9px 14px !important;
     display: flex;
     flex-wrap: wrap;
@@ -129,6 +170,14 @@
     justify-content: space-between;
     gap: 8px;
     flex-shrink: 0;
+  }
+
+  /* Post-Match Result Card keeps crisp Aero-Teal Studio contrast */
+  #arena-result-screen:not(.hidden) {
+    background-color: #FFFFFF;
+    background-image: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    color: #0F172A;
+    flex: 1;
   }
 
   /* Canvas Wrapper — Clamped Height so Quiz Dock is 100% Visible Without Scrolling! */
@@ -162,6 +211,41 @@
   }
   .esports-stage-card.is-expanded .arena-game-canvas {
     max-height: clamp(195px, 36dvh, 325px);
+  }
+
+  /* Mobile Touch D-Pad (Visible < 900px only) */
+  .arena-touch-dpad {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 38px);
+    gap: 5px;
+    touch-action: manipulation;
+  }
+  .arena-dpad-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1.5px solid rgba(56, 189, 248, 0.55);
+    color: #F8FAFC;
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .arena-dpad-btn:active {
+    background: rgba(13, 148, 136, 0.88);
+    border-color: #2DD4BF;
+  }
+  @media (min-width: 900px) {
+    .arena-touch-dpad { display: none !important; }
   }
 
   /* KNOWLEDGE-FIRST FULL-WIDTH CONSOLE: SLIM SKILL STRIP + LARGE QUESTION CARD */
@@ -307,9 +391,7 @@
     box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
     transform: translateY(-1px);
   }
-  .arena-compact-opt-btn:disabled {
-    cursor: not-allowed;
-  }
+  .arena-compact-opt-btn:disabled { cursor: not-allowed; }
   .arena-compact-opt-btn.opt-correct {
     background: rgba(16, 185, 129, 0.26) !important;
     border-color: #34D399 !important;
@@ -374,7 +456,7 @@
   .sql-schema-table {
     width: 100%;
     border-collapse: collapse;
-    font-family: "JetBrains Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
   }
   .sql-schema-table th {
@@ -396,39 +478,218 @@
     color: #FEF08A !important;
   }
 
-  /* Dark Esports Leaderboard Card */
-  .esports-lb-card {
-    background: #0B1120 !important;
-    border: 1.5px solid #1E293B !important;
-    color: #F8FAFC !important;
+  /* Aero-Teal Weekly Leaderboard Card & Top-3 Podium */
+  .arena-lb-card {
+    width: 100%;
+    min-width: 0;
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 22px;
+    box-shadow: var(--shadow-card);
+    color: var(--color-text-body);
+    overflow: hidden;
   }
-  .esports-lb-card .arena-lb-header {
-    background: #0F172A !important;
-    border-bottom: 1px solid #1E293B !important;
+  .arena-lb-header {
+    padding: 18px 18px 14px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F0FDFA 65%, #EFF6FF 100%);
+    border-bottom: 1px solid #E2E8F0;
   }
-  .esports-lb-card .arena-podium {
-    background: linear-gradient(180deg, #0F172A 0%, #0B1120 100%) !important;
-    border-bottom: 1px solid #1E293B !important;
+  .arena-podium {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+    gap: 8px;
+    padding: 20px 12px 14px;
+    background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+    border-bottom: 1px solid #E2E8F0;
   }
-  .esports-lb-card .podium-name { color: #F8FAFC !important; }
-  .esports-lb-card .arena-lb-row {
-    background: transparent;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.7) !important;
+  .podium-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+    padding: 10px 6px 0;
+    border-radius: 16px 16px 12px 12px;
+    border: 1.5px solid #E2E8F0;
+    background: #FFFFFF;
+    overflow: hidden;
   }
-  .esports-lb-card .arena-lb-row.is-me {
-    background: rgba(37, 99, 235, 0.22) !important;
+  .podium-col.rank-1 {
+    background: linear-gradient(165deg, #FFFBEB 0%, #FFFFFF 65%, #EFF6FF 100%);
+    border-color: #F59E0B;
+    box-shadow: 0 12px 24px -12px rgba(245, 158, 11, 0.28);
   }
-  .esports-lb-card .arena-lb-name { color: #F1F5F9 !important; }
-  .esports-lb-card .arena-lb-meta { color: #94A3B8 !important; }
-  .esports-lb-card .arena-lb-xp { color: #FACC15 !important; }
+  .podium-col.rank-2 {
+    background: linear-gradient(165deg, #F8FAFC 0%, #FFFFFF 65%, #EFF6FF 100%);
+    border-color: #94A3B8;
+  }
+  .podium-col.rank-3 {
+    background: linear-gradient(165deg, #FFF7ED 0%, #FFFFFF 65%, #F8FAFC 100%);
+    border-color: #D97706;
+  }
+  .podium-avatar {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    border: 2px solid #CBD5E1;
+    background: #FFFFFF;
+    color: #0F172A;
+    box-shadow: var(--shadow-xs);
+    flex-shrink: 0;
+  }
+  .podium-col.rank-1 .podium-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.12rem;
+    border-color: #F59E0B;
+    background: #FFFBEB;
+    color: #92400E;
+  }
+  .podium-col.rank-2 .podium-avatar {
+    border-color: #94A3B8;
+    background: #F1F5F9;
+    color: #1E293B;
+  }
+  .podium-col.rank-3 .podium-avatar {
+    border-color: #D97706;
+    background: #FFF7ED;
+    color: #9A3412;
+  }
+  .podium-crown {
+    position: absolute;
+    top: -9px;
+    right: -6px;
+    font-size: 15px;
+    line-height: 1;
+  }
+  .podium-name {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #0F172A;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .podium-xp {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #0F766E;
+    margin: 2px 0 8px;
+    white-space: nowrap;
+  }
+  .podium-pedestal {
+    width: calc(100% + 12px);
+    margin: 0 -6px;
+    padding: 6px 4px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .podium-col.rank-1 .podium-pedestal {
+    min-height: 48px;
+    background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 100%);
+    color: #78350F;
+  }
+  .podium-col.rank-2 .podium-pedestal {
+    min-height: 36px;
+    background: linear-gradient(180deg, #E2E8F0 0%, #CBD5E1 100%);
+    color: #1E293B;
+  }
+  .podium-col.rank-3 .podium-pedestal {
+    min-height: 28px;
+    background: linear-gradient(180deg, #FED7AA 0%, #FDBA74 100%);
+    color: #7C2D12;
+  }
+  .arena-lb-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 430px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .arena-lb-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 16px;
+    border-bottom: 1px solid #F1F5F9;
+    background: #FFFFFF;
+    transition: background-color 0.16s ease;
+    min-width: 0;
+  }
+  .arena-lb-row:hover {
+    background: #F8FAFC;
+  }
+  .arena-lb-row.is-me {
+    background: linear-gradient(90deg, #F0FDFA 0%, #EFF6FF 100%);
+    border-left: 3px solid #0D9488;
+  }
+  .arena-lb-rank {
+    width: 34px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .arena-lb-user {
+    flex: 1;
+    min-width: 0;
+  }
+  .arena-lb-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #0F172A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .arena-lb-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #475569;
+    margin-top: 1px;
+  }
+  .arena-lb-xp {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #0F766E;
+    flex-shrink: 0;
+  }
 
-  /* Shop Modal with Overscroll Containment */
+  /* Shop Modal (Aero-Teal Light Studio Frame + Overscroll Containment) */
   .arena-shop-modal {
     position: fixed;
     inset: 0;
     z-index: 120;
-    background: rgba(2, 6, 23, 0.86);
+    background: rgba(15, 23, 42, 0.68);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -443,102 +704,124 @@
     max-height: 92dvh;
     overflow-y: auto;
     overscroll-behavior: contain;
-    background: #0F172A;
-    color: #F8FAFC;
-    border: 2px solid #334155;
+    background: #FFFFFF;
+    color: #0F172A;
+    border: 1.5px solid #CBD5E1;
     border-radius: 24px;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    box-shadow: var(--shadow-modal);
     padding: 22px;
   }
-  @media (min-width: 900px) {
-    .arena-touch-dpad { display: none !important; }
-  }
   .anim-state-btn {
-    padding: 4px 10px;
-    border-radius: 8px;
+    padding: 5px 10px;
+    border-radius: 9px;
     font-size: 11px;
     font-weight: 800;
-    background: #1E293B;
-    color: #CBD5E1;
-    border: 1px solid #334155;
+    background: #FFFFFF;
+    color: #334155;
+    border: 1px solid #CBD5E1;
     cursor: pointer;
-    transition: background-color 0.14s ease, border-color 0.14s ease;
+    transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
   }
-  .anim-state-btn.active, .anim-state-btn:hover {
-    background: #2563EB;
+  .anim-state-btn.active,
+  .anim-state-btn:hover {
+    background: #0F766E;
     color: #FFFFFF;
-    border-color: #60A5FA;
+    border-color: #0F766E;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .esports-mode-card,
+    .esports-mode-thumb img,
+    .moba-skill-slot,
+    .arena-compact-opt-btn,
+    .arena-lb-row,
+    .anim-state-btn {
+      transition: none !important;
+    }
+    .esports-mode-card:hover .esports-mode-thumb img,
+    .moba-skill-slot:hover:not(.on-cd),
+    .arena-compact-opt-btn:hover:not(:disabled) {
+      transform: none !important;
+    }
+    .arena-compact-quiz-dock.gate-alert,
+    .arena-compact-quiz-dock.focus-reading {
+      animation: none !important;
+    }
   }
 </style>
+{% endblock %}
 
+{% block content %}
 <div class="arena-shell esports-arena-wrap">
 
-  <!-- 1. ESPORTS ARENA LAUNCHER HEADER -->
-  <section class="esports-hero" aria-labelledby="arena-hero-title">
-    <div class="esports-hero-bg"></div>
-    <div class="esports-hero-scrim"></div>
+  <!-- 1. AERO-TEAL v3.0 HERO BANNER + WEEKLY TOPIC BAR -->
+  <section class="pro-hero-banner p-6 sm:p-7" aria-labelledby="arena-hero-title" data-hero-stagger>
+    <div class="pro-mesh-orb w-64 h-64 bg-teal-300 -top-20 -right-12" data-parallax="-14" aria-hidden="true"></div>
+    <div class="pro-mesh-orb pro-mesh-orb-2 w-52 h-52 bg-blue-300 -bottom-24 left-1/3" data-parallax="10" aria-hidden="true"></div>
 
     <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-      <div class="max-w-2xl">
+      <div class="max-w-2xl min-w-0">
         <div class="flex flex-wrap items-center gap-2 mb-2.5">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-200 text-[11px] font-black uppercase tracking-wider">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] text-xs font-extrabold uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-[#0D9488] animate-live-dot" aria-hidden="true"></span>
             MÙA GIẢI TUẦN • {{ week_label }}
           </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-[11px] font-black">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[#92400E] text-xs font-extrabold">
             🎯 {{ weekly_campaign.short_title }}
           </span>
         </div>
 
-        <h1 id="arena-hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Đấu Trường Tin Học 11
+        <h1 id="arena-hero-title" class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+          <span class="text-gradient-brand">Đấu Trường Tin Học 11</span>
         </h1>
-        <p class="text-slate-300 text-sm mt-1.5 leading-relaxed">
-          Chủ đề tuần này: <strong class="text-amber-300">{{ weekly_campaign.title }}</strong>.
-          Đồ họa xương khớp <strong>60 FPS siêu mượt</strong>, kỹ năng có hồi chiêu cân bằng, kèm <strong>hệ thống giải thích kiến thức &amp; ôn tập câu sai</strong> ngay trong từng màn chơi!
+        <p class="text-slate-600 text-sm mt-1.5 leading-relaxed">
+          Chủ đề tuần này: <strong class="text-[#0F766E]">{{ weekly_campaign.title }}</strong>.
+          Đồ họa xương khớp <strong class="text-slate-900">60 FPS siêu mượt</strong>, kỹ năng có hồi chiêu cân bằng, kèm <strong class="text-slate-900">hệ thống giải thích kiến thức &amp; ôn tập câu sai</strong> ngay trong từng màn chơi!
         </p>
 
         <!-- WALLET & SHOP LAUNCH BAR -->
         <div class="flex flex-wrap items-center gap-2.5 mt-4">
-          <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/90 border border-amber-400/40">
+          <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50/90 border border-amber-200 shadow-xs">
             <img src="{{ url_for('static', filename='img/arena/assets/icon_gold_pouch.png') }}?v=9" alt="Vàng" class="w-5 h-5 object-contain" />
-            <span class="text-xs font-bold text-slate-300">Vàng:</span>
-            <span id="wallet-coins-display" class="text-sm font-black text-amber-300">240</span>
+            <span class="text-xs font-bold text-slate-700">Vàng:</span>
+            <span id="wallet-coins-display" class="font-mono tabular-nums text-sm font-extrabold text-[#B45309]">240</span>
           </div>
-          <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/90 border border-sky-400/40">
+          <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-teal-50/90 border border-teal-200 shadow-xs">
             <img src="{{ url_for('static', filename='img/arena/assets/icon_mana_crystal.png') }}?v=9" alt="XP" class="w-5 h-5 object-contain" />
-            <span class="text-xs font-bold text-slate-300">Điểm XP:</span>
-            <span id="wallet-xp-display" class="text-sm font-black text-sky-300">{{ my_stats.total_xp }}</span>
+            <span class="text-xs font-bold text-slate-700">Điểm XP:</span>
+            <span id="wallet-xp-display" class="font-mono tabular-nums text-sm font-extrabold text-[#0F766E]">{{ my_stats.total_xp }}</span>
           </div>
           <button type="button" onclick="openArenaShopModal()"
-            class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xs shadow-lg hover:brightness-110 transition cursor-pointer">
+            class="clay-btn clay-btn-primary clay-btn-sm">
             🛒 CỬA HÀNG TƯỚNG &amp; CHIẾN CƠ (SHOP)
           </button>
         </div>
       </div>
 
-      <!-- COMPACT PLAYER RANK CARD -->
-      <div class="w-full lg:w-[340px] shrink-0 rounded-2xl bg-slate-900/85 border border-slate-700/80 p-4 backdrop-blur-md">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <img src="{{ url_for('static', filename='img/arena/assets/icon_crown_trophy.png') }}?v=9" alt="Hạng" class="w-7 h-7 object-contain" />
-            <div>
-              <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">Hồ Sơ Đấu Trường</div>
-              <div class="text-sm font-black text-white" id="hero-my-rank">
+      <!-- COMPACT PLAYER RANK CARD (AERO-TEAL LIGHT) -->
+      <div class="w-full lg:w-[330px] shrink-0 rounded-2xl bg-white/95 border border-slate-200 p-4 shadow-sm">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+              <img src="{{ url_for('static', filename='img/arena/assets/icon_crown_trophy.png') }}?v=9" alt="Hạng" class="w-7 h-7 object-contain" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Hồ Sơ Đấu Trường</div>
+              <div class="font-display text-sm font-extrabold text-slate-900 truncate" id="hero-my-rank">
                 {% if my_stats.rank %}Hạng #{{ my_stats.rank }} Tuần{% else %}Chưa xếp hạng{% endif %}
               </div>
             </div>
           </div>
-          <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-black" id="hero-my-xp">{{ my_stats.total_xp }} XP</span>
+          <span class="px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200 text-[#0F766E] font-mono text-xs font-extrabold shrink-0" id="hero-my-xp">{{ my_stats.total_xp }} XP</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-center">
-          <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
-            <div class="text-[10px] font-bold text-slate-400 uppercase">Kỷ Lục Điểm</div>
-            <div class="text-lg font-black text-amber-300" id="hero-my-best-score">{{ my_stats.best_score }}</div>
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] font-bold text-slate-500 uppercase">Kỷ Lục Điểm</div>
+            <div class="font-mono tabular-nums text-lg font-extrabold text-[#B45309]" id="hero-my-best-score">{{ my_stats.best_score }}</div>
           </div>
-          <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
-            <div class="text-[10px] font-bold text-slate-400 uppercase">Nhanh Nhất</div>
-            <div class="text-lg font-black text-emerald-300" id="hero-my-best-time">
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] font-bold text-slate-500 uppercase">Nhanh Nhất</div>
+            <div class="font-mono tabular-nums text-lg font-extrabold text-[#047857]" id="hero-my-best-time">
               {% if my_stats.best_duration_sec %}{{ my_stats.best_duration_sec }}s{% else %}--{% endif %}
             </div>
           </div>
@@ -547,23 +830,23 @@
     </div>
 
     <!-- WEEKLY ROTATING TOPIC BAR -->
-    <div class="relative z-10 mt-4 pt-3.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
-      <div class="flex flex-wrap items-center gap-1.5">
-        <span class="text-[11px] font-black uppercase tracking-wider text-sky-300 mr-1">Chủ Đề Tuần:</span>
+    <div class="relative z-10 mt-5 pt-4 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-2 min-w-0">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#0F766E] mr-1">Chủ Đề Tuần:</span>
         {% for camp in weekly_campaigns_list %}
         <a href="{{ url_for('main.arena_hub', topic=camp.topic_code, class_id=selected_class_id if selected_class_id else None) }}"
-           class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition flex items-center gap-1 {% if camp.slot == weekly_campaign.slot %}bg-sky-500 text-slate-950 shadow{% else %}bg-slate-800/80 text-slate-300 hover:bg-slate-700{% endif %}">
+           class="topic-pill-switcher {% if camp.slot == weekly_campaign.slot %}is-active{% endif %}">
           <span>T{{ camp.slot }}: {{ camp.short_title.split('•')[-1].strip() }}</span>
           {% if camp.slot == weekly_campaign.slot %}
-          <span class="px-1 rounded bg-slate-950 text-amber-300 text-[9px] font-black">LIVE</span>
+          <span class="px-1.5 py-0.5 rounded bg-white/25 text-white text-[10px] font-extrabold">LIVE</span>
           {% endif %}
         </a>
         {% endfor %}
       </div>
 
-      <form method="GET" action="{{ url_for('main.arena_hub') }}" class="flex items-center gap-2">
+      <form method="GET" action="{{ url_for('main.arena_hub') }}" class="flex items-center gap-2 w-full sm:w-auto">
         <select name="topic" onchange="this.form.submit()" aria-label="Chọn chủ đề câu hỏi"
-          class="bg-slate-900 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none">
+          class="clay-select text-xs font-bold py-2 px-3 w-full sm:w-auto">
           <option value="A" {% if current_topic == 'A' %}selected{% endif %}>Chủ đề 1: Hệ điều hành &amp; Phần cứng</option>
           <option value="C" {% if current_topic == 'C' %}selected{% endif %}>Chủ đề 2 &amp; 3: Lưu trữ &amp; An toàn số</option>
           <option value="F" {% if current_topic == 'F' %}selected{% endif %}>Chủ đề 4, 5, 6: CSDL &amp; Truy vấn SQL</option>
@@ -578,66 +861,66 @@
   </section>
 
   <!-- 2. 4 GAME MODE LAUNCH CARDS -->
-  <nav class="esports-mode-grid" role="tablist" aria-label="Chọn trò chơi ôn luyện">
+  <nav class="esports-mode-grid" role="tablist" aria-label="Chọn trò chơi ôn luyện" data-reveal-group>
     <!-- Game 1: 2D Side-Scrolling Action Platformer -->
-    <button type="button" role="tab" id="tab-mode-boss_rpg" aria-selected="true"
-      class="esports-mode-card active" onclick="selectArenaMode('boss_rpg')">
-      <div class="esports-mode-thumb">
+    <button type="button" role="tab" id="tab-mode-boss_rpg" aria-selected="true" data-reveal
+      class="esports-mode-card pro-card-tilt group active" onclick="selectArenaMode('boss_rpg')">
+      <div class="esports-mode-thumb poster-shine">
         <img src="{{ url_for('static', filename='img/arena/poster_boss_rpg.png') }}?v=9" alt="Thánh Địa Vượt Ải 2D — Hiệp Sĩ Diệt Boss" />
-        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-black uppercase">60FPS SKELETAL 2D</span>
+        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-rose-600/95 text-white text-[10px] font-extrabold uppercase shadow-sm">60FPS SKELETAL 2D</span>
       </div>
       <div class="esports-mode-body">
-        <div class="text-sm font-black text-white">Thánh Địa Vượt Ải 2D</div>
-        <div class="text-[11px] font-semibold text-slate-400 mt-0.5">Hiệp Sĩ Diệt Boss: Chuyển động xương 60FPS, Né Hoàn Hảo [Shift], combo 3 đòn [J], giải câu hỏi mở Cổng &amp; phá Khiên Boss!</div>
+        <div class="font-display text-sm font-extrabold text-slate-900">Thánh Địa Vượt Ải 2D</div>
+        <div class="text-xs font-medium text-slate-600 mt-1 leading-relaxed">Hiệp Sĩ Diệt Boss: Chuyển động xương 60FPS, Né Hoàn Hảo [Shift], combo 3 đòn [J], giải câu hỏi mở Cổng &amp; phá Khiên Boss!</div>
       </div>
     </button>
 
     <!-- Game 2: 1945 Air Force Shooter -->
-    <button type="button" role="tab" id="tab-mode-space_shooter" aria-selected="false"
-      class="esports-mode-card" onclick="selectArenaMode('space_shooter')">
-      <div class="esports-mode-thumb">
+    <button type="button" role="tab" id="tab-mode-space_shooter" aria-selected="false" data-reveal
+      class="esports-mode-card pro-card-tilt group" onclick="selectArenaMode('space_shooter')">
+      <div class="esports-mode-thumb poster-shine">
         <img src="{{ url_for('static', filename='img/arena/poster_space_shooter.png') }}?v=9" alt="Chiến Cơ Không Chiến 1945 — Bắn Quái Vũ Trụ" />
-        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-sky-600 text-white text-[10px] font-black uppercase">CHIẾN CƠ 1945</span>
+        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#0B4FD8]/95 text-white text-[10px] font-extrabold uppercase shadow-sm">CHIẾN CƠ 1945</span>
       </div>
       <div class="esports-mode-body">
-        <div class="text-sm font-black text-white">Chiến Cơ 1945 (Bắn Quái Vũ Trụ)</div>
-        <div class="text-[11px] font-semibold text-slate-400 mt-0.5">Lái chiến cơ nghiêng cánh né đạn, nhặt Power-Up Overdrive, bắn máy bay đáp án đúng &amp; hạ Pháo Đài Bay Boss!</div>
+        <div class="font-display text-sm font-extrabold text-slate-900">Chiến Cơ 1945 (Bắn Quái Vũ Trụ)</div>
+        <div class="text-xs font-medium text-slate-600 mt-1 leading-relaxed">Lái chiến cơ nghiêng cánh né đạn, nhặt Power-Up Overdrive, bắn máy bay đáp án đúng &amp; hạ Pháo Đài Bay Boss!</div>
       </div>
     </button>
 
     <!-- Game 3: Esports Rapid Blitz 60s -->
-    <button type="button" role="tab" id="tab-mode-blitz" aria-selected="false"
-      class="esports-mode-card" onclick="selectArenaMode('blitz')">
-      <div class="esports-mode-thumb">
+    <button type="button" role="tab" id="tab-mode-blitz" aria-selected="false" data-reveal
+      class="esports-mode-card pro-card-tilt group" onclick="selectArenaMode('blitz')">
+      <div class="esports-mode-thumb poster-shine">
         <img src="{{ url_for('static', filename='img/arena/poster_speed_blitz.png') }}?v=9" alt="Đấu Trường Tia Chớp 60s" />
-        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[10px] font-black uppercase">FEVER QUIZ 60S</span>
+        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[10px] font-extrabold uppercase shadow-sm">FEVER QUIZ 60S</span>
       </div>
       <div class="esports-mode-body">
-        <div class="text-sm font-black text-white">Đấu Trường Tia Chớp 60s</div>
-        <div class="text-[11px] font-semibold text-slate-400 mt-0.5">10 câu trắc nghiệm tốc độ kèm Fever Mode, 3 quyền trợ giúp (50/50, Đóng Băng, Khiên Chuỗi) &amp; giải thích tức thì!</div>
+        <div class="font-display text-sm font-extrabold text-slate-900">Đấu Trường Tia Chớp 60s</div>
+        <div class="text-xs font-medium text-slate-600 mt-1 leading-relaxed">10 câu trắc nghiệm tốc độ kèm Fever Mode, 3 quyền trợ giúp (50/50, Đóng Băng, Khiên Chuỗi) &amp; giải thích tức thì!</div>
       </div>
     </button>
 
     <!-- Game 4: SQL Terminal Hunter -->
-    <button type="button" role="tab" id="tab-mode-sql_puzzle" aria-selected="false"
-      class="esports-mode-card" onclick="selectArenaMode('sql_puzzle')">
-      <div class="esports-mode-thumb">
+    <button type="button" role="tab" id="tab-mode-sql_puzzle" aria-selected="false" data-reveal
+      class="esports-mode-card pro-card-tilt group" onclick="selectArenaMode('sql_puzzle')">
+      <div class="esports-mode-thumb poster-shine">
         <img src="{{ url_for('static', filename='img/arena/poster_sql_hunter.png') }}?v=9" alt="Thợ Săn Lệnh SQL" />
-        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-violet-600 text-white text-[10px] font-black uppercase">LIVE SQL LAB</span>
+        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#0F766E] text-white text-[10px] font-extrabold uppercase shadow-sm">LIVE SQL LAB</span>
       </div>
       <div class="esports-mode-body">
-        <div class="text-sm font-black text-white">Thợ Săn Lệnh SQL</div>
-        <div class="text-[11px] font-semibold text-slate-400 mt-0.5">Xem trước bảng CSDL trực quan, lắp ghép câu lệnh SQL với gợi ý từng bước &amp; chẩn đoán lỗi mệnh đề chi tiết!</div>
+        <div class="font-display text-sm font-extrabold text-slate-900">Thợ Săn Lệnh SQL</div>
+        <div class="text-xs font-medium text-slate-600 mt-1 leading-relaxed">Xem trước bảng CSDL trực quan, lắp ghép câu lệnh SQL với gợi ý từng bước &amp; chẩn đoán lỗi mệnh đề chi tiết!</div>
       </div>
     </button>
   </nav>
 
-  <!-- 3. MAIN WORKSPACE: GAME CONSOLE (LEFT) + WEEKLY LEADERBOARD (RIGHT) -->
+  <!-- 3. MAIN WORKSPACE: GAME STAGE (LEFT) + WEEKLY LEADERBOARD (RIGHT) -->
   <div class="arena-main-grid">
 
     <div id="arena-theater-backdrop" class="arena-theater-backdrop hidden" onclick="toggleTheaterExpand(false)"></div>
 
-    <!-- LEFT COLUMN: ESPORTS GAME CONSOLE STAGE -->
+    <!-- LEFT COLUMN: HYBRID STAGE CARD (LIGHT PRE-MATCH LOBBY / DARK ACTIVE CONSOLE) -->
     <div class="arena-stage-card esports-stage-card" id="arena-stage-root">
 
       <!-- TOP HUD BAR (Hidden before match start) -->
@@ -680,60 +963,61 @@
         </div>
       </div>
 
-      <!-- PRE-MATCH LOBBY -->
+      <!-- PRE-MATCH LOBBY (AERO-TEAL v3.0 LIGHT STUDIO) -->
       <div id="arena-prematch-lobby" class="p-5 sm:p-6 flex flex-col items-center justify-center text-center">
-        <div class="w-full max-w-2xl rounded-2xl overflow-hidden border border-slate-700 shadow-2xl mb-5 bg-slate-950 relative">
+        <div class="w-full max-w-2xl relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm mb-5 bg-slate-900 poster-shine">
           <img id="lobby-mode-banner-img"
                src="{{ url_for('static', filename='img/arena/poster_boss_rpg.png') }}?v=9"
                alt="Banner Chế Độ Chơi"
-               class="w-full h-56 sm:h-64 object-cover block" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent flex flex-col justify-end p-5 text-left">
+               class="absolute inset-0 w-full h-full object-cover block" />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/25"></div>
+          <div class="relative z-10 min-h-[220px] sm:min-h-[256px] flex flex-col justify-end p-5 text-left">
             <div class="flex flex-wrap items-center gap-2 mb-1.5">
-              <span id="lobby-mode-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-600 text-white">
+              <span id="lobby-mode-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-600 text-white">
                 60FPS SKELETAL PLATFORMER • HỌC &amp; CHIẾN ĐẤU
               </span>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-400/20 text-amber-200 border border-amber-300/40">
                 {{ weekly_campaign.short_title }}
               </span>
             </div>
-            <h2 id="lobby-mode-title" class="text-2xl sm:text-3xl font-black text-white">
+            <h2 id="lobby-mode-title" class="font-display text-xl sm:text-2xl font-extrabold text-white">
               Thánh Địa Vượt Ải 2D — Thử Thách Tri Thức
             </h2>
-            <p id="lobby-mode-desc" class="text-slate-200 text-xs sm:text-sm mt-1">
+            <p id="lobby-mode-desc" class="text-slate-100 text-xs sm:text-sm mt-1 leading-relaxed">
               Chuyển động khớp xương 60FPS mượt mà, đánh combo 3 đòn [J], lướt né hoàn hảo [Shift], nhảy bật lò xo &amp; đáp đất giáng đòn [S]. Trả lời câu hỏi Tin học 11 hiển thị đầy đủ bên dưới để nạp Nội Năng, nhận giải thích tức thì, mở Cổng &amp; phá Khiên Boss!
             </p>
           </div>
         </div>
 
-        <div class="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-5 text-left">
-          <div class="p-3 rounded-xl bg-slate-900 border border-slate-700 flex items-center gap-3">
+        <div class="w-full max-w-2xl arena-lobby-info-grid mb-5 text-left">
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3 min-w-0">
             <img id="lobby-equipped-preview" src="{{ url_for('static', filename='img/arena/sprite_plat_mario.png') }}?v=9"
-                 alt="Đang trang bị" class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-700 p-1 object-contain shrink-0" />
-            <div>
-              <div class="text-[10px] font-black uppercase text-sky-400">Đang Xuất Trận</div>
-              <div id="lobby-equipped-name" class="text-xs font-black text-white mt-0.5">Kaelen — Phong Kiếm Sư</div>
-              <button type="button" onclick="openArenaShopModal()" class="text-[11px] font-extrabold text-amber-300 underline mt-0.5 cursor-pointer">
+                 alt="Đang trang bị" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-300 p-1 object-contain shrink-0" />
+            <div class="min-w-0">
+              <div class="text-[10px] font-extrabold uppercase text-[#0F766E]">Đang Xuất Trận</div>
+              <div id="lobby-equipped-name" class="text-xs font-extrabold text-slate-900 mt-0.5 truncate">Kaelen — Phong Kiếm Sư</div>
+              <button type="button" onclick="openArenaShopModal()" class="text-[11px] font-bold text-[#0B4FD8] hover:underline mt-0.5 cursor-pointer">
                 Đổi Tướng / Nâng cấp →
               </button>
             </div>
           </div>
-          <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
-            <div class="text-[10px] font-black uppercase text-amber-400">⚡ Chuyển Động &amp; Cơ Chế</div>
-            <div class="text-xs font-semibold text-slate-300 mt-0.5">Xương khớp 60FPS chuẩn tốc độ mọi màn hình, Coyote-Time nhảy mượt, Lướt Né Hoàn Hảo &amp; Buff Tri Thức!</div>
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 min-w-0">
+            <div class="text-[10px] font-extrabold uppercase text-[#B45309]">⚡ Chuyển Động &amp; Cơ Chế</div>
+            <div class="text-xs font-medium text-slate-600 mt-1 leading-relaxed">Xương khớp 60FPS chuẩn tốc độ mọi màn hình, Coyote-Time nhảy mượt, Lướt Né Hoàn Hảo &amp; Buff Tri Thức!</div>
           </div>
-          <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
-            <div class="text-[10px] font-black uppercase text-emerald-400">📘 Ôn Tập Thực Chiến</div>
-            <div class="text-xs font-semibold text-slate-300 mt-0.5">Hiện đầy đủ câu hỏi + 4 đáp án không cắt chữ, có giải thích kiến thức tức thì &amp; sổ ôn lại câu sai cuối trận!</div>
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 min-w-0">
+            <div class="text-[10px] font-extrabold uppercase text-[#047857]">📘 Ôn Tập Thực Chiến</div>
+            <div class="text-xs font-medium text-slate-600 mt-1 leading-relaxed">Hiện đầy đủ câu hỏi + 4 đáp án không cắt chữ, có giải thích kiến thức tức thì &amp; sổ ôn lại câu sai cuối trận!</div>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center justify-center gap-3">
           <button type="button" id="btn-start-arena-match" onclick="startArenaMatchNow()"
-            class="px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 hover:brightness-110 text-white font-black text-base shadow-xl transition cursor-pointer">
+            class="clay-btn clay-btn-primary px-8 py-4 rounded-2xl text-base font-extrabold shadow-lg cursor-pointer">
             ⚔️ BẮT ĐẦU THI ĐẤU NGAY →
           </button>
           <button type="button" onclick="openArenaShopModal()"
-            class="px-5 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-amber-400/40 text-amber-300 font-black text-sm transition cursor-pointer">
+            class="clay-btn clay-btn-secondary px-5 py-4 rounded-2xl text-sm font-bold cursor-pointer">
             🛒 Mở Cửa Hàng Tướng &amp; Chiến Cơ
           </button>
         </div>
@@ -951,7 +1235,7 @@
           <div id="blitz-question-card" class="p-5 sm:p-6 rounded-2xl bg-slate-900 border-2 border-sky-500/45 mb-5 shadow-inner transition-all">
             <div class="flex items-center justify-between gap-2 mb-2">
               <span class="text-xs font-black uppercase tracking-wider text-sky-400">📚 Câu Hỏi Kiến Thức Tin Học 11 (Phím [1-4]):</span>
-              <span id="blitz-fever-badge" class="hidden px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-rose-500 text-slate-950 text-[11px] font-black uppercase animate-pulse">
+              <span id="blitz-fever-badge" class="hidden px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-rose-500 text-slate-950 text-[11px] font-black uppercase animate-pulse motion-reduce:animate-none">
                 🔥 FEVER MODE ACTIVE
               </span>
             </div>
@@ -988,13 +1272,13 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 mb-4">
-            <div class="lg:col-span-7 p-5 rounded-2xl bg-slate-900 border-2 border-violet-500/50">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 mb-4 min-w-0">
+            <div class="lg:col-span-7 min-w-0 p-5 rounded-2xl bg-slate-900 border-2 border-violet-500/50">
               <div class="text-xs font-black uppercase tracking-wider text-sky-400 mb-1.5">📚 Nhiệm Vụ Truy Vấn Cơ Sở Dữ Liệu:</div>
               <p class="text-lg sm:text-xl font-black text-white leading-snug" id="sql-prompt-text">Đang tải thử thách SQL...</p>
             </div>
             <!-- Live Simulated Database Table Preview -->
-            <div class="lg:col-span-5 p-3.5 rounded-2xl bg-slate-950 border border-slate-700 overflow-x-auto">
+            <div class="lg:col-span-5 min-w-0 max-w-full p-3.5 rounded-2xl bg-slate-950 border border-slate-700 overflow-x-auto">
               <div class="text-xs font-black uppercase tracking-wider text-emerald-400 mb-2" id="sql-schema-table-title">
                 📊 Cấu trúc bảng dữ liệu mẫu
               </div>
@@ -1035,61 +1319,63 @@
         </div>
       </div>
 
-      <!-- RESULT SCREEN WITH SMART MISTAKE REVIEW DECK -->
-      <div id="arena-result-screen" class="p-5 sm:p-6 hidden overflow-y-auto">
+      <!-- RESULT SCREEN WITH SMART MISTAKE REVIEW DECK (AERO-TEAL LIGHT STUDIO) -->
+      <div id="arena-result-screen" class="p-5 sm:p-7 hidden overflow-y-auto">
         <div class="text-center max-w-2xl mx-auto">
-          <img src="{{ url_for('static', filename='img/arena/assets/icon_crown_trophy.png') }}?v=9" alt="Chiến thắng" class="w-16 h-16 mx-auto mb-2 object-contain" />
-          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-black mb-2">
-            <span>🏆 HOÀN THÀNH TRẬN ĐẤU</span>
-            <span id="result-rank-badge">#--</span>
+          <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center shadow-xs">
+            <img src="{{ url_for('static', filename='img/arena/assets/icon_crown_trophy.png') }}?v=9" alt="Chiến thắng" class="w-12 h-12 object-contain" />
           </div>
-          <h2 class="text-2xl font-black text-white">Tổng Kết Thành Tích &amp; Ôn Tập Kiến Thức</h2>
-          <div class="text-4xl font-black text-amber-300 my-2" id="result-xp-earned">+0 XP</div>
-          <p class="text-xs font-semibold text-slate-300" id="result-summary-line">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#047857] text-xs font-extrabold mb-2">
+            <span>🏆 HOÀN THÀNH TRẬN ĐẤU</span>
+            <span id="result-rank-badge" class="font-mono">#--</span>
+          </div>
+          <h2 class="font-display text-2xl font-extrabold text-slate-900">Tổng Kết Thành Tích &amp; Ôn Tập Kiến Thức</h2>
+          <div class="font-mono tabular-nums text-4xl font-extrabold text-[#0B4FD8] my-2" id="result-xp-earned">+0 XP</div>
+          <p class="text-xs font-medium text-slate-600" id="result-summary-line">
             Điểm số, thời gian hoàn thành và Vàng Chiến Công đã được cập nhật!
           </p>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-4">
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
-              <div class="text-[10px] font-bold text-slate-400 uppercase">Điểm Trận</div>
-              <div class="text-lg font-black text-white" id="result-raw-score">0</div>
+          <div class="arena-result-metrics-grid my-5">
+            <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-xs">
+              <div class="text-[10px] font-bold text-slate-500 uppercase">Điểm Trận</div>
+              <div class="font-mono tabular-nums text-lg font-extrabold text-slate-900" id="result-raw-score">0</div>
             </div>
-            <div class="p-3 rounded-xl bg-amber-500/15 border border-amber-400/40">
-              <div class="text-[10px] font-bold text-amber-300 uppercase">Vàng Thưởng</div>
-              <div class="text-lg font-black text-amber-300" id="result-coins-earned">+0 💰</div>
+            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 shadow-xs">
+              <div class="text-[10px] font-bold text-[#92400E] uppercase">Vàng Thưởng</div>
+              <div class="font-mono tabular-nums text-lg font-extrabold text-[#B45309]" id="result-coins-earned">+0 💰</div>
             </div>
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
-              <div class="text-[10px] font-bold text-slate-400 uppercase">Thời Gian</div>
-              <div class="text-lg font-black text-sky-300" id="result-duration">0s</div>
+            <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-xs">
+              <div class="text-[10px] font-bold text-slate-500 uppercase">Thời Gian</div>
+              <div class="font-mono tabular-nums text-lg font-extrabold text-[#0F766E]" id="result-duration">0s</div>
             </div>
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
-              <div class="text-[10px] font-bold text-slate-400 uppercase">Combo Max</div>
-              <div class="text-lg font-black text-rose-300" id="result-max-combo">x1</div>
+            <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-xs">
+              <div class="text-[10px] font-bold text-slate-500 uppercase">Combo Max</div>
+              <div class="font-mono tabular-nums text-lg font-extrabold text-[#BE123C]" id="result-max-combo">x1</div>
             </div>
           </div>
 
           <!-- Smart Post-Match Mistake Review Deck -->
-          <div id="result-mistake-review" class="hidden text-left mb-5 p-4 rounded-2xl bg-slate-900/95 border border-sky-500/35">
+          <div id="result-mistake-review" class="hidden text-left mb-5 p-4 rounded-2xl bg-teal-50/60 border border-teal-200">
             <div class="flex items-center justify-between gap-2 mb-2.5">
-              <h3 class="text-xs font-black uppercase tracking-wider text-sky-300">
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#0F766E]">
                 📘 Sổ Ôn Tập Nhanh Các Câu Vừa Làm Sai
               </h3>
-              <span id="result-mistake-count" class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-black">0 câu</span>
+              <span id="result-mistake-count" class="px-2.5 py-0.5 rounded-full bg-rose-100 border border-rose-200 text-[#BE123C] text-[10px] font-extrabold">0 câu</span>
             </div>
             <div id="result-mistake-list" class="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1"></div>
           </div>
 
           <div class="flex flex-wrap items-center justify-center gap-3">
             <button type="button" onclick="replayCurrentMode()"
-              class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-sm cursor-pointer">
+              class="clay-btn clay-btn-primary clay-btn-sm px-6 py-3">
               🔄 Chơi Lại
             </button>
             <button type="button" onclick="openArenaShopModal()"
-              class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm cursor-pointer">
+              class="px-5 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 border border-amber-300 text-[#92400E] font-extrabold text-sm transition cursor-pointer">
               🛒 Vào Shop Nâng Cấp
             </button>
             <button type="button" onclick="returnToLobby()"
-              class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-extrabold text-xs cursor-pointer">
+              class="clay-btn clay-btn-secondary clay-btn-sm px-4 py-3">
               Về Sảnh Chờ
             </button>
           </div>
@@ -1098,28 +1384,28 @@
 
     </div>
 
-    <!-- RIGHT COLUMN: DARK ESPORTS WEEKLY LEADERBOARD -->
-    <aside class="arena-lb-card esports-lb-card" aria-labelledby="weekly-lb-heading">
+    <!-- RIGHT COLUMN: AERO-TEAL v3.0 WEEKLY LEADERBOARD -->
+    <aside class="arena-lb-card" aria-labelledby="weekly-lb-heading">
       <div class="arena-lb-header">
         <div class="flex items-center justify-between gap-2">
-          <div>
-            <h2 id="weekly-lb-heading" class="text-base font-black text-white flex items-center gap-1.5">
+          <div class="min-w-0">
+            <h2 id="weekly-lb-heading" class="font-display text-base font-extrabold text-slate-900 flex items-center gap-1.5">
               <span>🏆 Bảng Xếp Hạng Tuần</span>
             </h2>
-            <p class="text-xs font-semibold text-slate-400 mt-0.5">
+            <p class="text-xs font-medium text-slate-600 mt-0.5">
               Điểm cao nhất + Thời gian ngắn nhất = Top 1
             </p>
           </div>
-          <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-400/20 text-amber-300 border border-amber-400/35">
+          <span class="px-2.5 py-1 rounded-full font-mono text-[11px] font-extrabold bg-amber-50 text-[#92400E] border border-amber-200 shrink-0">
             {{ week_key }}
           </span>
         </div>
 
         {% if classrooms %}
-        <form method="GET" action="{{ url_for('main.arena_hub') }}" class="mt-2.5 flex items-center gap-2">
+        <form method="GET" action="{{ url_for('main.arena_hub') }}" class="mt-3 flex items-center gap-2">
           <input type="hidden" name="topic" value="{{ current_topic }}">
           <select name="class_id" onchange="this.form.submit()" aria-label="Lọc bảng xếp hạng theo lớp"
-            class="w-full text-xs font-bold bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-slate-200">
+            class="clay-select w-full text-xs font-bold py-2 px-3">
             <option value="">🌐 Toàn trường (Tất cả học sinh)</option>
             {% for c in classrooms %}
             <option value="{{ c.id }}" {% if selected_class_id == c.id %}selected{% endif %}>
@@ -1139,8 +1425,8 @@
             {% set p = podium[idx] %}
             <div class="podium-col rank-{{ p.rank }}">
               <div class="podium-avatar">
-                {{ p.avatar_letter }}
-                <span class="podium-crown">
+                {{ p.avatar_char or (p.full_name[:1]|upper) }}
+                <span class="podium-crown" aria-hidden="true">
                   {% if p.rank == 1 %}👑{% elif p.rank == 2 %}🥈{% else %}🥉{% endif %}
                 </span>
               </div>
@@ -1155,14 +1441,15 @@
       <!-- FULL RANKING LIST -->
       <div class="arena-lb-list" id="lb-rows-container">
         {% for item in leaderboard %}
-        <div class="arena-lb-row {% if item.is_me %}is-me{% endif %}">
-          <div class="arena-lb-rank {% if item.rank == 1 %}text-amber-400{% elif item.rank == 2 %}text-slate-300{% elif item.rank == 3 %}text-orange-400{% else %}text-slate-400{% endif %}">
+        {% set is_self = item.is_me or (item.user_id == current_user.id) %}
+        <div class="arena-lb-row {% if is_self %}is-me{% endif %}">
+          <div class="arena-lb-rank {% if item.rank == 1 %}text-[#B45309] bg-amber-50 border border-amber-200 rounded-lg py-0.5{% elif item.rank == 2 %}text-slate-700 bg-slate-100 border border-slate-200 rounded-lg py-0.5{% elif item.rank == 3 %}text-[#9A3412] bg-orange-50 border border-orange-200 rounded-lg py-0.5{% else %}text-slate-600{% endif %}">
             #{{ item.rank }}
           </div>
           <div class="arena-lb-user">
             <div class="arena-lb-name">
               {{ item.full_name }}
-              {% if item.is_me %}<span class="text-[10px] font-black text-sky-400 ml-1">(Bạn)</span>{% endif %}
+              {% if is_self %}<span class="text-[10px] font-extrabold text-[#0F766E] ml-1">(Bạn)</span>{% endif %}
             </div>
             <div class="arena-lb-meta">
               <span>{{ item.badge_title }}</span>
@@ -1171,21 +1458,21 @@
             </div>
           </div>
           <div class="arena-lb-xp text-right">
-            <div>{{ item.best_score }} đ</div>
-            <div class="text-[11px] font-bold text-emerald-400">⏱ {{ item.best_duration_sec }}s</div>
+            <div class="text-slate-900">{{ item.best_score }} đ</div>
+            <div class="text-[11px] font-bold text-[#0F766E]">⏱ {{ item.best_duration_sec }}s</div>
           </div>
         </div>
         {% endfor %}
       </div>
 
-      <div class="p-3.5 bg-slate-950 text-white border-t border-slate-800">
-        <div class="text-xs font-bold text-slate-300" id="rival-footer-text">
+      <div class="p-3.5 bg-slate-50 text-slate-700 border-t border-slate-200">
+        <div class="text-xs font-semibold text-slate-700" id="rival-footer-text">
           {% if my_stats.rank == 1 %}
-            👑 Bạn đang dẫn đầu Top #1 tuần này!
+            👑 <strong class="text-[#0F766E]">Bạn đang dẫn đầu Top #1 tuần này!</strong>
           {% elif my_stats.rank %}
-            Cần thêm <strong class="text-amber-300">{{ my_stats.score_to_next }} điểm</strong> để vượt <strong class="text-white">{{ my_stats.next_target_name }}</strong> (#{{ my_stats.next_target_rank }})
+            Cần thêm <strong class="text-[#B45309]">{{ my_stats.score_to_next }} điểm</strong> để vượt <strong class="text-slate-900">{{ my_stats.next_target_name }}</strong> (#{{ my_stats.next_target_rank }})
           {% else %}
-            Bấm <strong>Bắt Đầu Thi Đấu</strong> để ghi danh lên BXH Tuần!
+            Bấm <strong class="text-slate-900">Bắt Đầu Thi Đấu</strong> để ghi danh lên BXH Tuần!
           {% endif %}
         </div>
       </div>
@@ -1195,64 +1482,67 @@
 </div>
 
 <!-- =========================================================================
-     DARK ESPORTS SHOP MODAL: ORIGINAL CHAMPIONS + 1945 JETS + 60FPS STUDIO
+     AERO-TEAL v3.0 SHOP MODAL: CHAMPIONS + 1945 JETS + 60FPS BONE STUDIO
      ========================================================================= -->
 <div id="arena-shop-modal" class="arena-shop-modal hidden" role="dialog" aria-modal="true" aria-labelledby="shop-modal-title">
   <div class="arena-shop-card">
-    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
       <div>
-        <span class="px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 font-black text-[11px] uppercase">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-[#92400E] font-extrabold text-[11px] uppercase">
           🛒 CỬA HÀNG TƯỚNG CHIẾN ĐẤU &amp; XƯỞNG CHIẾN CƠ 1945
         </span>
-        <h2 id="shop-modal-title" class="text-xl sm:text-2xl font-black text-white mt-1">
+        <h2 id="shop-modal-title" class="font-display text-xl sm:text-2xl font-extrabold text-slate-900 mt-1.5">
           Chiêu Mộ Tướng, Mua Chiến Cơ &amp; Nâng Cấp Kỹ Năng
         </h2>
-        <p class="text-xs font-semibold text-slate-400">
-          Dùng <strong>Vàng Chiến Công 💰</strong> kiếm được qua mỗi màn chơi HOẶC dùng <strong>Điểm Đấu Trường ⭐ (XP)</strong> để mở khóa!
+        <p class="text-xs font-medium text-slate-600 mt-0.5">
+          Dùng <strong class="text-slate-900">Vàng Chiến Công 💰</strong> kiếm được qua mỗi màn chơi HOẶC dùng <strong class="text-slate-900">Điểm Đấu Trường ⭐ (XP)</strong> để mở khóa!
         </p>
       </div>
 
-      <div class="flex items-center gap-2.5">
-        <div class="px-3.5 py-2 rounded-xl bg-slate-950 border border-amber-400/40 text-amber-300 font-black text-xs">
-          💰 Vàng: <span id="shop-coins-balance" class="text-sm text-white">240</span>
+      <div class="flex flex-wrap items-center gap-2.5">
+        <div class="px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-[#92400E] font-extrabold text-xs">
+          💰 Vàng: <span id="shop-coins-balance" class="font-mono text-sm text-[#B45309]">240</span>
         </div>
-        <div class="px-3.5 py-2 rounded-xl bg-slate-950 border border-sky-400/40 text-sky-300 font-black text-xs">
-          ⭐ Điểm XP: <span id="shop-xp-balance" class="text-sm text-white">{{ my_stats.total_xp }}</span>
+        <div class="px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-[#0F766E] font-extrabold text-xs">
+          ⭐ Điểm XP: <span id="shop-xp-balance" class="font-mono text-sm text-[#0F766E]">{{ my_stats.total_xp }}</span>
         </div>
         <button type="button" onclick="closeArenaShopModal()"
-          class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold text-xs cursor-pointer">
+          class="clay-btn clay-btn-secondary clay-btn-sm">
           ✕ Đóng
         </button>
       </div>
     </div>
 
     <!-- Shop Tabs -->
-    <div class="flex items-center gap-2 my-4">
+    <div class="flex flex-wrap items-center gap-2 my-4">
       <button type="button" id="shop-tab-btn-heroes" onclick="switchShopTab('heroes')"
-        class="px-4 py-2.5 rounded-xl font-black text-xs bg-rose-600 text-white shadow cursor-pointer">
+        class="px-4 py-2.5 rounded-xl font-extrabold text-xs bg-gradient-to-r from-[#0D9488] to-[#0B4FD8] text-white shadow cursor-pointer">
         ⚔️ Tướng Thánh Địa 2D (Kaelen, Vaelor, Lyra, Seraphina)
       </button>
       <button type="button" id="shop-tab-btn-jets" onclick="switchShopTab('jets')"
-        class="px-4 py-2.5 rounded-xl font-black text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer">
+        class="px-4 py-2.5 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 cursor-pointer">
         ✈️ Xưởng Chiến Cơ 1945 (Máy Bay &amp; Hỏa Lực)
       </button>
     </div>
 
     <!-- TAB 1: HEROES & LIVE 60FPS SKELETAL ANIMATION STUDIO -->
     <div id="shop-panel-heroes">
-      <div class="mb-5 p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col lg:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <canvas id="shop-anim-preview-canvas" width="184" height="184"
-            class="rounded-2xl bg-slate-900 border-2 border-sky-400/40 shrink-0"></canvas>
-          <div>
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 text-[10px] font-black uppercase">
+      <div class="mb-5 p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col lg:flex-row items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row items-center gap-4 min-w-0">
+          <!-- Framed Dark Canvas Viewport so Sprites & VFX Glow Stay Crisp -->
+          <div class="p-1.5 rounded-2xl bg-slate-900 border-2 border-[#0D9488]/60 shadow-md shrink-0">
+            <canvas id="shop-anim-preview-canvas" width="184" height="184"
+              class="rounded-xl bg-slate-950 block"></canvas>
+          </div>
+          <div class="min-w-0">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] text-[10px] font-extrabold uppercase">
               ✨ STUDIO CHUYỂN ĐỘNG KHỚP XƯƠNG 60 FPS REAL-TIME
             </div>
-            <h3 id="preview-champ-title" class="text-lg font-black text-white mt-1">
+            <h3 id="preview-champ-title" class="font-display text-lg font-extrabold text-slate-900 mt-1">
               Kaelen — Phong Kiếm Sư
             </h3>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Chuyển động khớp xương ghép trực tiếp từ bộ PNG tách rời: nhịp thở <code class="text-amber-300">IDLE</code> êm dịu, <code class="text-sky-300">WALK, RUN, JUMP, ATTACK, SKILL</code> mượt 60 FPS!
+            <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+              Chuyển động khớp xương ghép trực tiếp từ bộ PNG tách rời: nhịp thở <code class="font-mono text-[#B45309] font-bold">IDLE</code> êm dịu, <code class="font-mono text-[#0B4FD8] font-bold">WALK, RUN, JUMP, ATTACK, SKILL</code> mượt 60 FPS!
             </p>
             <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
               <button type="button" class="anim-state-btn active" onclick="setShopPreviewAnimRow(0, this)">0. IDLE</button>
@@ -1266,64 +1556,64 @@
         </div>
 
         <!-- 8 Separated Modular PNG Assets Inspector -->
-        <div class="w-full lg:w-96 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs">
-          <div class="text-[10px] font-black uppercase tracking-wider text-amber-300 mb-2">
+        <div class="w-full lg:w-96 p-3 rounded-xl bg-white border border-slate-200 text-xs shrink-0">
+          <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#0F766E] mb-2">
             🧩 BỘ ASSET .PNG TÁCH RỜI GHÉP XƯƠNG TƯỚNG:
           </div>
           <div class="grid grid-cols-4 gap-1.5 text-center">
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-part-head" src="{{ url_for('static', filename='img/arena/assets/part_head_yasuo.png') }}?v=9" alt="Đầu" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Đầu</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Đầu</div>
             </div>
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-part-torso" src="{{ url_for('static', filename='img/arena/assets/part_torso_yasuo.png') }}?v=9" alt="Thân" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Thân Giáp</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Thân Giáp</div>
             </div>
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-part-thigh" src="{{ url_for('static', filename='img/arena/assets/part_thigh_yasuo.png') }}?v=9" alt="Đùi" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Khớp Đùi</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Khớp Đùi</div>
             </div>
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-part-shin" src="{{ url_for('static', filename='img/arena/assets/part_shin_boot_yasuo.png') }}?v=9" alt="Giày" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Chân Giày</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Chân Giày</div>
             </div>
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-part-cape" src="{{ url_for('static', filename='img/arena/assets/part_cape_yasuo.png') }}?v=9" alt="Choàng" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Choàng/Cánh</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Choàng/Cánh</div>
             </div>
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-asset-weapon" src="{{ url_for('static', filename='img/arena/assets/weapon_yasuo_painted.png') }}?v=9" alt="Vũ khí" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Vũ Khí</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Vũ Khí</div>
             </div>
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-asset-vfx" src="{{ url_for('static', filename='img/arena/assets/vfx_tornado_cyclone.png') }}?v=9" alt="VFX" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Skill VFX</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Skill VFX</div>
             </div>
-            <div class="p-1 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="p-1 rounded-lg bg-slate-900 border border-slate-700">
               <img id="preview-asset-circle" src="{{ url_for('static', filename='img/arena/assets/vfx_magic_circle.png') }}?v=9" alt="Pháp trận" class="h-9 mx-auto object-contain" />
-              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Pháp Trận</div>
+              <div class="text-[9px] font-bold text-slate-300 mt-0.5">Pháp Trận</div>
             </div>
           </div>
         </div>
       </div>
 
-      <h3 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2.5">1. Chọn &amp; Chiêu Mộ Tướng Xuất Trận</h3>
+      <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-2.5">1. Chọn &amp; Chiêu Mộ Tướng Xuất Trận</h3>
       <div id="shop-heroes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5"></div>
 
-      <h3 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2.5">2. Nâng Cấp Sức Mạnh &amp; Giảm Hồi Chiêu (Lv.1 → Lv.5)</h3>
+      <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-2.5">2. Nâng Cấp Sức Mạnh &amp; Giảm Hồi Chiêu (Lv.1 → Lv.5)</h3>
       <div id="shop-hero-upgrades-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
     </div>
 
     <!-- TAB 2: 1945 AIR FORCE JETS -->
     <div id="shop-panel-jets" class="hidden">
-      <h3 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2.5">1. Chọn &amp; Mua Chiến Cơ Không Chiến 1945</h3>
+      <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-2.5">1. Chọn &amp; Mua Chiến Cơ Không Chiến 1945</h3>
       <div id="shop-jets-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5"></div>
 
-      <h3 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2.5">2. Nâng Cấp Hỏa Lực &amp; Giáp Chiến Cơ (Lv.1 → Lv.5)</h3>
+      <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-2.5">2. Nâng Cấp Hỏa Lực &amp; Giáp Chiến Cơ (Lv.1 → Lv.5)</h3>
       <div id="shop-jet-upgrades-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
     </div>
 
-    <div id="shop-toast-msg" class="mt-4 text-center text-xs font-extrabold text-emerald-400 min-h-[20px]"></div>
+    <div id="shop-toast-msg" class="mt-4 text-center text-xs font-extrabold text-[#047857] min-h-[20px]"></div>
   </div>
 </div>
 
@@ -1361,6 +1651,7 @@
   })).filter(ch => ch.prompt && ch.tokens.length > 0);
 
   const CURRENT_TOPIC = {{ current_topic | tojson }};
+  const CURRENT_USER_ID = {{ current_user.id | tojson }};
   const SUBMIT_URL = {{ url_for('main.api_arena_submit') | tojson }};
   const INITIAL_SERVER_XP = {{ my_stats.total_xp | default(0) | tojson }};
   const ASSET_BASE_URL = {{ url_for('static', filename='img/arena/assets/') | tojson }};
@@ -1940,18 +2231,18 @@
     document.getElementById('shop-panel-jets').classList.toggle('hidden', !isJets);
     document.getElementById('shop-panel-heroes').classList.toggle('hidden', isJets);
     document.getElementById('shop-tab-btn-heroes').className = !isJets
-      ? 'px-4 py-2.5 rounded-xl font-black text-xs bg-rose-600 text-white shadow cursor-pointer'
-      : 'px-4 py-2.5 rounded-xl font-black text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer';
+      ? 'px-4 py-2.5 rounded-xl font-extrabold text-xs bg-gradient-to-r from-[#0D9488] to-[#0B4FD8] text-white shadow cursor-pointer'
+      : 'px-4 py-2.5 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 cursor-pointer';
     document.getElementById('shop-tab-btn-jets').className = isJets
-      ? 'px-4 py-2.5 rounded-xl font-black text-xs bg-blue-600 text-white shadow cursor-pointer'
-      : 'px-4 py-2.5 rounded-xl font-black text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer';
+      ? 'px-4 py-2.5 rounded-xl font-extrabold text-xs bg-gradient-to-r from-[#0D9488] to-[#0B4FD8] text-white shadow cursor-pointer'
+      : 'px-4 py-2.5 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 cursor-pointer';
   }
 
   function showShopToast(msg, isError) {
     const el = document.getElementById('shop-toast-msg');
     if (!el) return;
     el.textContent = msg;
-    el.className = 'mt-4 text-center text-xs font-extrabold ' + (isError ? 'text-rose-400' : 'text-emerald-400');
+    el.className = 'mt-4 text-center text-xs font-extrabold ' + (isError ? 'text-[#BE123C]' : 'text-[#047857]');
   }
 
   function renderShopAll() {
@@ -1963,32 +2254,32 @@
       const owned = shopState.ownedHeroes.includes(h.id);
       const selected = shopState.selectedHero === h.id;
       const card = document.createElement('div');
-      card.className = 'p-3.5 rounded-2xl border-2 flex flex-col justify-between ' +
-        (selected ? 'border-rose-500 bg-rose-950/30' : 'border-slate-800 bg-slate-950/70');
+      card.className = 'p-3.5 rounded-2xl border-2 flex flex-col justify-between shadow-xs ' +
+        (selected ? 'border-[#0D9488] bg-teal-50/70' : 'border-slate-200 bg-white');
       card.innerHTML = `
         <div>
-          <div class="h-32 rounded-xl bg-slate-900 flex items-center justify-center p-2 mb-2.5 relative cursor-pointer"
+          <div class="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 mb-2.5 relative cursor-pointer"
                onclick="previewHeroInStudio('${h.id}')">
             <img src="${ARENA_SPRITE_URLS[h.sprite]}?v=9" alt="${h.name}" class="h-28 w-28 object-contain" />
-            <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-sky-500/25 text-sky-300 text-[10px] font-black">▶ Xem 60FPS</span>
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-teal-500/30 text-teal-200 text-[10px] font-black">▶ Xem 60FPS</span>
             <span class="absolute top-2 right-2 px-2 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px] font-black">${h.skill2}</span>
           </div>
-          <div class="font-black text-sm text-white">${h.name}</div>
-          <p class="text-[11px] font-semibold text-slate-400 mt-1">${h.desc}</p>
+          <div class="font-display font-extrabold text-sm text-slate-900">${h.name}</div>
+          <p class="text-[11px] font-medium text-slate-600 mt-1 leading-relaxed">${h.desc}</p>
         </div>
-        <div class="mt-3 pt-2 border-t border-slate-800 flex flex-col gap-1.5">
+        <div class="mt-3 pt-2.5 border-t border-slate-200 flex flex-col gap-1.5">
           ${owned ? `
             <button type="button" onclick="selectShopHero('${h.id}')"
-              class="w-full py-2 rounded-xl font-black text-xs cursor-pointer ${selected ? 'bg-emerald-600 text-white' : 'bg-rose-600 hover:bg-rose-500 text-white'}">
+              class="w-full py-2 rounded-xl font-extrabold text-xs cursor-pointer transition ${selected ? 'bg-[#047857] text-white' : 'bg-[#0B4FD8] hover:bg-[#093EB0] text-white'}">
               ${selected ? '✓ ĐANG XUẤT TRẬN' : 'CHỌN TƯỚNG'}
             </button>
           ` : `
             <button type="button" onclick="buyShopHero('${h.id}', 'coins')"
-              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs cursor-pointer">
+              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs cursor-pointer">
               Chiêu mộ (💰 ${h.coinCost} Vàng)
             </button>
             <button type="button" onclick="buyShopHero('${h.id}', 'xp')"
-              class="w-full py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs cursor-pointer">
+              class="w-full py-1.5 rounded-xl bg-[#0B4FD8] hover:bg-[#093EB0] text-white font-extrabold text-xs cursor-pointer">
               Chiêu mộ (⭐ ${h.xpCost} XP)
             </button>
           `}
@@ -2002,21 +2293,21 @@
       const lv = shopState.heroUpgrades[u.key] || 1;
       const coinPrice = u.baseCoin * lv, xpPrice = u.baseXp * lv;
       const card = document.createElement('div');
-      card.className = 'p-3.5 rounded-2xl border border-slate-800 bg-slate-950/70 flex flex-col justify-between';
+      card.className = 'p-3.5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between';
       card.innerHTML = `
         <div>
           <div class="flex items-center justify-between gap-1 mb-1">
-            <span class="font-black text-xs text-white">${u.name}</span>
-            <span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-black text-[10px]">Lv.${lv}/5</span>
+            <span class="font-extrabold text-xs text-slate-900">${u.name}</span>
+            <span class="px-2 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-[#0F766E] font-mono font-extrabold text-[10px]">Lv.${lv}/5</span>
           </div>
-          <p class="text-[11px] font-semibold text-slate-400">${u.desc}</p>
+          <p class="text-[11px] font-medium text-slate-600 leading-relaxed">${u.desc}</p>
         </div>
         <div class="mt-3 flex flex-col gap-1.5">
-          ${lv >= 5 ? `<div class="py-2 text-center rounded-xl bg-emerald-500/20 text-emerald-300 font-black text-xs">MAX LEVEL</div>` : `
+          ${lv >= 5 ? `<div class="py-2 text-center rounded-xl bg-emerald-50 border border-emerald-200 text-[#047857] font-extrabold text-xs">MAX LEVEL</div>` : `
             <button type="button" onclick="upgradeShopItem('hero','${u.key}','coins',${coinPrice})"
-              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs cursor-pointer">Nâng cấp (💰 ${coinPrice})</button>
+              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs cursor-pointer">Nâng cấp (💰 ${coinPrice})</button>
             <button type="button" onclick="upgradeShopItem('hero','${u.key}','xp',${xpPrice})"
-              class="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 font-black text-xs cursor-pointer">Nâng cấp (⭐ ${xpPrice} XP)</button>
+              class="w-full py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-[#0B4FD8] font-extrabold text-xs cursor-pointer">Nâng cấp (⭐ ${xpPrice} XP)</button>
           `}
         </div>`;
       huGrid.appendChild(card);
@@ -2028,28 +2319,28 @@
       const owned = shopState.ownedJets.includes(j.id);
       const selected = shopState.selectedJet === j.id;
       const card = document.createElement('div');
-      card.className = 'p-3.5 rounded-2xl border-2 flex flex-col justify-between ' +
-        (selected ? 'border-sky-500 bg-sky-950/30' : 'border-slate-800 bg-slate-950/70');
+      card.className = 'p-3.5 rounded-2xl border-2 flex flex-col justify-between shadow-xs ' +
+        (selected ? 'border-[#0B4FD8] bg-blue-50/70' : 'border-slate-200 bg-white');
       card.innerHTML = `
         <div>
-          <div class="h-32 rounded-xl bg-slate-900 flex items-center justify-center p-2 mb-2.5 relative">
+          <div class="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 mb-2.5 relative">
             <img src="${ARENA_SPRITE_URLS[j.sprite]}?v=9" alt="${j.name}" class="h-28 w-28 object-contain" />
             <span class="absolute top-2 right-2 px-2 py-0.5 rounded bg-rose-600 text-white text-[10px] font-black">${j.baseStreams} TIA ĐỎ</span>
           </div>
-          <div class="font-black text-sm text-white">${j.name}</div>
-          <p class="text-[11px] font-semibold text-slate-400 mt-1">${j.desc}</p>
+          <div class="font-display font-extrabold text-sm text-slate-900">${j.name}</div>
+          <p class="text-[11px] font-medium text-slate-600 mt-1 leading-relaxed">${j.desc}</p>
         </div>
-        <div class="mt-3 pt-2 border-t border-slate-800 flex flex-col gap-1.5">
+        <div class="mt-3 pt-2.5 border-t border-slate-200 flex flex-col gap-1.5">
           ${owned ? `
             <button type="button" onclick="selectShopJet('${j.id}')"
-              class="w-full py-2 rounded-xl font-black text-xs cursor-pointer ${selected ? 'bg-emerald-600 text-white' : 'bg-sky-600 hover:bg-sky-500 text-white'}">
+              class="w-full py-2 rounded-xl font-extrabold text-xs cursor-pointer transition ${selected ? 'bg-[#047857] text-white' : 'bg-[#0B4FD8] hover:bg-[#093EB0] text-white'}">
               ${selected ? '✓ ĐANG LÁI' : 'TRANG BỊ'}
             </button>
           ` : `
             <button type="button" onclick="buyShopJet('${j.id}','coins')"
-              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs cursor-pointer">Mua (💰 ${j.coinCost} Vàng)</button>
+              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs cursor-pointer">Mua (💰 ${j.coinCost} Vàng)</button>
             <button type="button" onclick="buyShopJet('${j.id}','xp')"
-              class="w-full py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs cursor-pointer">Mua (⭐ ${j.xpCost} XP)</button>
+              class="w-full py-1.5 rounded-xl bg-[#0B4FD8] hover:bg-[#093EB0] text-white font-extrabold text-xs cursor-pointer">Mua (⭐ ${j.xpCost} XP)</button>
           `}
         </div>`;
       jGrid.appendChild(card);
@@ -2061,21 +2352,21 @@
       const lv = shopState.jetUpgrades[u.key] || 1;
       const coinPrice = u.baseCoin * lv, xpPrice = u.baseXp * lv;
       const card = document.createElement('div');
-      card.className = 'p-3.5 rounded-2xl border border-slate-800 bg-slate-950/70 flex flex-col justify-between';
+      card.className = 'p-3.5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between';
       card.innerHTML = `
         <div>
           <div class="flex items-center justify-between gap-1 mb-1">
-            <span class="font-black text-xs text-white">${u.name}</span>
-            <span class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-black text-[10px]">Lv.${lv}/5</span>
+            <span class="font-extrabold text-xs text-slate-900">${u.name}</span>
+            <span class="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[#0B4FD8] font-mono font-extrabold text-[10px]">Lv.${lv}/5</span>
           </div>
-          <p class="text-[11px] font-semibold text-slate-400">${u.desc}</p>
+          <p class="text-[11px] font-medium text-slate-600 leading-relaxed">${u.desc}</p>
         </div>
         <div class="mt-3 flex flex-col gap-1.5">
-          ${lv >= 5 ? `<div class="py-2 text-center rounded-xl bg-emerald-500/20 text-emerald-300 font-black text-xs">MAX LEVEL</div>` : `
+          ${lv >= 5 ? `<div class="py-2 text-center rounded-xl bg-emerald-50 border border-emerald-200 text-[#047857] font-extrabold text-xs">MAX LEVEL</div>` : `
             <button type="button" onclick="upgradeShopItem('jet','${u.key}','coins',${coinPrice})"
-              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs cursor-pointer">Nâng cấp (💰 ${coinPrice})</button>
+              class="w-full py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs cursor-pointer">Nâng cấp (💰 ${coinPrice})</button>
             <button type="button" onclick="upgradeShopItem('jet','${u.key}','xp',${xpPrice})"
-              class="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 font-black text-xs cursor-pointer">Nâng cấp (⭐ ${xpPrice} XP)</button>
+              class="w-full py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-[#0B4FD8] font-extrabold text-xs cursor-pointer">Nâng cấp (⭐ ${xpPrice} XP)</button>
           `}
         </div>`;
       juGrid.appendChild(card);
@@ -2216,6 +2507,7 @@
 
   function selectArenaMode(mode) {
     stopActiveGameLoops();
+    resetKnowledgeFocusPauseUI();
     currentMode = mode;
     matchStarted = false;
 
@@ -2235,6 +2527,7 @@
     document.getElementById('lobby-mode-desc').textContent = meta.desc;
     document.getElementById('lobby-mode-banner-img').src = meta.img;
 
+    document.getElementById('arena-stage-root').classList.remove('is-in-match');
     document.getElementById('arena-hud-bar').classList.add('hidden');
     document.getElementById('arena-result-screen').classList.add('hidden');
     document.getElementById('arena-prematch-lobby').classList.remove('hidden');
@@ -2247,9 +2540,23 @@
 
   let knowledgeFocusPaused = false;
 
+  function resetKnowledgeFocusPauseUI() {
+    knowledgeFocusPaused = false;
+    ['btn-plat-focus-read', 'btn-air-focus-read'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.textContent = '⏸️ Đọc câu hỏi [Q]';
+      btn.className = 'px-3 py-2 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 border border-amber-400/50 text-amber-200 text-[11px] font-black cursor-pointer';
+    });
+    ['boss-quiz-overlay', 'shooter-quiz-dock'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('focus-reading');
+    });
+  }
+
   function toggleKnowledgeFocusPause(forceVal) {
     if (!matchStarted || (currentMode !== 'boss_rpg' && currentMode !== 'space_shooter')) {
-      knowledgeFocusPaused = false;
+      resetKnowledgeFocusPauseUI();
       return;
     }
     knowledgeFocusPaused = typeof forceVal === 'boolean' ? forceVal : !knowledgeFocusPaused;
@@ -2269,17 +2576,14 @@
 
   function startArenaMatchNow() {
     stopActiveGameLoops();
-    knowledgeFocusPaused = false;
+    resetKnowledgeFocusPauseUI();
     matchStarted = true;
     matchScore = 0; matchCoinsEarned = 0; matchCombo = 0; matchMaxCombo = 1;
     matchCorrect = 0; matchTotal = 0; matchStartTime = Date.now();
     matchMistakes = [];
     ArenaSFX.coin();
-    ['btn-plat-focus-read', 'btn-air-focus-read'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn) btn.textContent = '⏸️ Đọc câu hỏi [Q]';
-    });
 
+    document.getElementById('arena-stage-root').classList.add('is-in-match');
     document.getElementById('arena-prematch-lobby').classList.add('hidden');
     document.getElementById('arena-result-screen').classList.add('hidden');
     document.getElementById('arena-hud-bar').classList.remove('hidden');
@@ -4192,11 +4496,20 @@
     const tbl = document.getElementById('sql-schema-preview-table');
     const titleEl = document.getElementById('sql-schema-table-title');
     if (!tbl) return;
-    tbl.innerHTML = '';
+    tbl.textContent = '';
     const match = String(hintStr || '').match(/([A-Za-z0-9_]+)\s*\(([^)]+)\)/);
     if (!match) {
       if (titleEl) titleEl.textContent = '📊 Sơ đồ CSDL mẫu';
-      tbl.innerHTML = '<tr><th>Ghi chú</th></tr><tr><td>' + (hintStr || 'SELECT → FROM → WHERE') + '</td></tr>';
+      const headRow = document.createElement('tr');
+      const th = document.createElement('th');
+      th.textContent = 'Ghi chú';
+      headRow.appendChild(th);
+      const bodyRow = document.createElement('tr');
+      const td = document.createElement('td');
+      td.textContent = hintStr || 'SELECT → FROM → WHERE';
+      bodyRow.appendChild(td);
+      tbl.appendChild(headRow);
+      tbl.appendChild(bodyRow);
       return;
     }
     const tableName = match[1];
@@ -4360,15 +4673,15 @@
         if (revCnt) revCnt.textContent = matchMistakes.length + ' câu cần ôn lại';
         matchMistakes.forEach((m, i) => {
           const item = document.createElement('div');
-          item.className = 'p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs';
+          item.className = 'p-3 rounded-xl bg-white border border-slate-200 text-xs shadow-xs';
           const qDiv = document.createElement('div');
-          qDiv.className = 'font-extrabold text-white mb-1';
+          qDiv.className = 'font-extrabold text-slate-900 mb-1';
           qDiv.textContent = `${i + 1}. ${m.question}`;
           const aDiv = document.createElement('div');
-          aDiv.className = 'text-emerald-300 font-bold';
+          aDiv.className = 'text-[#047857] font-bold';
           aDiv.textContent = `✓ Đáp án đúng: ${m.rightAnswer}`;
           const eDiv = document.createElement('div');
-          eDiv.className = 'text-slate-400 mt-0.5';
+          eDiv.className = 'text-slate-600 mt-0.5';
           eDiv.textContent = `💡 ${m.explanation}`;
           item.appendChild(qDiv); item.appendChild(aDiv); item.appendChild(eDiv);
           revList.appendChild(item);
@@ -4400,7 +4713,140 @@
           shopState.serverXp = Math.max(shopState.serverXp || 0, data.my_stats.total_xp || 0);
           saveShopState();
         }
+        renderWeeklyLeaderboardFromApi(data);
       }).catch(() => {});
+  }
+
+  function renderWeeklyLeaderboardFromApi(data) {
+    const podiumBox = document.getElementById('lb-podium-container');
+    if (podiumBox && Array.isArray(data.podium)) {
+      podiumBox.textContent = '';
+      const rankOrder = [1, 0, 2];
+      rankOrder.forEach((idx) => {
+        if (data.podium.length <= idx) return;
+        const p = data.podium[idx];
+        const col = document.createElement('div');
+        col.className = 'podium-col rank-' + p.rank;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'podium-avatar';
+        avatar.textContent = p.avatar_char || (p.full_name ? String(p.full_name).slice(0, 1).toUpperCase() : '?');
+        const crown = document.createElement('span');
+        crown.className = 'podium-crown';
+        crown.setAttribute('aria-hidden', 'true');
+        crown.textContent = p.rank === 1 ? '👑' : (p.rank === 2 ? '🥈' : '🥉');
+        avatar.appendChild(crown);
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'podium-name';
+        nameEl.title = p.full_name || '';
+        nameEl.textContent = p.full_name || '';
+
+        const xpEl = document.createElement('div');
+        xpEl.className = 'podium-xp';
+        xpEl.textContent = `${p.best_score} đ • ${p.best_duration_sec}s`;
+
+        const ped = document.createElement('div');
+        ped.className = 'podium-pedestal';
+        ped.textContent = '#' + p.rank;
+
+        col.appendChild(avatar);
+        col.appendChild(nameEl);
+        col.appendChild(xpEl);
+        col.appendChild(ped);
+        podiumBox.appendChild(col);
+      });
+    }
+
+    const rowsBox = document.getElementById('lb-rows-container');
+    if (rowsBox && Array.isArray(data.leaderboard)) {
+      rowsBox.textContent = '';
+      data.leaderboard.forEach((item) => {
+        const isSelf = Boolean(item.is_me || (CURRENT_USER_ID && item.user_id === CURRENT_USER_ID));
+        const row = document.createElement('div');
+        row.className = 'arena-lb-row' + (isSelf ? ' is-me' : '');
+
+        const rankEl = document.createElement('div');
+        let rankStyle = 'text-slate-600';
+        if (item.rank === 1) rankStyle = 'text-[#B45309] bg-amber-50 border border-amber-200 rounded-lg py-0.5';
+        else if (item.rank === 2) rankStyle = 'text-slate-700 bg-slate-100 border border-slate-200 rounded-lg py-0.5';
+        else if (item.rank === 3) rankStyle = 'text-[#9A3412] bg-orange-50 border border-orange-200 rounded-lg py-0.5';
+        rankEl.className = 'arena-lb-rank ' + rankStyle;
+        rankEl.textContent = '#' + item.rank;
+
+        const userEl = document.createElement('div');
+        userEl.className = 'arena-lb-user';
+        const nameEl = document.createElement('div');
+        nameEl.className = 'arena-lb-name';
+        nameEl.appendChild(document.createTextNode(item.full_name || ''));
+        if (isSelf) {
+          const youSpan = document.createElement('span');
+          youSpan.className = 'text-[10px] font-extrabold text-[#0F766E] ml-1';
+          youSpan.textContent = '(Bạn)';
+          nameEl.appendChild(youSpan);
+        }
+        const metaEl = document.createElement('div');
+        metaEl.className = 'arena-lb-meta';
+        const badgeSpan = document.createElement('span');
+        badgeSpan.textContent = item.badge_title || '';
+        const dotSpan = document.createElement('span');
+        dotSpan.textContent = '•';
+        const comboSpan = document.createElement('span');
+        comboSpan.textContent = 'Combo x' + (item.max_combo || 0);
+        metaEl.appendChild(badgeSpan);
+        metaEl.appendChild(dotSpan);
+        metaEl.appendChild(comboSpan);
+        userEl.appendChild(nameEl);
+        userEl.appendChild(metaEl);
+
+        const scoreWrap = document.createElement('div');
+        scoreWrap.className = 'arena-lb-xp text-right';
+        const ptsDiv = document.createElement('div');
+        ptsDiv.className = 'text-slate-900';
+        ptsDiv.textContent = item.best_score + ' đ';
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'text-[11px] font-bold text-[#0F766E]';
+        timeDiv.textContent = '⏱ ' + item.best_duration_sec + 's';
+        scoreWrap.appendChild(ptsDiv);
+        scoreWrap.appendChild(timeDiv);
+
+        row.appendChild(rankEl);
+        row.appendChild(userEl);
+        row.appendChild(scoreWrap);
+        rowsBox.appendChild(row);
+      });
+    }
+
+    const footerEl = document.getElementById('rival-footer-text');
+    if (footerEl) {
+      footerEl.textContent = '';
+      if (data.my_stats && data.my_stats.rank === 1) {
+        footerEl.appendChild(document.createTextNode('👑 '));
+        const s = document.createElement('strong');
+        s.className = 'text-[#0F766E]';
+        s.textContent = 'Bạn đang dẫn đầu Top #1 tuần này!';
+        footerEl.appendChild(s);
+      } else if (data.my_stats && data.my_stats.rank) {
+        footerEl.appendChild(document.createTextNode('Cần thêm '));
+        const s1 = document.createElement('strong');
+        s1.className = 'text-[#B45309]';
+        s1.textContent = data.my_stats.score_to_next + ' điểm';
+        footerEl.appendChild(s1);
+        footerEl.appendChild(document.createTextNode(' để vượt '));
+        const s2 = document.createElement('strong');
+        s2.className = 'text-slate-900';
+        s2.textContent = data.my_stats.next_target_name || '';
+        footerEl.appendChild(s2);
+        footerEl.appendChild(document.createTextNode(` (#${data.my_stats.next_target_rank})`));
+      } else {
+        footerEl.appendChild(document.createTextNode('Bấm '));
+        const s = document.createElement('strong');
+        s.className = 'text-slate-900';
+        s.textContent = 'Bắt Đầu Thi Đấu';
+        footerEl.appendChild(s);
+        footerEl.appendChild(document.createTextNode(' để ghi danh lên BXH Tuần!'));
+      }
+    }
   }
 
   // Global Keyboard Controls (with Variable Jump Height & Instant Blitz Next!)
